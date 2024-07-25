@@ -1,0 +1,5 @@
+.content {
+	margin-top: 60px; /* Adjust this value to match the height of your navbar */
+	padding: 20px; /* Optional: Add padding if needed */
+	box-sizing: border-box; /* Ensures padding is included in the element's total width and height */
+  }

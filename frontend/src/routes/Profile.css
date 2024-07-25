@@ -1,0 +1,23 @@
+/* Profile.css */
+.profile-outer-container {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100vh; /* Full viewport height */
+	margin-top: 80px; /* Adjust based on your navbar height */
+	box-sizing: border-box; /* Ensures padding and margin are included in the element's total width and height */
+  }
+  
+  .profile-container {
+	text-align: center;
+  }
+  
+  .profile-container .row {
+	margin-bottom: 20px;
+  }
+  
+  .profile-container img {
+	width: 150px;
+	height: 150px;
+  }
+  
