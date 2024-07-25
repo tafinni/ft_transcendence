@@ -33,16 +33,16 @@ services:
       - DATABASE_USER=your_user
       - DATABASE_PASSWORD=your_password
 
- # frontend:
-  #  build:
-   #   context: ./frontend 
-    #  dockerfile: Dockerfile  
-   # volumes:
-    #  - ./frontend:/app 
-   # ports:
-    #  - "3000:3000"
-    #environment:
-    #  REACT_APP_BACKEND_URL: http://backend:8000 
+  frontend:
+    build:
+      context: ./frontend 
+      dockerfile: Dockerfile  
+    volumes:
+      - ./frontend:/app 
+    ports:
+      - "3000:3000"
+    environment:
+      REACT_APP_BACKEND_URL: http://backend:8000 
 
 
 networks:
