@@ -1,0 +1,56 @@
+version: '3.5'
+
+services:
+  db:
+    image: postgres:latest
+    container_name: postgres
+    environment:
+      POSTGRES_DB: pong_project
+      POSTGRES_USER: your_user
+      POSTGRES_PASSWORD: your_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+       - transcendence_network
+
+
+  backend:
+    build: ./backend
+    container_name: backend
+    depends_on:
+      - db
+    networks:
+      - transcendence_network
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/backend
+    environment:
+      - DATABASE_HOST=db
+      - DATABASE_NAME=pong_project
+      - DATABASE_USER=your_user
+      - DATABASE_PASSWORD=your_password
+
+ # frontend:
+  #  build:
+   #   context: ./frontend 
+    #  dockerfile: Dockerfile  
+   # volumes:
+    #  - ./frontend:/app 
+   # ports:
+    #  - "3000:3000"
+    #environment:
+    #  REACT_APP_BACKEND_URL: http://backend:8000 
+
+
+networks:
+  transcendence_network:
+
+volumes:
+  postgres_data:
+
+
+networks:
+  transcendence_network:
