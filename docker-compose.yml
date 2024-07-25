@@ -17,8 +17,9 @@ services:
 
 
   backend:
-    build: ./backend
+    image: backend
     container_name: backend
+    build: ./backend
     depends_on:
       - db
     networks:
@@ -34,11 +35,13 @@ services:
       - DATABASE_PASSWORD=your_password
 
   frontend:
+    image: frontend
+    container_name: frontend
     build:
       context: ./frontend 
       dockerfile: Dockerfile  
     volumes:
-      - ./frontend:/app 
+      - ./frontend/src:/app/src
     ports:
       - "3000:3000"
     environment:
@@ -50,7 +53,3 @@ networks:
 
 volumes:
   postgres_data:
-
-
-networks:
-  transcendence_network:
