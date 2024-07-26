@@ -3,7 +3,7 @@ FROM python:3.9-slim
 #PYTHONUNBUFFERED=1
 
 RUN apt-get update \
-	&& apt-get install -y --no-install-recommends \
+	&& apt-get install -y --no-install-recommends apt-utils \
 		postgresql-client \
 	&& rm -rf /var/lib/apt/lists/*
 
