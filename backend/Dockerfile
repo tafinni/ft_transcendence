@@ -10,6 +10,9 @@ RUN apt-get update \
 WORKDIR /app
 COPY requirements.txt /app/
 RUN pip --no-cache-dir install -r requirements.txt
+
+RUN pip install django-cors-headers
+
 COPY . /app/
 
 EXPOSE 8000
