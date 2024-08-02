@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 
+import json
 
 # Create your views here.
 
@@ -16,8 +17,9 @@ def home(request):
 @csrf_exempt
 def login_page(request):
     if request.method == "POST":
-        username = request.POST.get('username')
-        password = request.POST.get('password')
+        body = json.loads(request.body)
+        username = body.get('username')
+        password = body.get('password')
 
         user = authenticate(username=username, password=password)
         if user is None:

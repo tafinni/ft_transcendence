@@ -5,7 +5,7 @@ export function loadLogIn() {
 		<div class="bg-fade container-fluid d-flex justify-content-center align-items-center">
 			<div class="card p-4" style="width: 20rem;">
 				<h3 class="card-title text-center mb-4">Log In</h3>
-				<form id="login-form" method"POST">
+				<form id="login-form" method="POST">
 					<div class="form-group mb-3">
 						<label for="username" class="form-label">Username</label>
 						<input type="text" class="form-control" id="username" placeholder="Enter username" required>
@@ -61,6 +61,9 @@ export function initializeLogIn() {
                 // Handle successful login here (e.g., redirect to a different page)
             } else {
                 console.error('Login failed:', response.statusText);
+				const errorData = await response.json();
+                console.error('Login failed:', errorData);
+                alert('Login failed: ' + (errorData.error || response.statusText))
                 // Handle login failure here (e.g., show an error message to the user)
             }
         } catch (error) {
