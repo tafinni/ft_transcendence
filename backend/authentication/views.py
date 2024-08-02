@@ -4,9 +4,12 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
+import json
 
 
-# Create your views here.
+# Create your views here.  
+#curl -v -X POST -F username=jon
+ #-F password=jon http://localhost:8000/login/
 
 @login_required
 def home(request):
@@ -16,8 +19,11 @@ def home(request):
 @csrf_exempt
 def login_page(request):
     if request.method == "POST":
-        username = request.POST.get('username')
-        password = request.POST.get('password')
+        body = json.loads(request.body)
+        username = body.get('username')
+        password = body.get('password')
+    #    username = request.POST.get('username')
+     #   password = request.POST.get('password')
 
         user = authenticate(username=username, password=password)
         if user is None:
@@ -25,7 +31,8 @@ def login_page(request):
         else:
             login(request, user)
             return JsonResponse({'message': 'Login successful', 'redirect': '/home/'})
-
+#return JsonResponse({"status": "ok"})
+#return JsonResponse({})
     # Render the login page template (GET request)
   #  return render(request, 'login.html')
     return JsonResponse({'error': 'Invalid request method'}, status=405)
@@ -34,10 +41,19 @@ def login_page(request):
 @csrf_exempt
 def register_page(request):
     if request.method == 'POST':
-        first_name = request.POST.get('first_name')
-        last_name = request.POST.get('last_name')
-        username = request.POST.get('username')
-        password = request.POST.get('password')
+        body = json.loads(request.body)
+        first_name = body.get('first_name')
+        last_name = body.get('last_name')
+        username = body.get('username')
+        password = body.get('password')
+    #    first_name = request.POST.get('first_name')
+    #    last_name = request.POST.get('last_name')
+    #    username = request.POST.get('username')
+    #    password = request.POST.get('password')
+
+
+        if not all([first_name, last_name, username, password]):
+                return JsonResponse({'error': 'Missing required fields'}, status=400)
 
         user = User.objects.filter(username=username)
          

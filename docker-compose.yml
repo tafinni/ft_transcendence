@@ -49,14 +49,27 @@ services:
     ports:
       - "3000:3000"
     environment:
-      REACT_APP_BACKEND_URL: http://backend:8000 
+      REACT_APP_BACKEND_URL: http://backend:8000
 
+  game-dev:
+    image: game-dev
+    container_name: game-dev
+    build:
+      context: game-dev
+      dockerfile: Dockerfile
+#    pull_policy: build
+    networks:
+      - t_extra
+    volumes:
+      - ./game-dev/src:/app/src
+    ports:
+      - "5173:5173"
 
 networks:
   t_intra:
 #    name: t_intra
   t_extra:
-  #  name: t_extra
+#    name: t_extra
 
 volumes:
   postgres_data:
