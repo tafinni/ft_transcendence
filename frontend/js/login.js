@@ -1,9 +1,11 @@
+import { loadHome } from './home.js';
+
 export function loadLogIn() {
 	return `
 		<div class="bg-fade container-fluid d-flex justify-content-center align-items-center">
 			<div class="card p-4" style="width: 20rem;">
 				<h3 class="card-title text-center mb-4">Log In</h3>
-				<form>
+				<form id="login-form" method"POST">
 					<div class="form-group mb-3">
 						<label for="username" class="form-label">Username</label>
 						<input type="text" class="form-control" id="username" placeholder="Enter username" required>
@@ -23,6 +25,9 @@ export function loadLogIn() {
 
 
 export function initializeLogIn() {
+
+	console.log('initializeLogIn called'); // Debugging
+
     const loginForm = document.getElementById('login-form');
 
     if (!loginForm) {
@@ -33,11 +38,14 @@ export function initializeLogIn() {
     loginForm.addEventListener('submit', async (event) => {
         event.preventDefault(); // Prevent the form from submitting the default way
 
+
         const username = document.getElementById('username').value;
         const password = document.getElementById('password').value;
 
+		console.log('Form submitted:', { username, password }); // Debugging
+
         try {
-            const response = await fetch('http://backend:8000/login/', {
+            const response = await fetch('http://localhost:8000/login/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -48,6 +56,8 @@ export function initializeLogIn() {
             if (response.ok) {
                 const data = await response.json();
                 console.log('Login successful:', data);
+                document.getElementById('content').innerHTML = loadHome();
+
                 // Handle successful login here (e.g., redirect to a different page)
             } else {
                 console.error('Login failed:', response.statusText);

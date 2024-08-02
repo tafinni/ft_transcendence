@@ -1,6 +1,6 @@
 import { loadHome } from './home.js';
 import { loadStats } from './stats.js';
-import { loadLogIn } from './login.js';
+import { loadLogIn, initializeLogIn } from './login.js';
 
 // Update content
 async function loadContent(content) {
@@ -14,6 +14,7 @@ async function loadContent(content) {
 	}
 	else if (content === 'login') {
 		contentElement.innerHTML = loadLogIn();
+		initializeLogIn();
 	}
 	else {
 		contentElement.innerHTML = `<h1> 404 Page not found</h1>`;
