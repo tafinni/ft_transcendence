@@ -1,6 +1,6 @@
 import { loadHome } from './home.js';
 import { loadStats } from './stats.js';
-import { loadSignIn } from './signin.js';
+import { loadLogIn } from './login.js';
 
 // Update content
 async function loadContent(content) {
@@ -12,8 +12,8 @@ async function loadContent(content) {
 	else if (content === 'stats') {
 		contentElement.innerHTML = await loadStats();
 	}
-	else if (content === 'signin') {
-		contentElement.innerHTML = loadSignIn();
+	else if (content === 'login') {
+		contentElement.innerHTML = loadLogIn();
 	}
 	else {
 		contentElement.innerHTML = `<h1> 404 Page not found</h1>`;
@@ -29,12 +29,12 @@ document.getElementById('stats-link').addEventListener('click', (event) => {
 	event.preventDefault(); // Stops normal link
 	loadContent('stats');
 });
-document.getElementById('signin-link').addEventListener('click', (event) => {
+document.getElementById('login-link').addEventListener('click', (event) => {
 	event.preventDefault(); // Stops normal link
-	loadContent('signin');
+	loadContent('login');
 });
 
 /* Default content */
 window.onload = () => {
-	loadContent('signin');
+	loadContent('login');
 }
