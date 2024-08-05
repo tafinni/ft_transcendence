@@ -1,4 +1,4 @@
-import { loadHome } from './home.js';
+import { loadContent } from './router.js';
 
 export function loadLogIn() {
 	return `
@@ -17,7 +17,8 @@ export function loadLogIn() {
 					</div>
 					<button type="submit" class="btn btn-primary w-100">Log In</button>
 					<p>Don't have an account?</p>
-					<button type="button" class="btn btn-link">Register</button>
+					<button type="button" id="register-button" class="btn btn-link">Register</button>
+
 				</form>
 			</div>
 		</div>
@@ -33,6 +34,7 @@ export function initializeLogIn() {
     if (!loginForm) {console.error('Login form not found'); return;}
 
 	const errorMessage = document.getElementById('error-message');
+    const registerButton = document.getElementById('register-button');
 
     loginForm.addEventListener('submit', async (event) => {
 		event.preventDefault(); // Prevent the form from submitting the default way
@@ -42,21 +44,21 @@ export function initializeLogIn() {
 
 		console.log('Form submitted:', { username, password }); // Debugging
 
-        try {
-            const response = await fetch('http://localhost:8000/login/', {
+        try
+		{
+            const response = await fetch('http://localhost:8000/login/',
+			{
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ username, password })
             });
 
             if (response.ok) 
 			{
                 const data = await response.json();
-                console.log('Login successful:', data);
-                document.getElementById('content').innerHTML = loadHome();
-            } 
+                console.log('Login successful:', data); // debugging, testing
+				loadContent('home');
+			} 
 			else 
 			{
                 console.error('Login failed:', response.statusText);
@@ -73,4 +75,9 @@ export function initializeLogIn() {
 			errorMessage.style.display = 'block';
         }
     });
+
+	registerButton.addEventListener('click', () => {
+        console.log('Pressed register button'); // Debugging
+		loadContent('register');
+	})
 }

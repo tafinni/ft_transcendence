@@ -1,9 +1,10 @@
 import { loadHome } from './home.js';
 import { loadStats } from './stats.js';
 import { loadLogIn, initializeLogIn } from './login.js';
+import { loadRegister, initializeRegister } from './register.js';
 
 // Update content
-async function loadContent(content) {
+export async function loadContent(content) {
 	const contentElement = document.getElementById('content');
 
 	if (content === 'home') {
@@ -15,6 +16,11 @@ async function loadContent(content) {
 	else if (content === 'login') {
 		contentElement.innerHTML = loadLogIn();
 		initializeLogIn();
+
+	}
+	else if (content === 'register') {
+		contentElement.innerHTML = loadRegister();
+		initializeRegister();
 	}
 	else {
 		contentElement.innerHTML = `<h1> 404 Page not found</h1>`;

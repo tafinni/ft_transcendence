@@ -10,3 +10,7 @@ html, body {
 	width: 100vw;
 	background-color: black;
 }
+
+.hidden-navbar {
+	display: none;
+}
