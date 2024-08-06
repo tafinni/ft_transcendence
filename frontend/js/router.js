@@ -2,6 +2,7 @@ import { loadHome } from './home.js';
 import { loadStats } from './stats.js';
 import { loadLogIn, initializeLogIn } from './login.js';
 import { loadRegister, initializeRegister } from './register.js';
+import { loadProfile } from './profile.js';
 
 // Update content
 export async function loadContent(content) {
@@ -27,8 +28,7 @@ export async function loadContent(content) {
 		navbar.classList.add('navbar-hidden');
 	}
 	else if (content === 'profile') {
-		contentElement.innerHTML = loadRegister();
-		initializeRegister();
+		contentElement.innerHTML = loadProfile();
 		navbar.classList.remove('navbar-hidden');
 	}
 	else {

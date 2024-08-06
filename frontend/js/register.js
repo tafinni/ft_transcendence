@@ -4,7 +4,7 @@ export function loadRegister() {
     return `
         <div class="bg-fade container-fluid d-flex justify-content-center align-items-center">
             <div class="card p-4" style="width: 20rem;">
-                <h3 class="card-title text-center mb-4">Register</h3>
+				<button type="button" id="cancel-button" class="btn btn-link">Cancel</button>                <h3 class="card-title text-center mb-4">Register</h3>
                 <form id="register-form" method="POST">
                     <div id="error-message" class="text-danger mb-3" style="display: none;"></div>
                     <div class="form-group mb-3">
@@ -37,6 +37,9 @@ export function initializeRegister() {
 	const registerForm = document.getElementById('register-form');
 	if (!registerForm) { console.error('Register form not found'); return; }
 
+	const errorMessage = document.getElementById('error-message');
+	const cancelButton = document.getElementById('cancel-button');
+
 	registerForm.addEventListener('submit', async (event) => {
 		event.preventDefault();
 
@@ -60,12 +63,16 @@ export function initializeRegister() {
 			{
 				const data = await response.json();
 				console.log('Registration successful:', data); // debugging, testing
-				alert('Registration successful');
+				alert(data.message);
 				loadContent('login');
 			}
 			else
 			{
 				console.error('Registration failed:', response.statusText);
+				const errorData = await response.json();
+				console.error('Registration failed:', errorData);
+				errorMessage.textContent = errorData.error;
+				errorMessage.style.display = 'block';
 			}
 		}
 		catch (error)
@@ -73,4 +80,9 @@ export function initializeRegister() {
 			console.error('Error during registration:', error);
 		}
 	});
+
+	cancelButton.addEventListener('click', () => {
+		console.log('Cancelled registration'); // Debugging
+		loadContent('login');
+	})
 }
