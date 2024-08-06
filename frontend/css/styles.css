@@ -1,4 +1,16 @@
 html, body {
 	height: 100%;
+	min-height: 100% !important;
 	margin: 0;
+	padding: 0;
+}
+
+.bg-fade {
+	height: 100vh;
+	width: 100vw;
+	background-color: black;
+}
+
+.navbar-hidden {
+	display: none;
 }
