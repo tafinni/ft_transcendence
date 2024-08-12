@@ -1,7 +1,19 @@
 {
 	"languageDropdown": "RU",
-	"home": "Home",
-	"profile": "Profile",
-	"stats": "Stats",
-	"login": "Log Out"
+	"home": "Игра",
+	"profile": "Профиль",
+	"stats": "Статистика",
+	"login": "Выйти",
+
+	"Log In": "Войти",
+	"Username": "Имя пользователя",
+	"Password": "Пароль",
+	"Don't have an account?": "У вас нет учетной записи?",
+	"Register": "Регистрация",
+
+	"Back": "Назад",
+	"First Name": "Имя",
+	"Last Name": "Фамилия"
+
+
 }
