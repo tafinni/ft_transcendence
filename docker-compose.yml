@@ -1,3 +1,5 @@
+version: '3.5'
+
 services:
   db:
     image: postgres:latest
@@ -39,7 +41,7 @@ services:
     build:
       context: ./frontend 
       dockerfile: Dockerfile
-    pull_policy: build
+ #   pull_policy: build
     networks:
       - t_extra
     volumes:
@@ -55,7 +57,7 @@ services:
     build:
       context: game-dev
       dockerfile: Dockerfile
-    pull_policy: build
+#    pull_policy: build
     networks:
       - t_extra
     volumes:
@@ -79,9 +81,9 @@ services:
 
 networks:
   t_intra:
-    name: t_intra
+#    name: t_intra
   t_extra:
-    name: t_extra
+#    name: t_extra
 
 volumes:
   postgres_data:
