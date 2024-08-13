@@ -1,5 +1,3 @@
-version: '3.5'
-
 services:
   db:
     image: postgres:latest
@@ -14,7 +12,6 @@ services:
       - "5432:5432"
     networks:
        - t_intra
-
 
   backend:
     image: backend
@@ -81,9 +78,9 @@ services:
 
 networks:
   t_intra:
-#    name: t_intra
+    name: t_intra
   t_extra:
-#    name: t_extra
+    name: t_extra
 
 volumes:
   postgres_data:
