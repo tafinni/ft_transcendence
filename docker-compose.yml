@@ -79,9 +79,9 @@ services:
 
 networks:
   t_intra:
-#    name: t_intra
+    name: t_intra
   t_extra:
-#    name: t_extra
+    name: t_extra
 
 volumes:
   postgres_data:
