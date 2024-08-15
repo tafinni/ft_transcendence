@@ -6,7 +6,24 @@ import { Server } from 'socket.io';
 
 const app = express();
 const server = createServer(app);
-const io = new Server(server);
+//const io = new Server(server);
+
+const io = new Server(server, {
+  cors: {
+    origin: "*", // Adjust this to restrict access to specific origins if needed
+    methods: ["GET", "POST"],
+    allowedHeaders: ["my-custom-header"],
+    credentials: true
+  }
+});
+
+//const io = require('socket.io')(http, {
+//  origins: '*:*'
+//});
+//const io = require('socket.io')(server, { origins: '*:*'})
+
+//io.origins('*:*'); 
+//io.set('origins', '*:*')
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -18,6 +35,9 @@ io.on('connection', (socket) => {
   socket.on('chat message', (msg) => {
     io.emit('chat message', msg);
   });
+  socket.on('start game', (value) => {
+    io.emit('game start', value)
+  }) 
 });
 
 server.listen(8001, () => {

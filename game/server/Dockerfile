@@ -2,4 +2,6 @@ FROM node:20-alpine
 WORKDIR /app
 COPY . .
 RUN npm install
-CMD ["npm", "run", "dev"]
+RUN npm install -g nodemon
+#CMD ["npm", "run", "dev"]
+CMD ["nodemon", "src/index.js"]
