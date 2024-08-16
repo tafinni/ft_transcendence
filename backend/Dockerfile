@@ -12,7 +12,7 @@ COPY requirements.txt /app/
 RUN pip install --upgrade pip
 RUN pip --no-cache-dir install -r requirements.txt
 
-RUN pip install django-cors-headers
+#RUN pip install django-cors-headers
 
 COPY . /app/
 

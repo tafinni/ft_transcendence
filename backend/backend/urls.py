@@ -15,6 +15,7 @@ Including another URLconf
 """
 from authentication.views import *
 #from authentication.views import login_page, register_page, home, logout_page, update_profile
+#from  authentication.views import match_history
 from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
@@ -33,6 +34,7 @@ urlpatterns = [
     path('logout/', logout_page, name='logout'),
     path('update_profile/', update_profile, name='update_profile'),
     path('profile/', profile, name='profile'),
+ #   path('match_history/', views.match_history, name='match_history'),
 ]
 
 if settings.DEBUG:

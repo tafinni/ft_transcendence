@@ -5,7 +5,9 @@ from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 import json
-
+from .models import UserStats
+#from .models import MatchHistory
+from django.conf import settings
 
 # Create your views here.  
 #curl -v -X POST -F username=jon
@@ -13,7 +15,7 @@ import json
 
 @login_required
 def home(request):
-    return JsonResponse({'message': 'Welcome to the home page!'})
+    return JsonResponse({'message': 'Welcome to the home page!!'})
 
 # Define a view function for the login page
 @csrf_exempt
@@ -22,9 +24,7 @@ def login_page(request):
         body = json.loads(request.body)
         username = body.get('username')
         password = body.get('password')
-    #    username = request.POST.get('username')
-     #   password = request.POST.get('password')
-
+        
         user = authenticate(username=username, password=password)
         if user is None:
             return JsonResponse({'error': 'Invalid Password or Username'}, status=400)
@@ -46,12 +46,6 @@ def register_page(request):
         last_name = body.get('last_name')
         username = body.get('username')
         password = body.get('password')
-     #   display_name = body.get('display_name')
-    #    first_name = request.POST.get('first_name')
-    #    last_name = request.POST.get('last_name')
-    #    username = request.POST.get('username')
-    #    password = request.POST.get('password')
-
 
         if not all([first_name, last_name, username, password]):
                 return JsonResponse({'error': 'Missing required fields'}, status=400)
@@ -60,10 +54,6 @@ def register_page(request):
          
         if user.exists():
             return JsonResponse({'error': 'Username already taken!'}, status=400)
-
-   #     if UserProfile.objects.filter(display_name=display_name).exists():
-   #         return JsonResponse({'error': 'Display name already taken!'}, status=400)
-         
         # Create a new User object with the provided information
         user = User.objects.create_user(
             first_name=first_name,
@@ -71,13 +61,10 @@ def register_page(request):
             username=username,
             password=password
         )
-         
-        # Set the user's password and save the user object
         user.set_password(password)
         user.save()
         return JsonResponse({'message': 'Account created successfully!'})
-     
-    # Render the registration page template (GET request)
+
     return JsonResponse({'error': 'Invalid request method'}, status=405)
 
 # Define a view function for the logout page
@@ -97,7 +84,6 @@ def update_profile(request):
         body = json.loads(request.body)
         user = request.user
         user_profile, created = UserProfile.objects.get_or_create(user=user)
-  
 
         first_name = body.get('first_name')
         last_name = body.get('last_name')
@@ -130,12 +116,37 @@ def update_profile(request):
 def profile(request):
     user = request.user
     user_stats = UserStats.objects.get(user=user)
+    try:
+        avatar_url = user_profile.avatar.url
+    #except ValueError:
+    except:
+    #    avatar_url = '/media/avatars/default.jpg'
+        avatar_url = 'http://localhost:8000/media/avatars/default.jpg'
+    #    avatar_url = settings.MEDIA_URL + 'avatars/default.jpg'
+
+
     data = {
         'username': user.username,
         'first_name': user.first_name,
         'last_name': user.last_name,
         'wins': user_stats.wins,
         'losses': user_stats.losses,
-        'avatar': user.userprofile.avatar.url,
+        'avatar': avatar_url,
     }
     return JsonResponse(data)
+
+
+#@login_required
+#def match_history(request):
+ #   data = {
+ #       'status': 'success',
+ #       'data': {
+  #          'key1': 'value1',
+   #         'key2': 'value2'
+   #     }
+  #  }
+  #  return JsonResponse(data)
+ #   user = request.user
+ #   matches = MatchHistory.objects.filter(user=user).order_by('-date')
+ #   match_list = [{'opponent': match.opponent, 'date': match.date, 'result': match.result, 'details': match.details} for match in matches]
+ #   return JsonResponse({'matches': match_list})

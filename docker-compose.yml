@@ -9,9 +9,10 @@ services:
       POSTGRES_USER: your_user
       POSTGRES_PASSWORD: your_password
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data_new:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+#      -"5432:1532"
     networks:
        - t_intra
 
@@ -29,6 +30,7 @@ services:
       - "8000:8000"
     volumes:
       - ./backend:/backend
+      - ./media:/app/media 
     environment:
       - DATABASE_HOST=db
       - DATABASE_NAME=pong_project
@@ -72,4 +74,5 @@ networks:
 #    name: t_extra
 
 volumes:
-  postgres_data:
+#  postgres_data:
+  postgres_data_new:

@@ -1,0 +1,17 @@
+{
+	"languageDropdown": "FI",
+	"home": "Koti",
+	"profile": "Profiili",
+	"stats": "Tilastot",
+	"login": "Kirjaudu ulos",
+
+	"Log In": "Kirjaudu sisään",
+	"Username": "Käyttäjänimi",
+	"Password": "Salasana",
+	"Don't have an account?": "Eikö sinulla ole tiliä?",
+	"Register": "Rekisteröidy",
+
+	"Back": "Takaisin",
+	"First Name": "Etunimi",
+	"Last Name": "Sukunimi"
+}

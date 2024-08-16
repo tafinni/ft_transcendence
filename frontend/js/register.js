@@ -4,26 +4,27 @@ export function loadRegister() {
     return `
         <div class="bg-fade container-fluid d-flex justify-content-center align-items-center">
             <div class="card p-4" style="width: 20rem;">
-				<button type="button" id="cancel-button" class="btn btn-link">Cancel</button>                <h3 class="card-title text-center mb-4">Register</h3>
+				<button type="button" id="cancel-button" class="btn btn-link" translate="Back"></button>
+				<h3 class="card-title text-center mb-4" translate="Register"></h3>
                 <form id="register-form" method="POST">
                     <div id="error-message" class="text-danger mb-3" style="display: none;"></div>
                     <div class="form-group mb-3">
-                        <label for="first_name" class="form-label">First Name</label>
-                        <input type="text" class="form-control" id="first_name" placeholder="Enter first name" required>
+                        <label for="first_name" class="form-label" translate="First Name"></label>
+                        <input type="text" class="form-control" id="first_name" required>
                     </div>
                     <div class="form-group mb-3">
-                        <label for="last_name" class="form-label">Last Name</label>
-                        <input type="text" class="form-control" id="last_name" placeholder="Enter last name" required>
+                        <label for="last_name" class="form-label" translate="Last Name"></label>
+                        <input type="text" class="form-control" id="last_name" required>
                     </div>
                     <div class="form-group mb-3">
-                        <label for="username" class="form-label">Username</label>
-                        <input type="text" class="form-control" id="username" placeholder="Enter username" required>
+                        <label for="username" class="form-label" translate="Username"></label>
+                        <input type="text" class="form-control" id="username" required>
                     </div>
                     <div class="form-group mb-3">
-                        <label for="password" class="form-label">Password</label>
-                        <input type="password" class="form-control" id="password" placeholder="Enter password" required>
+                        <label for="password" class="form-label" translate="Password"></label>
+                        <input type="password" class="form-control" id="password" required>
                     </div>
-                    <button type="submit" class="btn btn-primary w-100">Register</button>
+                    <button type="submit" class="btn btn-primary w-100" translate="Register"></button>
                 </form>
             </div>
         </div>

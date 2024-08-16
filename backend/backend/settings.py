@@ -29,7 +29,13 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 # Allow all origins #testing
-CORS_ALLOW_ALL_ORIGINS = True #testing
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:3000',  # testing
+]
+
+CORS_ALLOW_CREDENTIALS = True # testing
+
+
 
 
 # Application definition
@@ -46,9 +52,9 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+	'corsheaders.middleware.CorsMiddleware', #testing
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-	'corsheaders.middleware.CorsMiddleware', #testing
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
