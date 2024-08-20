@@ -20,16 +20,23 @@ class UserStats(models.Model):
     def __str__(self):
        return f"Stats for {self.user.username}"
 
-#class MatchHistory(models.Model):
- #   user = models.ForeignKey(User, on_delete=models.CASCADE)
- #   opponent = models.CharField(max_length=100)
- #   date = models.DateTimeField(auto_now_add=True)
- #   result = models.CharField(max_length=10)  # win/loss/draw
- #   details = models.TextField(blank=True, null=True)
+class MatchHistory(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    opponent = models.CharField(max_length=100)
+    date = models.DateTimeField(auto_now_add=True)
+    result = models.CharField(max_length=10)  # win/loss/draw
+    details = models.TextField(blank=True, null=True)
 
- #   def __str__(self):
- #       return f"{self.user.username} vs {self.opponent} on {self.date}"
+    def __str__(self):
+        return f"{self.user.username} vs {self.opponent} on {self.date}"
 
+class Friendship(models.Model):
+    user = models.ForeignKey(User, related_name='friendships', on_delete=models.CASCADE)
+    friend = models.ForeignKey(User, related_name='friends', on_delete=models.CASCADE)
+    accepted = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f'{self.user.username} -> {self.friend.username} (Accepted: {self.accepted})'
 
 # Signal to create or update user profile
 from django.db.models.signals import post_save

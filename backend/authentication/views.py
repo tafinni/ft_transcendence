@@ -5,9 +5,9 @@ from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 import json
-from .models import UserStats
-#from .models import MatchHistory
+from .models import UserStats, UserProfile, MatchHistory
 from django.conf import settings
+from . import views
 
 # Create your views here.  
 #curl -v -X POST -F username=jon
@@ -99,7 +99,10 @@ def update_profile(request):
                 return JsonResponse({'error': 'Display name already taken'}, status=400)
             user_profile.display_name = display_name
         if avatar:
-            user_profile.avatar.save(avatar.name, avatar, save=True)
+            avatar_response = upload_avatar(request)
+            if avatar_response.status_code != 200:
+                return avatar_response
+            #user_profile.avatar.save(avatar.name, avatar, save=True) upload_avatar or?
         user.save()
         user_profile.save()
         return JsonResponse({'message': 'Profile updated successfully'})
@@ -109,16 +112,29 @@ def update_profile(request):
 
 #@login_required
 #@csrf_exempt
-#def upload_avatar(request):
+def upload_avatar(request):
+    if request.method == "POST":
+        user = request.user
+        user_profile, created = UserProfile.objects.get_or_create(user=user)
+        avatar = request.FILES.get('avatar')
+        if avatar:
+            user_profile.avatar.save(avatar.name, avatar, save=True)
+            user_profile.save()
+            return JsonResponse({'message': 'Avatar uploaded successfully'})
+        else:
+            return JsonResponse({'error': 'No avatar provided'}, status=400)
+
+    return JsonResponse({'error': 'Invalid request method'}, status=405)
 
 
 @login_required
 def profile(request):
     user = request.user
     user_stats = UserStats.objects.get(user=user)
+#    user_profile, created = UserProfile.objects.get_or_create(user=user)
+
     try:
         avatar_url = user_profile.avatar.url
-    #except ValueError:
     except:
     #    avatar_url = '/media/avatars/default.jpg'
         avatar_url = 'http://localhost:8000/media/avatars/default.jpg'
@@ -136,17 +152,81 @@ def profile(request):
     return JsonResponse(data)
 
 
-#@login_required
-#def match_history(request):
- #   data = {
- #       'status': 'success',
- #       'data': {
-  #          'key1': 'value1',
-   #         'key2': 'value2'
-   #     }
-  #  }
-  #  return JsonResponse(data)
- #   user = request.user
- #   matches = MatchHistory.objects.filter(user=user).order_by('-date')
- #   match_list = [{'opponent': match.opponent, 'date': match.date, 'result': match.result, 'details': match.details} for match in matches]
- #   return JsonResponse({'matches': match_list})
+@login_required
+def match_history(request):
+    user = request.user
+    matches = MatchHistory.objects.filter(user=user).order_by('-date')
+    match_list = [
+        {
+            'opponent': match.opponent, 
+            'date': match.date, 'result': match.result, 
+            'details': match.details
+        } for match in matches
+    ]
+    return JsonResponse({'matches': match_list})
+
+
+# Add friend view
+@login_required
+@csrf_exempt
+def add_friend(request):
+    if request.method == "POST":
+        body = json.loads(request.body)
+        friend_username = body.get('friend_username')
+
+        if not friend_username:
+            return JsonResponse({'error': 'Friend username is required'}, status=400)
+
+        try:
+            friend = User.objects.get(username=friend_username)
+        except User.DoesNotExist:
+            return JsonResponse({'error': 'User does not exist'}, status=404)
+
+        if friend == request.user:
+            return JsonResponse({'error': 'You cannot add yourself as a friend'}, status=400)
+
+        friendship, created = Friendship.objects.get_or_create(user=request.user, friend=friend)
+        if not created:
+            return JsonResponse({'error': 'Friend request already sent or already friends'}, status=400)
+
+        return JsonResponse({'message': 'Friend request sent'})
+
+    return JsonResponse({'error': 'Invalid request method'}, status=405)
+
+# Remove friend view
+@login_required
+@csrf_exempt
+def remove_friend(request):
+    if request.method == "POST":
+        body = json.loads(request.body)
+        friend_username = body.get('friend_username')
+
+        if not friend_username:
+            return JsonResponse({'error': 'Friend username is required'}, status=400)
+
+        try:
+            friend = User.objects.get(username=friend_username)
+        except User.DoesNotExist:
+            return JsonResponse({'error': 'User does not exist'}, status=404)
+
+        try:
+            friendship = Friendship.objects.get(user=request.user, friend=friend)
+            friendship.delete()
+            return JsonResponse({'message': 'Friend removed successfully'})
+        except Friendship.DoesNotExist:
+            return JsonResponse({'error': 'Friendship does not exist'}, status=404)
+
+    return JsonResponse({'error': 'Invalid request method'}, status=405)
+
+
+# Friends list view
+@login_required
+def friends_list(request):
+    friendships = Friendship.objects.filter(user=request.user, accepted=True)
+    friends = [
+        {
+            'username': friend.friend.username,
+            'online_status': friend.friend.is_online  # ? add in User model
+        } for friend in friendships
+    ]
+    return JsonResponse({'friends': friends})
