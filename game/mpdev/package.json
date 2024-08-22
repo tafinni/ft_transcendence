@@ -1,0 +1,19 @@
+{
+  "name": "mpdev",
+  "version": "0.0.1",
+  "description": "Socket.IO implementation of remote server for ft_transcendence",
+  "type": "module",
+  "scripts": {
+    "dev": "concurrently \"vite\" \"vite build --watch\"",
+    "serve": "vite",
+    "watch": "vite build --watch"
+},
+  "devDependencies": {
+    "vite": "^5.3.3",
+    "vite-plugin-restart": "^0.4.1"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "socket.io": "^4.7.5"
+  }
+}
