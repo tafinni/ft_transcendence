@@ -23,28 +23,28 @@ const textureLoader = new THREE.TextureLoader()
 /**
  * Object
  */
-const cube = new THREE.Mesh(
+const paddleBlue = new THREE.Mesh(
     new THREE.BoxGeometry(0.25, 1, 0.25),
     new THREE.MeshBasicMaterial()
 )
-cube.position.x = -2
+paddleBlue.position.x = -2
 
-const cube2 = new THREE.Mesh(
+const paddleRed = new THREE.Mesh(
     new THREE.BoxGeometry(0.25, 1, 0.25),
     new THREE.MeshBasicMaterial()
 )
-cube2.position.x = 2
+paddleRed.position.x = 2
 
 const ball = new THREE.Mesh(
     new THREE.SphereGeometry(0.2, 16, 16),
     new THREE.MeshNormalMaterial()
 )
 
-cube.material.color =  new THREE.Color('red')
-cube2.material.color = new THREE.Color('blue')
+paddleBlue.material.color =  new THREE.Color('red')
+paddleRed.material.color = new THREE.Color('blue')
 //ball.material.color = new THREE.Color('yellow')
 
-scene.add(cube, cube2, ball)
+scene.add(paddleBlue, paddleRed, ball)
 
 /**
  * Sizes
@@ -108,38 +108,38 @@ const tick = () =>
     const elapsedTime = clock.getElapsedTime()
 
     // rotate
-    //cube.rotation.x = elapsedTime / 2
-    //cube.rotation.y = elapsedTime / 2
+    //paddleBlue.rotation.x = elapsedTime / 2
+    //paddleBlue.rotation.y = elapsedTime / 2
 
     // check to move
     if (moveUp2 != moveDown2) {
-        if (moveUp2 && cube2.position.y <= 2) {
-            cube2.position.y += yMove
-            //cube2.position.z -= yMove
+        if (moveUp2 && paddleRed.position.y <= 2) {
+            paddleRed.position.y += yMove
+            //paddleRed.position.z -= yMove
         }
-        else if (moveDown2 && cube2.position.y >= -2) {
-            cube2.position.y -= yMove
-            //cube2.position.z += yMove
+        else if (moveDown2 && paddleRed.position.y >= -2) {
+            paddleRed.position.y -= yMove
+            //paddleRed.position.z += yMove
         }
     }
     if (moveUp1 != moveDown1) {
-        if (moveUp1 && cube.position.y <= 2) {
-            cube.position.y += yMove
-            //cube.position.z -= yMove
+        if (moveUp1 && paddleBlue.position.y <= 2) {
+            paddleBlue.position.y += yMove
+            //paddleBlue.position.z -= yMove
         }
-        else if (moveDown1 && cube.position.y >= -2) {
-            cube.position.y -= yMove
-            //cube.position.z += yMove
+        else if (moveDown1 && paddleBlue.position.y >= -2) {
+            paddleBlue.position.y -= yMove
+            //paddleBlue.position.z += yMove
         }
     }
     // ball movement during game
     if (game_run) {
-        //if (ball.position.x + (ball.width / 2) >= 1.75 && checkHit(cube2.height / 2, cube2.position.y)) {
-        //if (ball.position.x <= left_bound && checkHit(cube.geometry.parameters.width, cube.position.y)
-        //|| (ball.position.x >= right_bound && checkHit(cube2.geometry.parameters.width, cube2.position.y))) {
+        //if (ball.position.x + (ball.width / 2) >= 1.75 && checkHit(paddleRed.height / 2, paddleRed.position.y)) {
+        //if (ball.position.x <= left_bound && checkHit(paddleBlue.geometry.parameters.width, paddleBlue.position.y)
+        //|| (ball.position.x >= right_bound && checkHit(paddleRed.geometry.parameters.width, paddleRed.position.y))) {
         var hit = null
-        if (!ball_passed && ball.position.x <= left_bound) hit = cube
-        else if (!ball_passed && ball.position.x >= right_bound) hit = cube2
+        if (!ball_passed && ball.position.x <= left_bound) hit = paddleBlue
+        else if (!ball_passed && ball.position.x >= right_bound) hit = paddleRed
         if (hit != null) {
             if (checkHit(hit.geometry.parameters.height / 2 + ball.geometry.parameters.radius, hit.position.y)) {
                 ball_direction.x *= -1.05
@@ -190,8 +190,8 @@ var moveDown2 = false
 //     // 40 down 38 up 37 left 39 right
 //     // 87 W 65 A 83 S 68 D
 //     // 82 R
-//     if (keyCode == 87) cube.position.y += yMove
-//     else if (keyCode == 65) cube.position.x -= xMove
+//     if (keyCode == 87) paddleBlue.position.y += yMove
+//     else if (keyCode == 65) paddleBlue.position.x -= xMove
 //     else if (keyCode == )
 // }
 
@@ -214,7 +214,7 @@ function onDocumentKeyUp(event) {
     else if (key_code == 87) moveUp1 = false
     else if (key_code == 83) moveDown1 = false
     else if (key_code == 82) {
-        cube.position.y = cube2.position.y = 0
+        paddleBlue.position.y = paddleRed.position.y = 0
         ball.position.x = ball.position.y = 0
         game_run = false
     }
@@ -227,8 +227,8 @@ var game_run = false
 var ball_passed = false
 var ball_direction = { x: 0, y: 0 }
 var top_bound = 2
-var left_bound = cube.position.x + cube.geometry.parameters.width / 2 + ball.geometry.parameters.radius
-var right_bound = cube2.position.x - cube2.geometry.parameters.width / 2 - ball.geometry.parameters.radius
+var left_bound = paddleBlue.position.x + paddleBlue.geometry.parameters.width / 2 + ball.geometry.parameters.radius
+var right_bound = paddleRed.position.x - paddleRed.geometry.parameters.width / 2 - ball.geometry.parameters.radius
 var game_score = { left: 0, right: 0}
 
 export function startGame() {

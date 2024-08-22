@@ -4,24 +4,35 @@ import { loadLogIn, initializeLogIn } from './login.js';
 import { loadRegister, initializeRegister } from './register.js';
 import { loadProfile } from './profile.js';
 import { updateContent } from './i18n.js';
+import { loadGame } from './game.js';
 
 function navLinkVisibility(state) {
 	const homeLink = document.getElementById('home-link');
 	const profileLink = document.getElementById('profile-link');
 	const statsLink = document.getElementById('stats-link');
 	const loginLink = document.getElementById('login-link');
+	const gameLink = document.getElementById('game-link');
 
-	if (state) {
+	if (state == 1) {
 		homeLink.style.display = 'block';
 		profileLink.style.display = 'block';
 		statsLink.style.display = 'block';
 		loginLink.style.display = 'block';
+		gameLink.style.display = 'block';
+	}
+	else if (state == 2) {
+		homeLink.style.display ='block';
+		profileLink.style.display ='none';
+		statsLink.style.display ='none';
+		loginLink.style.display ='none';
+		gameLink.style.display = 'block';
 	}
 	else {
 		homeLink.style.display ='none';
 		profileLink.style.display ='none';
 		statsLink.style.display ='none';
 		loginLink.style.display ='none';
+		gameLink.style.display = 'none';
 	}
 }
 
@@ -31,7 +42,7 @@ export async function loadContent(content) {
 
 	if (content === 'home') {
 		contentElement.innerHTML = await loadHome();
-		navLinkVisibility(true);
+		navLinkVisibility(1);
 	}
 	else if (content === 'stats') {
 		contentElement.innerHTML = await loadStats();
@@ -39,16 +50,20 @@ export async function loadContent(content) {
 	else if (content === 'login') {
 		contentElement.innerHTML = loadLogIn();
 		initializeLogIn();
-		navLinkVisibility(false);
+		navLinkVisibility(0);
 	}
 	else if (content === 'register') {
 		contentElement.innerHTML = loadRegister();
 		initializeRegister();
-		navLinkVisibility(false);
+		navLinkVisibility(0);
 
 	}
 	else if (content === 'profile') {
 		contentElement.innerHTML = await loadProfile();
+	}
+	else if (content === 'game'){
+		contentElement.innerHTML = await loadGame();
+		navLinkVisibility(2);
 	}
 	else {
 		contentElement.innerHTML = `<h1> 404 Page not found</h1>`;
@@ -72,6 +87,11 @@ document.getElementById('login-link').addEventListener('click', (event) => {
 document.getElementById('profile-link').addEventListener('click', (event) => {
 	event.preventDefault(); // Stops normal link
 	loadContent('profile');
+});
+
+document.getElementById('game-link').addEventListener('click', (event) => {
+	event.preventDefault(); // Stops normal link
+	loadContent('game');
 });
 
 /* Default content */

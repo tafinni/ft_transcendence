@@ -25,28 +25,28 @@ const textureLoader = new THREE.TextureLoader()
 /**
  * Object
  */
-const cube = new THREE.Mesh(
+const paddleBlue = new THREE.Mesh(
     new THREE.BoxGeometry(0.25, 1, 0.25),
     new THREE.MeshBasicMaterial()
 )
-cube.position.x = -2
+paddleBlue.position.x = -2
 
-const cube2 = new THREE.Mesh(
+const paddleRed = new THREE.Mesh(
     new THREE.BoxGeometry(0.25, 1, 0.25),
     new THREE.MeshBasicMaterial()
 )
-cube2.position.x = 2
+paddleRed.position.x = 2
 
 const ball = new THREE.Mesh(
     new THREE.SphereGeometry(0.2, 16, 16),
     new THREE.MeshNormalMaterial()
 )
 
-cube.material.color =  new THREE.Color('red')
-cube2.material.color = new THREE.Color('blue')
+paddleBlue.material.color =  new THREE.Color('red')
+paddleRed.material.color = new THREE.Color('blue')
 //ball.material.color = new THREE.Color('yellow')
 
-scene.add(cube, cube2, ball)
+scene.add(paddleBlue, paddleRed, ball)
 
 /**
  * Sizes
