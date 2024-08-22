@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.http import JsonResponse
 import json
 from .models import UserStats, UserProfile, MatchHistory
@@ -19,6 +19,7 @@ def home(request):
 
 # Define a view function for the login page
 @csrf_exempt
+#@csrf_protect
 def login_page(request):
     if request.method == "POST":
         body = json.loads(request.body)
@@ -39,6 +40,7 @@ def login_page(request):
 
 # Define a view function for the registration page
 @csrf_exempt
+#@csrf_protect
 def register_page(request):
     if request.method == 'POST':
         body = json.loads(request.body)
@@ -69,6 +71,7 @@ def register_page(request):
 
 # Define a view function for the logout page
 @csrf_exempt
+#@csrf_protect
 def logout_page(request):
     if request.method == "POST":
         logout(request)
@@ -79,6 +82,7 @@ def logout_page(request):
 
 @login_required
 @csrf_exempt
+#@csrf_protect
 def update_profile(request):
     if request.method == "POST":
         body = json.loads(request.body)
@@ -111,7 +115,8 @@ def update_profile(request):
 
 
 #@login_required
-#@csrf_exempt
+@csrf_exempt
+#@csrf_protect
 def upload_avatar(request):
     if request.method == "POST":
         user = request.user
@@ -131,14 +136,13 @@ def upload_avatar(request):
 def profile(request):
     user = request.user
     user_stats = UserStats.objects.get(user=user)
-#    user_profile, created = UserProfile.objects.get_or_create(user=user)
+    user_profile, created = UserProfile.objects.get_or_create(user=user)
 
     try:
         avatar_url = user_profile.avatar.url
     except:
-    #    avatar_url = '/media/avatars/default.jpg'
-        avatar_url = 'http://localhost:8000/media/avatars/default.jpg'
-    #    avatar_url = settings.MEDIA_URL + 'avatars/default.jpg'
+    #    avatar_url = 'http://localhost:8000/media/avatars/default.jpg'
+        avatar_url = settings.MEDIA_URL + 'avatars/default.jpg'
 
 
     data = {
@@ -169,6 +173,7 @@ def match_history(request):
 # Add friend view
 @login_required
 @csrf_exempt
+#@csrf_protect
 def add_friend(request):
     if request.method == "POST":
         body = json.loads(request.body)
@@ -196,6 +201,7 @@ def add_friend(request):
 # Remove friend view
 @login_required
 @csrf_exempt
+#@csrf_protect
 def remove_friend(request):
     if request.method == "POST":
         body = json.loads(request.body)
