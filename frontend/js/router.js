@@ -67,6 +67,7 @@ document.getElementById('stats-link').addEventListener('click', (event) => {
 });
 document.getElementById('login-link').addEventListener('click', (event) => {
 	event.preventDefault(); // Stops normal link
+	sessionStorage.removeItem("username"); // added for savin log in
 	loadContent('login');
 });
 document.getElementById('profile-link').addEventListener('click', (event) => {
@@ -76,5 +77,9 @@ document.getElementById('profile-link').addEventListener('click', (event) => {
 
 /* Default content */
 window.onload = () => {
-	loadContent('login');
+	if (!sessionStorage.getItem("username")) // added for savin log in
+	{
+		loadContent('login');
+
+	}
 }

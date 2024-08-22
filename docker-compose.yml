@@ -47,7 +47,8 @@ services:
     networks:
       - t_extra
     volumes:
-      - ./frontend/src:/app/src
+     - ./frontend:/app
+    #  - ./frontend/src:/app/src
     ports:
       - "3000:3000"
     environment:

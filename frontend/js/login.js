@@ -61,6 +61,9 @@ export function initializeLogIn() {
 			{
                 const data = await response.json();
                 console.log('Login successful:', data); // debugging, testing
+				sessionStorage.setItem("username", username); // added for savin log in
+
+		
 				loadContent('home');
 			} 
 			else 

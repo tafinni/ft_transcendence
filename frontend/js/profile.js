@@ -15,8 +15,9 @@ export async function loadProfile() {
 				<div class="col-md-4">
 					<div class="card text-center">
 						<div class="card-body">
-						<img src="${userData.avatar}" class="rounded-circle img-fluid mb-3" alt="Avatar" style="width: 150px; height: 150px;">							<h4 class="card-title">${userData.display_name}</h4>
+						<img src="http://localhost:8000/${userData.avatar}" class="rounded-circle img-fluid mb-3" alt="Avatar" style="width: 150px; height: 150px;">							<h4 class="card-title">${userData.display_name}</h4>
 							<p class="text-muted">@${userData.username}</p>
+forrrrr
 						</div>
 					</div>
 				</div>
