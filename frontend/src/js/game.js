@@ -157,8 +157,7 @@ var goalsRed = 0;
 var goalsBlue = 0;
 function checkGoal() {
     if (ball.position.x < -2.1) {
-        console.log("Red made goal at ", ball.position.x, " ", ball.position.z);
-        ball.position.x = 0;
+       ball.position.x = 0;
         ball.position.z = 0;
         goalsRed++;
         console.log(goalsBlue, "-", goalsRed);
@@ -196,7 +195,6 @@ function moveRed() {
 
 function moveBlue() {
     paddleBlue.position.z += paddleSpeed * dirBlue;
-    console.log("Blue paddle is at ", paddleBlue.position.z);
 }
 
 let supposedZRed;
@@ -209,7 +207,7 @@ function predictBallZRed() {
 
     while (distanceToPaddle > 0) {
         predictedZ += predictedDZ;
-        if (predictedZ < 0 || predictedZ > 4) {
+        if (predictedZ < -2 || predictedZ > 2) {
             predictedDZ *= -1;
             predictedZ += 2 * predictedDZ;
         }
@@ -222,10 +220,11 @@ function predictBallZBlue() {
     let predictedZ = ball.position.z;
     let predictedDZ = dBallZ;
     let distanceToPaddle = Math.abs(paddleBlue.position.x - ball.position.x);
-
+    // console.log("Dist at begin ", distanceToPaddle);
     while (distanceToPaddle > 0) {
+        // console.log("Dist now is ", distanceToPaddle);
         predictedZ += predictedDZ;
-        if (predictedZ < 0 || predictedZ > 4) {
+        if (predictedZ < -2 || predictedZ > 2) {
             predictedDZ *= -1;
             predictedZ += 2 * predictedDZ;
         }
@@ -237,11 +236,11 @@ function predictBallZBlue() {
 function aiMoveRed() {
     let predictedZ;
     if (Date.now() - timerRed > 1000) {
-        predictedZ = predictBallZRed() - 0.025; // half of paddle height
-        if (predictedZ < 0) {
-            predictedZ = 0;
-        } else if (predictedZ + 0.1 > 4) {
-            predictedZ = 4 - 0.1;
+        predictedZ = predictBallZRed() - 0.025; // half of paddle width
+        if (predictedZ < -2) {
+            predictedZ = -2;
+        } else if (predictedZ + 0.025 > 2) {
+            predictedZ = 2 - 0.025;
         }
         supposedZRed = predictedZ;
         timerRed = Date.now();
@@ -264,18 +263,18 @@ function aiMoveBlue() {
         predictedZ = predictBallZBlue() - 0.025;
         if (predictedZ < -2) {
             predictedZ = -2;
-        } else if (predictedZ + 0.1 > 2) {
-            predictedZ = 2 - 0.1;
+        } else if (predictedZ + 0.025 > 2) {
+            predictedZ = 2 - 0.025;
         }
         supposedZBlue = predictedZ;
-        timerBlue = Date.now;
+        timerBlue = Date.now();
     }
-    console.log("Suppose ", supposedZBlue);
+    // console.log("Suppose ", supposedZBlue);
     if (paddleBlue.position.z < supposedZBlue) {
-        console.log("Blue up");
+        // console.log("Blue up");
         paddleBlue.position.z += paddleSpeed;
     } else if (paddleBlue.position.z > supposedZBlue) {
-        console.log("Blue down");
+        // console.log("Blue down");
         paddleBlue.position.z -= paddleSpeed;
     }
 }
