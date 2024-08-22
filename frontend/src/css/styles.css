@@ -1,0 +1,25 @@
+html, body {
+	height: 100%;
+	min-height: 100% !important;
+	margin: 0;
+	padding: 0;
+}
+
+.bg-fade {
+	height: 100vh;
+	width: 100vw;
+	background-color: black;
+}
+
+.navbar-hidden {
+	display: none;
+}
+
+canvas {
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: -9999;
+  }

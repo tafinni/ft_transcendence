@@ -93,14 +93,14 @@ def update_profile(request):
         last_name = body.get('last_name')
         display_name = body.get('display_name')
         avatar = request.FILES.get('avatar')
-
+        print(body)#test
         if first_name:
             user.first_name = first_name
         if last_name:
             user.last_name = last_name
         if display_name:
-            if UserProfile.objects.filter(display_name=display_name).exclude(user=user).exists():
-                return JsonResponse({'error': 'Display name already taken'}, status=400)
+     #       if UserProfile.objects.filter(display_name=display_name).exclude(user=user).exists():
+      #          return JsonResponse({'error': 'Display name already taken'}, status=400)
             user_profile.display_name = display_name
         if avatar:
             avatar_response = upload_avatar(request)
@@ -151,6 +151,7 @@ def profile(request):
         'last_name': user.last_name,
         'wins': user_stats.wins,
         'losses': user_stats.losses,
+        'display_name': user_profile.display_name,
         'avatar': avatar_url,
     }
     return JsonResponse(data)
