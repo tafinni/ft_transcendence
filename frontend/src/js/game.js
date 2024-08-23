@@ -1,10 +1,14 @@
-export function loadGame() {
+export function loadGame(test) {
+    console.log(test);
     goalsBlue = 0;
     goalsRed = 0;
     gameRunning = true;
     timerBlue = 0;
     timerRed = 0;
-    // blueIsAi = false;
+    if (test == 1)
+        blueIsAi = false;
+    else
+        blueIsAi = true;
     // redIsAi = false;
     paddleBlue.position.z = 0;
     paddleRed.position.z = 0;
@@ -285,7 +289,7 @@ const tick = () => {
     const elapsedTime = clock.getElapsedTime()
 
     // Update camera position
-    // angle += speed;
+    angle += speed;
     camera.position.x = radius * Math.cos(angle);
     camera.position.z = radius * Math.sin(angle);
     camera.lookAt(scene.position); // Assuming the origin is at (0, 0, 0)
@@ -371,4 +375,4 @@ document.addEventListener('keyup', (e) => {
     }
 });
 
-// tick()
+tick()

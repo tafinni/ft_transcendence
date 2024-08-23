@@ -20,6 +20,7 @@ export function updateContent() {
 		document.getElementById('stats-link').innerText = i18next.t('stats');
 		document.getElementById('login-link').innerText = i18next.t('login');
 		document.getElementById('game-link').innerText = i18next.t('game');
+		document.getElementById('ai-link').innerText = i18next.t('ai');
 		document.getElementById('languageDropdown').innerText = i18next.t('languageDropdown');
 	
     document.querySelectorAll('[translate]').forEach(element => {

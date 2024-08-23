@@ -12,6 +12,7 @@ function navLinkVisibility(state) {
 	const statsLink = document.getElementById('stats-link');
 	const loginLink = document.getElementById('login-link');
 	const gameLink = document.getElementById('game-link');
+	const extra = document.getElementById('ai-link');
 
 	if (state == 1) {
 		homeLink.style.display = 'block';
@@ -19,6 +20,7 @@ function navLinkVisibility(state) {
 		statsLink.style.display = 'block';
 		loginLink.style.display = 'block';
 		gameLink.style.display = 'block';
+		extra.style.display = 'block';
 	}
 	else if (state == 2) {
 		homeLink.style.display ='block';
@@ -26,6 +28,7 @@ function navLinkVisibility(state) {
 		statsLink.style.display ='none';
 		loginLink.style.display ='none';
 		gameLink.style.display = 'block';
+		extra.style.display = 'none';
 	}
 	else {
 		homeLink.style.display ='none';
@@ -33,6 +36,7 @@ function navLinkVisibility(state) {
 		statsLink.style.display ='none';
 		loginLink.style.display ='none';
 		gameLink.style.display = 'none';
+		extra.style.display = 'none';
 	}
 }
 
@@ -62,7 +66,11 @@ export async function loadContent(content) {
 		contentElement.innerHTML = await loadProfile();
 	}
 	else if (content === 'game'){
-		contentElement.innerHTML = await loadGame();
+		contentElement.innerHTML = await loadGame(1);
+		navLinkVisibility(2);
+	}
+	else if (content === 'ai'){
+		contentElement.innerHTML = await loadGame(0);
 		navLinkVisibility(2);
 	}
 	else {
@@ -92,6 +100,11 @@ document.getElementById('profile-link').addEventListener('click', (event) => {
 document.getElementById('game-link').addEventListener('click', (event) => {
 	event.preventDefault(); // Stops normal link
 	loadContent('game');
+});
+
+document.getElementById('ai-link').addEventListener('click', (event) => {
+	event.preventDefault(); // Stops normal link
+	loadContent('ai');
 });
 
 /* Default content */
