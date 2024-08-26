@@ -5,6 +5,7 @@ import { loadRegister, initializeRegister } from './register.js';
 import { loadProfile } from './profile.js';
 import { updateContent } from './i18n.js';
 import { loadGame } from './game.js';
+import { loadRemote} from '/pong_client.js';
 
 function navLinkVisibility(state) {
 	const homeLink = document.getElementById('home-link');
@@ -13,6 +14,7 @@ function navLinkVisibility(state) {
 	const loginLink = document.getElementById('login-link');
 	const gameLink = document.getElementById('game-link');
 	const extra = document.getElementById('ai-link');
+	const remote = document.getElementById('remote-link');
 
 	if (state == 1) {
 		homeLink.style.display = 'block';
@@ -60,7 +62,6 @@ export async function loadContent(content) {
 		contentElement.innerHTML = loadRegister();
 		initializeRegister();
 		navLinkVisibility(0);
-
 	}
 	else if (content === 'profile') {
 		contentElement.innerHTML = await loadProfile();
@@ -71,6 +72,10 @@ export async function loadContent(content) {
 	}
 	else if (content === 'ai'){
 		contentElement.innerHTML = await loadGame(0);
+		navLinkVisibility(2);
+	}
+	else if (content === 'remote'){
+		contentElement.innerHTML = await loadRemote();
 		navLinkVisibility(2);
 	}
 	else {
@@ -105,6 +110,11 @@ document.getElementById('game-link').addEventListener('click', (event) => {
 document.getElementById('ai-link').addEventListener('click', (event) => {
 	event.preventDefault(); // Stops normal link
 	loadContent('ai');
+});
+
+document.getElementById('remote-link').addEventListener('click', (event) => {
+	event.preventDefault(); // Stops normal link
+	loadContent('remote');
 });
 
 /* Default content */
