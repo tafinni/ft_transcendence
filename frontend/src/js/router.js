@@ -5,7 +5,7 @@ import { loadRegister, initializeRegister } from './register.js';
 import { loadProfile } from './profile.js';
 import { updateContent } from './i18n.js';
 import { loadGame } from './game.js';
-import { loadRemote} from '/pong_client.js';
+import { loadRemote} from './pong_client.js';
 
 function navLinkVisibility(state) {
 	const homeLink = document.getElementById('home-link');

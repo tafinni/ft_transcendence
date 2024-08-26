@@ -3,7 +3,13 @@
 export function loadRemote(){
     draw();
 }
-const canvas = document.getElementById('pongCanvas');
+// const canvas = document.getElementById('pongCanvas');
+const canvas = document.createElement('canvas');
+canvas.width = 800;
+canvas.height = 600;
+canvas.id = 'pongCanvas';
+document.body.appendChild(canvas);
+
 const ctx = canvas.getContext('2d');
 
 const urlParams = new URLSearchParams(window.location.search);
