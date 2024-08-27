@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.http import JsonResponse
 import json
-from .models import UserStats, UserProfile, MatchHistory
+from .models import UserStats, UserProfile, MatchHistory, Friendship
 from django.conf import settings
 from . import views
 
@@ -168,13 +168,13 @@ def profile(request):
         avatar_url = settings.MEDIA_URL + 'avatars/default.jpg'
 
     # friends
- #   friendships = Friendship.objects.filter(user=request.user, accepted=True)
- #   friends = [
-  #      {
-   #         'username': friend.friend.username,
-   #         'online_status': friend.friend.is_online  # ? add in User model
-    #    } for friend in friendships
-   # ]
+    friendships = Friendship.objects.filter(user=request.user, accepted=True)
+    friends = [
+        {
+            'username': friend.friend.username,
+            'online_status': friend.friend.is_online  # ? add in User model
+        } for friend in friendships
+    ]
 
     data = {
         'username': user.username,
@@ -184,7 +184,7 @@ def profile(request):
         'losses': user_stats.losses,
         'display_name': user_profile.display_name,
         'avatar': avatar_url,
-    #    'friends': friends,
+        'friends': friends,
     }
     return JsonResponse(data)
 
