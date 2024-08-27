@@ -4,16 +4,20 @@
   "description": "Socket.IO implementation of remote server for ft_transcendence",
   "type": "module",
   "scripts": {
-    "dev": "concurrently \"vite\" \"vite build --watch\"",
+    "dev": "nodemon src/server.js",
+    "concurrent": "concurrently \"nodemon src/server.js\" \"vite\"",
     "serve": "vite",
     "watch": "vite build --watch"
-},
+  },
   "devDependencies": {
+    "@vitejs/plugin-vue": "^5.1.2",
     "vite": "^5.3.3",
     "vite-plugin-restart": "^0.4.1"
   },
   "dependencies": {
+    "concurrently": "^8.2.2",
     "express": "^4.19.2",
-    "socket.io": "^4.7.5"
+    "socket.io": "^4.7.5",
+    "three": "^0.167.1"
   }
 }
