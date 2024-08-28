@@ -17,7 +17,18 @@
     </style>
   </head>
   <body>
+    <div align="center">Controls: Move with WS, Space starts round, R ends round, I prints gamedata to console
+      <br>Login is optional, right player will autocontrol if not connected. Logout as 'boot' to reset players</div>
+    <div align="center">
+      <form id="login" method="POST">
+        <input type="text" id="username" name="username" placeholder="">
+        <button id="loginbutton" type="submit">Login</button>
+        <button id="logoffbutton" type="button" disabled>Logoff</button>
+      </form>
+      
+    </div>
     <div align="center"><button id="start" type="button">Start game</button></div>
+    <div align="center" id="users" class="users"> - </div>
     <div align="center" id="score" class="score">0 - 0</div>
     <div align="center" id="wrapper"><canvas class="webgl"></canvas></div>
     <script src="socket.io/socket.io.js"></script>

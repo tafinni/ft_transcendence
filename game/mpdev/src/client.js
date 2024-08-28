@@ -7,10 +7,43 @@ import * as THREE from '/build/three.module.js'
 const socket = io();
 
 const startbutton = document.getElementById('start');
+const loginform = document.getElementById('login');
+const loginbutton = document.getElementById('loginbutton')
+const logoffbutton = document.getElementById('logoffbutton')
+const userfield = document.getElementById('username')
 
 startbutton.addEventListener("click", function() {
     socket.emit('startbutton');
 });
+
+loginform.addEventListener("submit", function(event) {
+    event.preventDefault()
+    //console.log('event: ', event)
+    //console.log(document.getElementById('username').value)
+    socket.emit('login', userfield.value)
+})
+
+// loginbutton.addEventListener("click", function() {
+//     socket.emit('login', userfield.value)
+// })
+
+logoffbutton.addEventListener("click", function() {
+    socket.emit('logoff', userfield.value);
+});
+
+socket.on('requestlogin', () => {
+    socket.emit('login', userfield.value)
+})
+
+socket.on('logged', (onoff, username) => {
+    console.log('logged bool: ', onoff)
+    console.log('logged user: [', username, ']')
+    if (username === '') console.log('username is \'\'')
+    logoffbutton.disabled = onoff;
+    if (onoff && username !== '') loginbutton.disabled = !onoff;
+    userfield.value = username;
+    //console.log('u:', username)
+})
 
 socket.on('startbutton', () => {
     console.log('starting game')
@@ -18,8 +51,16 @@ socket.on('startbutton', () => {
   });
 
 socket.on('status', (update) => {
+    // if (tickcounter % 60 === 0) {
+    //     console.log(gamedata)
+    // }
     Object.assign(gamedata, update)
-    //gamedata = { ...gamedata, ...update }
+})
+
+socket.on('users', (users) => {
+    //console.log('users: ', users.left, "-", users.right)
+    const element = document.getElementById("users")
+    element.textContent = users.left + " - " + users.right
 })
 
 socket.on('score', (newScore) => {
@@ -112,6 +153,8 @@ const tick = () =>
     window.requestAnimationFrame(tick)
 }
 
+// END OF THREE
+
 /**
  * Keypress handling
  */
@@ -122,10 +165,14 @@ var moveDown = false
 document.addEventListener("keydown", onDocumentKeyDown, true);
 function onDocumentKeyDown(event) {
     var key_code = event.which
-    if (key_code == 87)
+    if (key_code == 87) {
         moveUp = true
-    else if (key_code == 83)
+        lastkeytick = tickcounter
+    }
+    else if (key_code == 83) {
         moveDown = true
+        lastkeytick = tickcounter
+    }
     else if (key_code == 82)
         socket.emit('endgame')
 }
@@ -133,10 +180,14 @@ document.addEventListener("keyup", onDocumentKeyUp, true);
 function onDocumentKeyUp(event) {
     var key_code = event.which
     //console.log(key_code)
-    if (key_code == 87)
+    if (key_code == 87) {
         moveUp = false
-    else if (key_code == 83)
+        lastkeytick = tickcounter
+    }
+    else if (key_code == 83) {
         moveDown = false
+        lastkeytick = tickcounter
+    }
     else if (key_code == 32) {
         if (!gamedata.run)
         socket.emit('startbutton')
@@ -153,15 +204,24 @@ function onDocumentKeyUp(event) {
 
 const xmax = 1000000
 const ymax = 1000000
-const left_bound = cube.position.x + cube.geometry.parameters.width / 2 + ball.geometry.parameters.radius
+//const left_bound = cube.position.x + cube.geometry.parameters.width / 2 + ball.geometry.parameters.radius
 const right_bound = cube2.position.x - cube2.geometry.parameters.width / 2 - ball.geometry.parameters.radius
 const top_bound = 2
 //var game_run = false
-const gamedata = { tick: 0, left: 0, right: 0, ballX: 0, ballY: 0, ballDX: 0, ballDY: 0, ballpass: 0, run: false }
+//const gamedata = { tick: 0, left: 0, right: 0, ballX: 0, ballY: 0, ballDX: 0, ballDY: 0, ballpass: 0, run: false }
+const gamedata = { left: 0, right:0, ballX: 0, ballY: 0, run: false }
 const score = {left: 0, right: 0 }
+
+var tickcounter = 0
+var lastkeytick = 0
 
 // Send keypresses to server periodically
 setInterval(() => {
+    tickcounter++
+    if (!gamedata.run && tickcounter - lastkeytick > 20) {
+        if (tickcounter % 3 !== 0)
+            return
+    }
     socket.emit('updown', moveUp, moveDown);
   }, 1000 / 60); // Send 60 times per second  
 

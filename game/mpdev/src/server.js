@@ -5,10 +5,14 @@ import { dirname, join } from 'node:path';
 import { Server } from 'socket.io';
 //import * as THREE from 'three';
 
-
+// Initialize app and socket.io server
 const app = express();
 const server = createServer(app);
 const io = new Server(server);
+
+/**
+ * Make individual files available on http server
+ */
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -28,7 +32,39 @@ app.use('/build/three.module.js',
   express.static(join(__dirname, '../node_modules/three/build/three.module.js'))
 );
 
+/**
+ * Socket.io connection and event handling
+ */
+
+const users = {left: '', right: ''}
+
 io.on('connection', (socket) => {
+  socket.username = ''
+  socket.emit('requestlogin')
+  socket.on('login', (username) => {
+    if (socket.username !== '' || username === '') return
+    socket.username = username
+    if (users.left == '')
+      users.left = username
+    else if (username != users.left && users.right == '')
+      users.right = username
+    io.emit('users', users)
+    socket.emit('logged', false, socket.username)
+  })
+  socket.on('logoff', (username) => {
+    if (username === '') return
+    if (username === 'boot') {
+      users.left = ''
+      users.right = ''
+    }
+    if (users.left == socket.username)
+      users.left = ''
+    else if (users.right == socket.username)
+      users.right = ''
+    socket.username = ''
+    io.emit('users', users)
+    socket.emit('logged', true, socket.username)
+  })
   socket.on('startbutton', () => {
     if (!gamedata.run) {
       serverStart()
@@ -37,26 +73,31 @@ io.on('connection', (socket) => {
     }
   });
   socket.on('requeststatus', () => {
-    socket.emit('status', gamedata)
+    updateclient(socket)
   })
-  socket.on('up', () => {
-    gamedata.up = true
-    gamedata.down = false
-  })
-  socket.on('down', () => {
-    gamedata.up = false
-    gamedata.down = true
-  })
-  socket.on('updown', (up, down) => {
-    moveUp = up
-    moveDown = down
-    socket.emit('status', gamedata)
-  })
+  socket.on('updown', (up, down) => updown(socket, up, down))
   socket.on('endgame', () => {
     if (gamedata.run)
       serverEnd()
   })
 });
+
+function updown(socket, up, down) {
+  if (socket.username.charAt(0) === users.left.charAt(0) || socket.username.charAt(0) === users.right.charAt(0)) {
+    if (socket.username == users.left) {
+      moveUp = up
+      moveDown = down
+    } else if (socket.username == users.right) {
+      rightUp = up
+      rightDown = down
+    }
+  }
+  updateclient(socket)
+}
+
+function updateclient(socket) {
+  socket.emit('status', { left: ~~gamedata.left, right: ~~gamedata.right, ballX: ~~gamedata.ballX, ballY: ~~gamedata.ballY, run: gamedata.run})
+}
 
 server.listen(7000, () => {
   console.log('server running at http://localhost:7000');
@@ -75,8 +116,13 @@ const ticksToEnd = 200
 
 let moveUp = false
 let moveDown = false
+let rightUp = false
+let rightDown = false
+let bounce = 0
+var tick = 0
 const gamedata = { tick: 0, left: 0, right: 0, ballX: 0, ballY: 0, ballDX: 0, ballDY: 0, ballpass: 0, run: false }
-const score = {left: 0, right: 0 }
+const score = { left: 0, right: 0 }
+
 
 function serverStart() {
   serverEnd()
@@ -95,19 +141,34 @@ function serverEnd() {
 }
 
 function serverTick() {
-  if (moveUp) gamedata.left += playerspeed
-  if (moveDown) gamedata.left -= playerspeed
-  if (gamedata.left > xmax)
-    gamedata.left = xmax
-  else if (gamedata.left < -xmax)
-    gamedata.left = -xmax
-  if (!gamedata.run) return
+  { // move left paddle 
+    if (moveUp) gamedata.left += playerspeed
+    if (moveDown) gamedata.left -= playerspeed
+    if (gamedata.left > xmax)
+      gamedata.left = xmax
+    else if (gamedata.left < -xmax)
+      gamedata.left = -xmax
+  }
+  { // move right paddle 
+    if (rightUp) gamedata.right += playerspeed
+    if (rightDown) gamedata.right -= playerspeed
+    if (gamedata.right > xmax)
+      gamedata.right = xmax
+    else if (gamedata.right < -xmax)
+      gamedata.right = -xmax
+  }
+  if (!gamedata.run) return // stop here if game is not running
   gamedata.ballX += gamedata.ballDX
   if (gamedata.ballpass == 0 && (gamedata.ballX > xmax || gamedata.ballX < -xmax)) {
     if (checkHit()) {
+      gamedata.ballX -= gamedata.ballDX
+      if (gamedata.ballX > 0)
+        gamedata.ballDY += (gamedata.ballY - gamedata.right) * gamedata.ballDY / hitTolerance
+      else
+        gamedata.ballDY += (gamedata.ballY - gamedata.left) * gamedata.ballDY / hitTolerance
       gamedata.ballDX *= -1.08
-      gamedata.ballX += gamedata.ballDX
-    } else
+    } 
+    else
       gamedata.ballpass = 1
   }
   gamedata.ballY += gamedata.ballDY
@@ -116,10 +177,13 @@ function serverTick() {
     gamedata.ballY += gamedata.ballDY
   }
   if (gamedata.ballpass == 0) {
-    if (gamedata.right > gamedata.ballY) 
-      gamedata.right -= Math.min(playerspeed * 0.9, gamedata.right - gamedata.ballY)
-    else
-      gamedata.right += Math.min(playerspeed * 0.9, gamedata.ballY - gamedata.right)
+    // * right auto player
+    if (users.right === '') {
+      if (gamedata.right > gamedata.ballY) 
+        gamedata.right -= Math.min(playerspeed * 0.8, gamedata.right - gamedata.ballY)
+      else
+        gamedata.right += Math.min(playerspeed * 0.8, gamedata.ballY - gamedata.right)
+    }
   }
   else {
     gamedata.ballpass += 1
@@ -151,4 +215,4 @@ function checkHit() {
   return false
 }
 
-setInterval(serverTick, 1000 / 100) // 100 Hz
+setInterval(serverTick, 1000 / 120) // 120 Hz
