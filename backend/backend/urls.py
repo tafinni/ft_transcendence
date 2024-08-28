@@ -36,7 +36,9 @@ urlpatterns = [
     path('profile/', profile, name='profile'),
     path('match_history/', views.match_history, name='match_history'),
     path('change_password/', views.change_password, name='change_password'),
-    path('add_friend/', views.add_friend, name='add_friend')
+    path('add_friend/', views.add_friend, name='add_friend'),
+    path('remove_friend/', views.remove_friend, name='remove_friend'),
+    path('match_history/', views.match_history, name='match_history')
 ]
 
 if settings.DEBUG:

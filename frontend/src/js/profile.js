@@ -25,11 +25,33 @@ export async function loadProfile() {
 				<div class="col-md-4">
 					<div class="card">
 						<div class="card-body">
-							<h5 class="card-title">Friends List</h5>
-							<button type="submit" id="add-friends-button" class="btn btn-primary">Add friends</button>
+							<h5 class="card-title">Friends</h5>
+							<button type="submit" id="add-friend-button" class="btn btn-primary">Add friend</button>
+							<button type="submit" id="remove-friend-button" class="btn btn-primary">Remove friend</button>
 							<ul id="friends-list" class="list-group">
 								<!-- Friends here dinamically -->
 							</ul>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-4">
+					<div class="card">
+						<div class="card-body">
+							<h5 class="card-title">Stats</h5>
+								<table class="table table-striped">
+								<tbody>
+									<tr>
+										<th scope="row">Wins</th>
+										<td>${userData.wins}</td>
+									</tr>
+									<tr>
+										<th scope="row">Losses</th>
+										<td>${userData.losses}</td>
+									</tr>
+								</tbody>
+							</table>
+							<button type="submit" id="match-history-button" class="btn btn-primary">Match history</button>
+
 						</div>
 					</div>
 				</div>
@@ -269,7 +291,7 @@ export async function savePassword() {
 	});
 }
 
-export async function addFriends() {
+export async function addFriend() {
 	const response = await fetch('http://localhost:8000/profile/', {
 		method: 'GET',
 		credentials: 'include'
@@ -290,8 +312,9 @@ export async function addFriends() {
 		 </div>
 	 </div>
  `;
-
 }
+
+
 
 export async function saveFriend() {
 	const response = await fetch('http://localhost:8000/profile/', {
@@ -310,7 +333,7 @@ export async function saveFriend() {
 	addFriendsForm.addEventListener('submit', async (event) => {
 		event.preventDefault();
 
-		const username = document.getElementById('new-friend').value;
+		const friend_username = document.getElementById('new-friend').value;
 		
 		console.log('Add friends form submitted');
 
@@ -321,7 +344,7 @@ export async function saveFriend() {
 					method: 'POST',
 					credentials: 'include',
 					headers: { 'Content-Type' : 'application/json' },
-					body: JSON.stringify({ username })
+					body: JSON.stringify({ friend_username })
 				});
 
 			if (response.ok)
@@ -352,6 +375,148 @@ export async function saveFriend() {
 	});
 }
 
+export async function removeFriend() {
+	const response = await fetch('http://localhost:8000/profile/', {
+		method: 'GET',
+		credentials: 'include'
+	});
+	if (!response.ok) { console.error('Failed loading profile:', response.statusText); return `<h1>Error loading profile</h1>`; }
+
+	return `
+	<div class="container mt-5">
+        <div class="card" style="background-color: white; padding: 20px; border-radius: 10px;">
+		 <form id="remove-friends-form">
+			 <div class="form-group">
+				 <label for="friends-name">Friend's name</label>
+				 <input type="text" id="remove-friend" class="form-control" required>
+			 </div>
+			 <button type="submit" class="btn btn-primary mt-3">Remove friend</button>
+			 <button type="button" id="cancel-button" class="btn btn-link" >Cancel</button>
+		 </form>
+		 </div>
+	 </div>
+ `;
+
+}
+
+export async function saveRemovedFriend() {
+	const response = await fetch('http://localhost:8000/profile/', {
+		method: 'GET',
+		credentials: 'include'
+	});
+	if (!response.ok) { console.error('Failed loading profile:', response.statusText); return `<h1>Error loading profile</h1>`; }
+
+    console.log('removeFriend called'); // Debugging
+
+	const removeFriendsForm = document.getElementById('remove-friends-form');
+	if (!removeFriendsForm) { console.error('Remove friends form not found'); return ; }
+
+	const cancelButton = document.getElementById('cancel-button');
+
+	removeFriendsForm.addEventListener('submit', async (event) => {
+		event.preventDefault();
+
+		const friend_username = document.getElementById('remove-friend').value;
+		
+		console.log('Remove friend form submitted');
+
+		try
+		{
+			const response = await fetch('http://localhost:8000/remove_friend/',
+				{
+					method: 'POST',
+					credentials: 'include',
+					headers: { 'Content-Type' : 'application/json' },
+					body: JSON.stringify({ friend_username })
+				});
+
+			if (response.ok)
+			{
+				const data = await response.json();
+				console.log('Friend removed succesfully');
+				alert(data.message);
+				loadContent('profile');
+			}
+			else
+			{
+				const errorData = await response.json();
+				console.error('Removing friend failed');
+				alert(errorData);
+				loadContent('profile');
+			}
+		}
+		catch (error)
+		{
+			console.error('Error during removing friend', error);
+			alert('Error occured when removing friend. Try again.');
+		}
+	});
+
+	cancelButton.addEventListener('click', () => {
+		console.log('Cancelled remove friend'); // Debugging
+		loadContent('profile');
+	});
+}
+
+export async function matchHistory () {
+	const response = await fetch('http://localhost:8000/match_history/', {
+		method: 'GET',
+		credentials: 'include'
+	});
+	if (!response.ok) { console.error('Failed loading profile:', response.statusText); return `<h1>Error loading profile</h1>`; }
+
+	const matchData = await response.json();
+
+	return `
+	<div class="container mt-5">
+		<div class="col-md-4">
+			<div class="card">
+				<div class="card-body">
+					<h5 class="card-title">Match history</h5>
+						<table class="table table-striped">
+						<tbody>
+							<tr>
+								<th scope="row">Date</th>
+								<td>${matchData.date}</td>
+							</tr>
+							<tr>
+								<th scope="row">Against</th>
+								<td>${matchData.opponent}</td>
+							</tr>
+							<tr>
+								<th scope="row">Result</th>
+								<td>${matchData.result}</td>
+							</tr>
+						</tbody>
+					</table>
+					<button type="submit" id="back-button" class="btn btn-primary">Back</button>
+
+				</div>
+			</div>
+		</div>
+	</div>
+	`;
+
+
+}
+
+export async function backButtonListener() {
+	const response = await fetch('http://localhost:8000/profile/', {
+		method: 'GET',
+		credentials: 'include'
+	});
+	if (!response.ok) { console.error('Failed loading profile:', response.statusText); return `<h1>Error loading profile</h1>`; }
+
+	const backButton = document.getElementById('back-button');
+	if (backButton)
+	{
+		backButton.addEventListener('click', () => {
+			console.log('Clicked back button');
+			loadContent('profile');
+		});
+	}
+}
+
 export async function buttonListener () {
 	const response = await fetch('http://localhost:8000/profile/', {
 		method: 'GET',
@@ -361,8 +526,10 @@ export async function buttonListener () {
 
     const editButton = document.getElementById('edit-button');
 	const pwdButton = document.getElementById('change-password-button');
-	const addFriendsButton = document.getElementById('add-friends-button');
-    
+	const addFriendButton = document.getElementById('add-friend-button');
+	const removeFriendButton = document.getElementById('remove-friend-button');
+    const matchHistoryButton = document.getElementById('match-history-button');
+
     editButton.addEventListener('click', () => {
         console.log('Clicked edit button'); // Debugging
         loadContent('editInfo');
@@ -373,9 +540,24 @@ export async function buttonListener () {
 		loadContent('changePassword');
 	});
 
-	addFriendsButton.addEventListener('click', () => {
-		console.log('Clicked add friends button');
-		loadContent('profile-add-friends')
+	addFriendButton.addEventListener('click', () => {
+		console.log('Clicked add friend button');
+		loadContent('profile-add-friend');
+	});
+
+	removeFriendButton.addEventListener('click', () => {
+		console.log('Clicked remove friend button');
+		loadContent('profile-remove-friend');
+	});
+
+	matchHistoryButton.addEventListener('click', () => {
+		console.log('Clicked match history button');
+		loadContent('profile-match-history');
+	});
+
+	matchHistoryButton.addEventListener('click', () => {
+		console.log('Clicked match history button');
+		loadContent('profile-match-history');
 	});
 }
 
