@@ -20,6 +20,7 @@ const app = express();
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 const serverIP = getServerIP();
+console.log(serverIP);
 
 const clients = [];
 
@@ -67,10 +68,10 @@ wss.on('connection', (ws, req) => {
         const data = JSON.parse(message);
         if (data.type === 'move') {
             if (data.playerId === gState.playerLeft.playerId) {
-                gState.playerLeft.paddlePos = data.y;
+                gState.playerLeft.paddleDir = data.y;
             }
             if (data.playerId === gState.playerRight.playerId) {
-                gState.playerRight.paddlePos = data.y;
+                gState.playerRight.paddleDir = data.y;
             }
         }
     });
@@ -107,6 +108,8 @@ function updateGameState() {
     ) {
         gState.ball.vx = -gState.ball.vx;
     }
+    gState.playerLeft.paddlePos += gState.playerLeft.paddleDir * 10;
+    gState.playerRight.paddlePos += gState.playerRight.paddleDir * 10;
 }
 
 function sendGameState() {

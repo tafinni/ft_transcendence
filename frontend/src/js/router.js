@@ -23,6 +23,7 @@ function navLinkVisibility(state) {
 		loginLink.style.display = 'block';
 		gameLink.style.display = 'block';
 		extra.style.display = 'block';
+		remote.style.display = 'block';
 	}
 	else if (state == 2) {
 		homeLink.style.display ='block';
@@ -31,6 +32,7 @@ function navLinkVisibility(state) {
 		loginLink.style.display ='none';
 		gameLink.style.display = 'block';
 		extra.style.display = 'none';
+		remote.style.display = 'none';
 	}
 	else {
 		homeLink.style.display ='none';
@@ -39,6 +41,7 @@ function navLinkVisibility(state) {
 		loginLink.style.display ='none';
 		gameLink.style.display = 'none';
 		extra.style.display = 'none';
+		remote.style.display = 'none';
 	}
 }
 
