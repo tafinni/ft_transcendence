@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.http import JsonResponse
 import json
-from .models import UserStats, UserProfile, MatchHistory
+from .models import UserStats, UserProfile, MatchHistory, Friendship
 from django.conf import settings
 from . import views
 
@@ -93,14 +93,13 @@ def update_profile(request):
         last_name = body.get('last_name')
         display_name = body.get('display_name')
         avatar = request.FILES.get('avatar')
-
         if first_name:
             user.first_name = first_name
         if last_name:
             user.last_name = last_name
         if display_name:
-            if UserProfile.objects.filter(display_name=display_name).exclude(user=user).exists():
-                return JsonResponse({'error': 'Display name already taken'}, status=400)
+     #       if UserProfile.objects.filter(display_name=display_name).exclude(user=user).exists():
+      #          return JsonResponse({'error': 'Display name already taken'}, status=400)
             user_profile.display_name = display_name
         if avatar:
             avatar_response = upload_avatar(request)
@@ -112,6 +111,30 @@ def update_profile(request):
         return JsonResponse({'message': 'Profile updated successfully'})
     
     return JsonResponse({'error': 'Invalid request method'}, status=405)
+
+
+
+@login_required
+@csrf_exempt
+#@csrf_protect
+def change_password(request):
+    if request.method == "POST":
+        body = json.loads(request.body)
+        current_password = body.get('current_password')
+        new_password = body.get('new_password')
+        confirm_password = body.get('confirm_password')
+        if not all([current_password, new_password, confirm_password]):
+            return JsonResponse({'error': 'All fields are required'}, status=400)
+        if new_password != confirm_password:
+            return JsonResponse({'error': 'New password and confirm password do not match'}, status=400)
+
+        user.set_password(new_password)
+        user.save()
+        return JsonResponse({'message': 'Password changed successfully'})
+    
+    return JsonResponse({'error': 'Invalid request method'}, status=405)
+
+
 
 
 #@login_required
@@ -144,6 +167,14 @@ def profile(request):
     #    avatar_url = 'http://localhost:8000/media/avatars/default.jpg'
         avatar_url = settings.MEDIA_URL + 'avatars/default.jpg'
 
+    # friends
+    friendships = Friendship.objects.filter(user=request.user, accepted=True)
+    friends = [
+        {
+            'username': friend.friend.username,
+            'online_status': friend.friend.is_online  # ? add in User model
+        } for friend in friendships
+    ]
 
     data = {
         'username': user.username,
@@ -151,7 +182,9 @@ def profile(request):
         'last_name': user.last_name,
         'wins': user_stats.wins,
         'losses': user_stats.losses,
+        'display_name': user_profile.display_name,
         'avatar': avatar_url,
+        'friends': friends,
     }
     return JsonResponse(data)
 
@@ -224,15 +257,3 @@ def remove_friend(request):
 
     return JsonResponse({'error': 'Invalid request method'}, status=405)
 
-
-# Friends list view
-@login_required
-def friends_list(request):
-    friendships = Friendship.objects.filter(user=request.user, accepted=True)
-    friends = [
-        {
-            'username': friend.friend.username,
-            'online_status': friend.friend.is_online  # ? add in User model
-        } for friend in friendships
-    ]
-    return JsonResponse({'friends': friends})

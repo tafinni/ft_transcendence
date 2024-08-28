@@ -2,7 +2,7 @@ import { loadHome } from './home.js';
 import { loadStats } from './stats.js';
 import { loadLogIn, initializeLogIn } from './login.js';
 import { loadRegister, initializeRegister } from './register.js';
-import { editButtonListener, loadProfile, editInfo, saveInfo } from './profile.js';
+import { buttonListener, loadProfile, editInfo, saveInfo, changePassword, savePassword, addFriends, saveFriend } from './profile.js';
 import { updateContent } from './i18n.js';
 
 function navLinkVisibility(state) {
@@ -49,11 +49,19 @@ export async function loadContent(content) {
 	}
 	else if (content === 'profile') {
 		contentElement.innerHTML = await loadProfile();
-		editButtonListener();
+		buttonListener();
 	}
 	else if (content === 'editInfo') {
 		contentElement.innerHTML = await editInfo();
 		saveInfo();
+	}
+	else if (content === 'changePassword') {
+		contentElement.innerHTML = await changePassword();
+		savePassword();
+	}
+	else if (content === 'profile-add-friends') {
+		contentElement.innerHTML = await addFriends();
+		saveFriend();
 	}
 	else {
 		contentElement.innerHTML = `<h1> 404 Page not found</h1>`;
