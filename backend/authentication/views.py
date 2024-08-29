@@ -31,6 +31,8 @@ def login_page(request):
             return JsonResponse({'error': 'Invalid Password or Username'}, status=400)
         else:
             login(request, user)
+            user.userprofile.is_online = True #test
+            user.userprofile.save() #test
             return JsonResponse({'message': 'Login successful', 'redirect': '/home/'})
 #return JsonResponse({"status": "ok"})
 #return JsonResponse({})
@@ -74,6 +76,13 @@ def register_page(request):
 #@csrf_protect
 def logout_page(request):
     if request.method == "POST":
+
+        user = request.user  # Инициализируем переменную user
+        
+        # Обновляем статус пользователя перед выходом
+        if hasattr(user, 'userprofile'):
+            user.userprofile.is_online = False #test
+            user.userprofile.save() #test
         logout(request)
         return JsonResponse({'message': 'Logout successful'})
 
@@ -175,7 +184,7 @@ def profile(request):
     friends = [
         {
             'username': friend.friend.username,
-            'online_status': friend.friend.is_online  # ? add in User model
+            'online_status':  friend.friend.userprofile.is_online  # ? add in User model
         } for friend in friendships
     ]
 
