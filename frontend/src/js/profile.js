@@ -558,13 +558,13 @@ export async function displayFriends() {
 		friendName.className = 'friend-name';
 		friendName.textContent = friend.username;
 
-		const onlineStatus = document.createElement('span');
+/* 		const onlineStatus = document.createElement('span');
 		onlineStatus.className = 'online-status';
 		onlineStatus.textContent = friend.online_status ? 'Online' : 'Offline';
-		onlineStatus.style.color = friend.online_status ? 'green' : 'red';
+		onlineStatus.style.color = friend.online_status ? 'green' : 'red'; */
 
 		friendItem.appendChild(friendName);
-		friendItem.appendChild(onlineStatus);
+//		friendItem.appendChild(onlineStatus);
 
 		friendsListContainer.appendChild(friendItem);
 	});

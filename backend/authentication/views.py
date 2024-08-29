@@ -119,8 +119,8 @@ def update_profile(request): #EDITED
 @csrf_exempt
 #@csrf_protect
 def change_password(request):
-    user = request.user
     if request.method == "POST":
+        user = request.user
         body = json.loads(request.body)
         current_password = body.get('current_password')
         new_password = body.get('new_password')
@@ -174,7 +174,7 @@ def profile(request):
     friends = [
         {
             'username': friend.friend.username,
-            'online_status': friend.friend.is_online  # ? add in User model
+            #'online_status': friend.friend.is_online  # ? add in User model
         } for friend in friendships
     ]
 
@@ -187,6 +187,7 @@ def profile(request):
         'display_name': user_profile.display_name,
         'avatar': avatar_url,
         'friends': friends,
+        'friend-requests': 
     }
     return JsonResponse(data)
 
