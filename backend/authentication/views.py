@@ -257,3 +257,29 @@ def remove_friend(request):
 
     return JsonResponse({'error': 'Invalid request method'}, status=405)
 
+# Accept friend request
+@login_required
+@csrf_exempt
+#@csrf_protect
+def accept_friend_request(request):
+    if request.method == "POST":
+        body = json.loads(request.body)
+        request_user_username = body.get('request_user_username')
+
+        if not request_user_username:
+            return JsonResponse({'error': 'Request user username is required'}, status=400)
+
+        try:
+            request_user = User.objects.get(username=request_user_username)
+        except User.DoesNotExist:
+            return JsonResponse({'error': 'User does not exist'}, status=404)
+
+        try:
+            friendship = Friendship.objects.get(user=request_user, friend=request.user, accepted=False)
+            friendship.accepted = True
+            friendship.save()
+            return JsonResponse({'message': 'Friend request accepted'})
+        except Friendship.DoesNotExist:
+            return JsonResponse({'error': 'Friend request does not exist or already accepted'}, status=404)
+
+    return JsonResponse({'error': 'Invalid request method'}, status=405)
