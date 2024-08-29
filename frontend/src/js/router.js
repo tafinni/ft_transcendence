@@ -2,7 +2,7 @@ import { loadHome } from './home.js';
 import { loadStats } from './stats.js';
 import { loadLogIn, initializeLogIn } from './login.js';
 import { loadRegister, initializeRegister } from './register.js';
-import { buttonListener, loadProfile, editInfo, saveInfo, changePassword, savePassword, addFriend, saveFriend, removeFriend, saveRemovedFriend, matchHistory, backButtonListener } from './profile.js';
+import { buttonListener, loadProfile, editInfo, saveInfo, changePassword, savePassword, addFriend, saveFriend, removeFriend, saveRemovedFriend, matchHistory, backButtonListener, displayFriends } from './profile.js';
 import { updateContent } from './i18n.js';
 
 function navLinkVisibility(state) {
@@ -48,8 +48,9 @@ export async function loadContent(content) {
 
 	}
 	else if (content === 'profile') {
-		contentElement.innerHTML = await loadProfile();
-		buttonListener();
+		/* contentElement.innerHTML = await */loadProfile();
+		/* await displayFriends();
+		buttonListener(); */
 	}
 	else if (content === 'editInfo') {
 		contentElement.innerHTML = await editInfo();

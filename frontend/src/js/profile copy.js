@@ -26,9 +26,8 @@ export async function loadProfile() {
 					<div class="card">
 						<div class="card-body">
 							<h5 class="card-title">Friends</h5>
-							<button type="submit" id="add-friend-button" class="btn btn-primary">Add</button>
-							<button type="submit" id="remove-friend-button" class="btn btn-primary">Remove</button>
-							<button type="submit" id="friend-requests-button" class="btn btn-primary">Requests</button>
+							<button type="submit" id="add-friend-button" class="btn btn-primary">Add friend</button>
+							<button type="submit" id="remove-friend-button" class="btn btn-primary">Remove friend</button>
 							<ul id="friends-list" class="list-group">
 								<!-- Friends here dinamically -->
 							</ul>
@@ -120,22 +119,22 @@ export async function editInfo() {
             <div class="card" style="background-color: white; padding: 20px; border-radius: 10px;">
             
 				<h2>Edit Profile Information</h2>
-				<form id="edit-info-form" enctype="multipart/form-data">
+				<form id="edit-info-form">
 					<div class="form-group">
 						<label for="first_name">First Name</label>
-						<input type="text" id="first_name" name="first_name" class="form-control" value="${userData.first_name}" required>
+						<input type="text" id="first_name" class="form-control" value="${userData.first_name}" required>
 					</div>
 					<div class="form-group">
 						<label for="last_name">Last Name</label>
-						<input type="text" id="last_name" name="last_name" class="form-control" value="${userData.last_name}" required>
+						<input type="text" id="last_name" class="form-control" value="${userData.last_name}" required>
 					</div>
 					<div class="form-group">
 						<label for="display_name">Display Name</label>
-						<input type="text" id="display_name" name="display_name" class="form-control" value="${userData.display_name}" required>
+						<input type="text" id="display_name" class="form-control" value="${userData.display_name}" required>
 					</div>
 					<div class="form-group">
 						<label for="avatar">Change Avatar</label>
-						<input type="file" id="avatar" name="avatar" class="form-control">
+						<input type="file" id="avatar" class="form-control">
 					</div>
 					<button type="submit" class="btn btn-primary mt-3">Save Changes</button>
 					<button type="button" id="cancel-button" class="btn btn-link" >Cancel</button>
@@ -163,7 +162,11 @@ export async function saveInfo() {
     editInfoForm.addEventListener('submit', async (event) => {
         event.preventDefault();
 
-		const formData = new FormData(editInfoForm);
+		const first_name = document.getElementById('first_name').value;
+		const last_name = document.getElementById('last_name').value;
+        const display_name = document.getElementById('display_name').value;
+
+        console.log('Edit info form submitted'); // Debugging
 
         try 
         {
@@ -171,7 +174,8 @@ export async function saveInfo() {
             {
                 method: 'POST',
                 credentials: 'include',
-                body: formData
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ first_name, last_name, display_name })
             });
 
             if (response.ok)
@@ -198,7 +202,6 @@ export async function saveInfo() {
 		loadContent('profile');
 	});
 }
-
 
 export async function changePassword() {
 	const response = await fetch('http://localhost:8000/profile/', {
@@ -268,6 +271,8 @@ export async function savePassword() {
 					body: JSON.stringify({ current_password, new_password, confirm_password })
 				});
 			
+
+
 			if (response.ok)
 			{
 				const data = await response.json();
@@ -570,58 +575,6 @@ export async function displayFriends() {
 	});
 }
 
-export async function friendRequests() {
-	const response = await fetch('http://localhost:8000/profile/', {
-		method: 'GET',
-		credentials: 'include'
-	});
-	if (!response.ok) { console.error('Failed loading profile:', response.statusText); return `<h1>Error loading profile</h1>`; }
-
-	try
-	{
-		const response = await fetch('http://localhost:8000/match_history/', {
-			method: 'GET',
-			credentials: 'include'
-		});
-		if (!response.ok) { console.error('Failed loading profile:', response.statusText); return `<h1>Error loading profile</h1>`; }
-
-		const data = await response.json();
-		const matches = data.matches;
-		console.log('matchHistory called', data);
-		return `
-			<div class="container mt-5">
-				<div class="row">
-					<div class="col-md-12">
-						<div class="card">
-							<div class="card-body">
-								<h5 class="card-title">Friend requests</h5>
-								<table class="table table-striped">
-									<tbody>
-										${matches.map(matchData => `
-											<tr>
-												<td>${matchData.date}</td>
-												<td>${matchData.opponent}</td>
-												<td>${matchData.result}</td>
-											</tr>
-										`).join('')}
-									</tbody>
-								</table>
-								<button type="button" id="back-button" class="btn btn-primary">Back</button>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		`;
-	}
-	catch (error)
-	{
-		console.error('Error getching match history:', error);
-		alert('Error with match history');
-		loadContent('profile');
-	}
-}
-
 export async function buttonListener () {
 	const response = await fetch('http://localhost:8000/profile/', {
 		method: 'GET',
@@ -669,12 +622,5 @@ export async function buttonListener () {
 		loadContent('profile-match-history');
 	});
 	}
-
-	if (friendRequestsButton) {
-		friendRequestsButton.addEventListener('click', () => {
-			console.log('Clicked requests button');
-			loadContent('profile-friend-requests');
-		});
-		}
 }
 
