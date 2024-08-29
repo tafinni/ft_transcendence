@@ -12,6 +12,19 @@ services:
     ports:
       - "7000:7000"
 
+  chantest:
+    image: chantest
+    container_name: chantest
+    build:
+      context: chantest
+      dockerfile: Dockerfile
+    networks:
+      - t_extra
+    volumes:
+      - ./chantest/src:/app/src
+    ports:
+      - "9000:7000"
+
 networks:
   t_intra:
     name: t_intra

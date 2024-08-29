@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>chantest</title>
+    <style>
+      body { margin: 0; padding-bottom: 3rem; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+
+      #form { background: rgba(0, 0, 0, 0.15); padding: 0.25rem; position: fixed; bottom: 0; left: 0; right: 0; display: flex; height: 3rem; box-sizing: border-box; backdrop-filter: blur(10px); }
+      #input { border: none; padding: 0 1rem; flex-grow: 1; border-radius: 2rem; margin: 0.25rem; }
+      #input:focus { outline: none; }
+      #form > button { background: #333; border: none; padding: 0 1rem; margin: 0.25rem; border-radius: 3px; outline: none; color: #fff; }
+
+      #messages { list-style-type: none; margin: 0; padding: 0; }
+      #messages > li { padding: 0.5rem 1rem; }
+      #messages > li:nth-child(odd) { background: #efefef; }
+      #container p { display: inline; overflow: hidden; white-space: nowrap; margin-top: 0; margin-bottom: 0;}
+      #container span { display: inline-block; overflow: hidden; white-space: nowrap; }
+      .channel { display: inline-block; }
+    </style>
+  </head>
+  <body>
+    <div align="center">Socket.IO connection channel test</div>
+    <div align="center">
+      <form id="login" method="POST">
+        <input type="text" id="username" name="username" placeholder="">
+        <button id="loginbutton" type="submit">Login</button>
+        <button id="logoffbutton" type="button" disabled>Logoff</button>
+        <span id="loginresult">Empty</span>
+      </form>
+    </div>
+    <div align="center">
+      <form id="channelform" method="POST">
+        <input type="text" id="chan" name="chan" placeholder="c1">
+        <button id="addchanbtn" type="submit">Add channel</button>
+        <button id="rmvchanbtn" type="button" disabled>Remove channel</button>
+        <span id="loginresult">Empty</span>
+      </form>
+    </div>
+    <div align="center" id="info" class="info">Connection: User:</div>
+    <div align="center"><button id="start" type="button">Start game</button></div>
+    <div align="center" id="users" class="users"> - </div>
+    <div align="center" id="score" class="score">0 - 0</div>
+    <div id="channels" align="center">
+      <div id="messageLog" class="channel">fsfas</div>
+      <div id="messageLog2" class="channel">fasf</div>
+    </div>
+    <script src="socket.io/socket.io.js"></script>
+    <script type="module" src="client.js"></script>
+  </body>
+</html>
