@@ -83,16 +83,16 @@ def logout_page(request):
 @login_required
 @csrf_exempt
 #@csrf_protect
-def update_profile(request):
+def update_profile(request): #EDITED
     if request.method == "POST":
-        body = json.loads(request.body)
         user = request.user
         user_profile, created = UserProfile.objects.get_or_create(user=user)
 
-        first_name = body.get('first_name')
-        last_name = body.get('last_name')
-        display_name = body.get('display_name')
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+        display_name = request.POST.get('display_name')
         avatar = request.FILES.get('avatar')
+
         if first_name:
             user.first_name = first_name
         if last_name:
@@ -102,9 +102,10 @@ def update_profile(request):
       #          return JsonResponse({'error': 'Display name already taken'}, status=400)
             user_profile.display_name = display_name
         if avatar:
-            avatar_response = upload_avatar(request)
-            if avatar_response.status_code != 200:
-                return avatar_response
+            #avatar_response = upload_avatar(request)
+            user_profile.avatar.save(avatar.name, avatar, save=True)
+            #if avatar_response.status_code != 200:
+            #    return avatar_response
             #user_profile.avatar.save(avatar.name, avatar, save=True) upload_avatar or?
         user.save()
         user_profile.save()
@@ -119,6 +120,7 @@ def update_profile(request):
 #@csrf_protect
 def change_password(request):
     if request.method == "POST":
+        user = request.user #?
         body = json.loads(request.body)
         current_password = body.get('current_password')
         new_password = body.get('new_password')
@@ -130,6 +132,7 @@ def change_password(request):
 
         user.set_password(new_password)
         user.save()
+        login(request, user)
         return JsonResponse({'message': 'Password changed successfully'})
     
     return JsonResponse({'error': 'Invalid request method'}, status=405)
@@ -196,8 +199,8 @@ def match_history(request):
     match_list = [
         {
             'opponent': match.opponent, 
-            'date': match.date, 'result': match.result, 
-            'details': match.details
+            'date': match.date, 
+            'result': match.result
         } for match in matches
     ]
     return JsonResponse({'matches': match_list})
@@ -281,5 +284,31 @@ def accept_friend_request(request):
             return JsonResponse({'message': 'Friend request accepted'})
         except Friendship.DoesNotExist:
             return JsonResponse({'error': 'Friend request does not exist or already accepted'}, status=404)
+
+    return JsonResponse({'error': 'Invalid request method'}, status=405)
+
+
+
+@login_required
+@csrf_exempt
+def decline_friend_request(request):
+    if request.method == "POST":
+        body = json.loads(request.body)
+        request_user_username = body.get('request_user_username')
+
+        if not request_user_username:
+            return JsonResponse({'error': 'Request user username is required'}, status=400)
+
+        try:
+            request_user = User.objects.get(username=request_user_username)
+        except User.DoesNotExist:
+            return JsonResponse({'error': 'User does not exist'}, status=404)
+
+        try:
+            friendship = Friendship.objects.get(user=request_user, friend=request.user, accepted=False)
+            friendship.delete()
+            return JsonResponse({'message': 'Friend request declined and removed'})
+        except Friendship.DoesNotExist:
+            return JsonResponse({'error': 'Friend request does not exist or already processed'}, status=404)
 
     return JsonResponse({'error': 'Invalid request method'}, status=405)

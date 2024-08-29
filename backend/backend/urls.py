@@ -39,7 +39,8 @@ urlpatterns = [
     path('add_friend/', views.add_friend, name='add_friend'),
     path('remove_friend/', views.remove_friend, name='remove_friend'),
     path('match_history/', views.match_history, name='match_history'),
-    path('accept_friend_request/', views.accept_friend_request, name='accept_friend_request')
+    path('accept_friend_request/', views.accept_friend_request, name='accept_friend_request'),
+    path('decline_friend_request/', views.decline_friend_request, name='decline_friend_request'),
 ]
 
 if settings.DEBUG:
