@@ -31,8 +31,8 @@ def login_page(request):
             return JsonResponse({'error': 'Invalid Password or Username'}, status=400)
         else:
             login(request, user)
-            user.userprofile.is_online = True #test
-            user.userprofile.save() #test
+            user.userprofile.is_online = True
+            user.userprofile.save()
             return JsonResponse({'message': 'Login successful', 'redirect': '/home/'})
 #return JsonResponse({"status": "ok"})
 #return JsonResponse({})
@@ -58,7 +58,6 @@ def register_page(request):
          
         if user.exists():
             return JsonResponse({'error': 'Username already taken!'}, status=400)
-        # Create a new User object with the provided information
         user = User.objects.create_user(
             first_name=first_name,
             last_name=last_name,
@@ -76,13 +75,10 @@ def register_page(request):
 #@csrf_protect
 def logout_page(request):
     if request.method == "POST":
-
-        user = request.user  # Инициализируем переменную user
-        
-        # Обновляем статус пользователя перед выходом
+        user = request.user
         if hasattr(user, 'userprofile'):
-            user.userprofile.is_online = False #test
-            user.userprofile.save() #test
+            user.userprofile.is_online = False 
+            user.userprofile.save()
         logout(request)
         return JsonResponse({'message': 'Logout successful'})
 
@@ -92,7 +88,7 @@ def logout_page(request):
 @login_required
 @csrf_exempt
 #@csrf_protect
-def update_profile(request): #EDITED
+def update_profile(request):
     if request.method == "POST":
         user = request.user
         user_profile, created = UserProfile.objects.get_or_create(user=user)
@@ -129,7 +125,7 @@ def update_profile(request): #EDITED
 #@csrf_protect
 def change_password(request):
     if request.method == "POST":
-        user = request.user #?
+        user = request.user
         body = json.loads(request.body)
         current_password = body.get('current_password')
         new_password = body.get('new_password')
@@ -184,8 +180,17 @@ def profile(request):
     friends = [
         {
             'username': friend.friend.username,
-            'online_status':  friend.friend.userprofile.is_online  # ? add in User model
+            'online_status':  friend.friend.userprofile.is_online
         } for friend in friendships
+    ]
+
+     # friend requests
+    friend_requests = Friendship.objects.filter(friend=user, accepted=False, is_request=True)
+    requests = [
+        {
+            'username': request.user.username,
+        #    'display_name': request.user.userprofile.display_name, #?
+        } for request in friend_requests
     ]
 
     data = {
@@ -197,6 +202,7 @@ def profile(request):
         'display_name': user_profile.display_name,
         'avatar': avatar_url,
         'friends': friends,
+        'friend_requests': requests,
     }
     return JsonResponse(data)
 
@@ -235,7 +241,7 @@ def add_friend(request):
         if friend == request.user:
             return JsonResponse({'error': 'You cannot add yourself as a friend'}, status=400)
 
-        friendship, created = Friendship.objects.get_or_create(user=request.user, friend=friend)
+        friendship, created = Friendship.objects.get_or_create(user=request.user, friend=friend, is_request=True)
         if not created:
             return JsonResponse({'error': 'Friend request already sent or already friends'}, status=400)
 
@@ -262,7 +268,9 @@ def remove_friend(request):
 
         try:
             friendship = Friendship.objects.get(user=request.user, friend=friend)
+            reverse_friendship = Friendship.objects.get(user=friend, friend=request.user) #?
             friendship.delete()
+            reverse_friendship.delete() #?
             return JsonResponse({'message': 'Friend removed successfully'})
         except Friendship.DoesNotExist:
             return JsonResponse({'error': 'Friendship does not exist'}, status=404)
@@ -287,9 +295,14 @@ def accept_friend_request(request):
             return JsonResponse({'error': 'User does not exist'}, status=404)
 
         try:
-            friendship = Friendship.objects.get(user=request_user, friend=request.user, accepted=False)
+            friendship = Friendship.objects.get(user=request_user, friend=request.user, accepted=False, is_request=True)
             friendship.accepted = True
+            friendship.is_request = False
             friendship.save()
+
+            # Create a reciprocal friendship
+            Friendship.objects.get_or_create(user=request.user, friend=request_user, accepted=True, is_request=False) #?
+
             return JsonResponse({'message': 'Friend request accepted'})
         except Friendship.DoesNotExist:
             return JsonResponse({'error': 'Friend request does not exist or already accepted'}, status=404)
@@ -314,7 +327,7 @@ def decline_friend_request(request):
             return JsonResponse({'error': 'User does not exist'}, status=404)
 
         try:
-            friendship = Friendship.objects.get(user=request_user, friend=request.user, accepted=False)
+            friendship = Friendship.objects.get(user=request_user, friend=request.user, accepted=False, is_request=True)
             friendship.delete()
             return JsonResponse({'message': 'Friend request declined and removed'})
         except Friendship.DoesNotExist:

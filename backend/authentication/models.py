@@ -33,6 +33,7 @@ class Friendship(models.Model):
     user = models.ForeignKey(User, related_name='friendships', on_delete=models.CASCADE)
     friend = models.ForeignKey(User, related_name='friends', on_delete=models.CASCADE)
     accepted = models.BooleanField(default=False)
+    is_request = models.BooleanField(default=True)
 
     def __str__(self):
         return f'{self.user.username} -> {self.friend.username} (Accepted: {self.accepted})'
