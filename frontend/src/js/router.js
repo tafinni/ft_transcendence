@@ -2,106 +2,106 @@ import { loadHome } from './home.js';
 import { loadStats } from './stats.js';
 import { loadLogIn, initializeLogIn } from './login.js';
 import { loadRegister, initializeRegister } from './register.js';
-import { buttonListener, loadProfile, editInfo, saveInfo, changePassword, savePassword, addFriend, saveFriend, removeFriend, saveRemovedFriend, matchHistory, backButtonListener, displayFriends } from './profile.js';
-import { updateContent } from './i18n.js';
+import { loadProfile } from './profile/profile.js';
+import { updateContent, initI18next } from './i18n.js';
 
+/* Set navigation bar visibility */
 function navLinkVisibility(state) {
 	const homeLink = document.getElementById('home-link');
 	const profileLink = document.getElementById('profile-link');
 	const statsLink = document.getElementById('stats-link');
 	const loginLink = document.getElementById('login-link');
 
-	if (state) {
+	if (state)
+	{
 		homeLink.style.display = 'block';
 		profileLink.style.display = 'block';
 		statsLink.style.display = 'block';
 		loginLink.style.display = 'block';
 	}
-	else {
-		homeLink.style.display ='none';
-		profileLink.style.display ='none';
-		statsLink.style.display ='none';
-		loginLink.style.display ='none';
-	}
+	else 
+	{
+		homeLink.style.display = 'none';
+		profileLink.style.display = 'none';
+		statsLink.style.display = 'none';
+		loginLink.style.display = 'none';
+  	}
 }
 
-// Update content
-export async function loadContent(content) {
-	const contentElement = document.getElementById('content');
+/* Update page content */
+export async function loadContent(content, addHistory = true) {
+  await initI18next;
 
-	if (content === 'home') {
-		contentElement.innerHTML = await loadHome();
-		navLinkVisibility(true);
-	}
-	else if (content === 'stats') {
-		contentElement.innerHTML = await loadStats();
-	}
-	else if (content === 'login') {
-		contentElement.innerHTML = loadLogIn();
-		initializeLogIn();
-		navLinkVisibility(false);
-	}
-	else if (content === 'register') {
-		contentElement.innerHTML = loadRegister();
-		initializeRegister();
-		navLinkVisibility(false);
+  const contentElement = document.getElementById('content');
 
+	if (!localStorage.getItem("username") && !sessionStorage.getItem("username") && content !== 'login' && content !== 'register')
+	{
+		content = 'login';
+		console.log('Redirected to login');
+		alert('Please log in');
 	}
-	else if (content === 'profile') {
-		/* contentElement.innerHTML = await */loadProfile();
-		/* await displayFriends();
-		buttonListener(); */
+
+	if (addHistory)
+	{
+		const current = window.location.pathname.replace('/', '');
+		if (current !== content)
+			window.history.pushState({ content: content }, '', `/${content}#`);
 	}
-	else if (content === 'editInfo') {
-		contentElement.innerHTML = await editInfo();
-		saveInfo();
+  
+	switch (content)
+	{
+		case 'home':
+			contentElement.innerHTML = await loadHome();
+			navLinkVisibility(true);
+			break ;
+		case 'stats':
+			contentElement.innerHTML = await loadStats();
+			break ;
+		case 'login':
+			contentElement.innerHTML = loadLogIn();
+			initializeLogIn();
+			navLinkVisibility(false);
+			break ;
+		case 'register':
+			contentElement.innerHTML = loadRegister();
+			initializeRegister();
+			navLinkVisibility(false);
+			break ;
+		case 'profile':
+			loadProfile();
+			break ;
+		default:
+			loadContent('home');
+			return ;
 	}
-	else if (content === 'changePassword') {
-		contentElement.innerHTML = await changePassword();
-		savePassword();
-	}
-	else if (content === 'profile-add-friend') {
-		contentElement.innerHTML = await addFriend();
-		saveFriend();
-	}
-	else if (content === 'profile-remove-friend') {
-		contentElement.innerHTML = await removeFriend();
-		saveRemovedFriend();
-	}
-	else if (content === 'profile-match-history') {
-		contentElement.innerHTML = await matchHistory();
-		backButtonListener();
-	}
-	else {
-		contentElement.innerHTML = `<h1> 404 Page not found</h1>`;
-	}
-	updateContent();
+  updateContent();
 }
 
-// Navigation events
+/* Navigation bar events */
 document.getElementById('home-link').addEventListener('click', (event) => {
-	event.preventDefault(); // Stops normal link
-	loadContent('home');
+  event.preventDefault();
+  loadContent('home');
 });
+
 document.getElementById('stats-link').addEventListener('click', (event) => {
-	event.preventDefault(); // Stops normal link
-	loadContent('stats');
+  event.preventDefault();
+  loadContent('stats');
 });
+
 document.getElementById('login-link').addEventListener('click', (event) => {
-	event.preventDefault(); // Stops normal link
-	sessionStorage.removeItem("username");
-	loadContent('login');
+  event.preventDefault();
+  sessionStorage.removeItem("username");
+  localStorage.removeItem("username");
+  loadContent('login');
 });
+
 document.getElementById('profile-link').addEventListener('click', (event) => {
-	event.preventDefault(); // Stops normal link
-	loadContent('profile');
+  event.preventDefault();
+  loadContent('profile');
 });
 
-/* Default content */
-window.onload = () => {
-    if (!sessionStorage.getItem("username")) // added for savin log in
-    {
-        loadContent('login');
+document.getElementById('languageDropdown').addEventListener('change', (event) => {
+  setLanguage(e.target.value);
+  event.preventDefault(); 
+});
 
-    }
-}

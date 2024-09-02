@@ -5,13 +5,36 @@
 	"stats": "Tilastot",
 	"login": "Kirjaudu ulos",
 
-	"Log In": "Kirjaudu sisään",
-	"Username": "Käyttäjänimi",
-	"Password": "Salasana",
-	"Don't have an account?": "Eikö sinulla ole tiliä?",
-	"Register": "Rekisteröidy",
+	"log in": "Kirjaudu sisään",
+	"username": "Käyttäjänimi",
+	"password": "Salasana",
+	"don't have an account?": "Eikö sinulla ole tiliä?",
+	"register": "Rekisteröidy",
 
-	"Back": "Takaisin",
-	"First Name": "Etunimi",
-	"Last Name": "Sukunimi"
+	"back": "Takaisin",
+	"first name": "Etunimi",
+	"last name": "Sukunimi",
+
+	"match history": "Otteluhistoria",
+	"friends": "Ystävät",
+	"add": "Lisää",
+	"remove": "Poista",
+	"user info": "Käyttäjätiedot",
+	"display name": "Näyttönimi",
+	"change password": "Muuta salasanaa",
+
+	"change avatar": "Muuta avataria",
+	"save changes": "Tallenna muutokset",
+	"cancel": "Peruuta",
+	"edit user information": "Muuta käyttäjätietoja",
+	"current password": "Nykyinen salasana",
+	"new password": "Uusi salasana",
+	"type new password again": "Kirjoita uusi salasana uudelleen",
+
+	"friend's name": "Ystävän nimi",
+	"send request": "Lähetä pyyntö",
+	"remove friend": "Poista ystävä",
+
+	"wins": "Voitot",
+	"losses": "Häviöt"
 }

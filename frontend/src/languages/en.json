@@ -5,15 +5,45 @@
 	"stats": "Stats",
 	"login": "Log Out",
 
-	"Log In": "Log In",
-	"Username": "Username",
-	"Password": "Password",
-	"Don't have an account?": "Don't have an account?",
-	"Register": "Register",
+	"log in": "Log In",
+	"username": "Username",
+	"password": "Password",
+	"don't have an account?": "Don't have an account?",
+	"register": "Register",
 
-	"Back": "Back",
-	"First Name": "First Name",
-	"Last Name": "Last Name"
+	"back": "Back",
+	"first name": "First Name",
+	"last name": "Last Name",
+
+	"match history": "Match history",
+	"friends": "Friends",
+	"add": "Add",
+	"remove": "Remove",
+	"user info": "User info",
+	"display name": "Display name",
+	"change password": "Change password",
+
+	"change avatar": "Change avatar",
+	"save changes": "Save changes",
+	"cancel": "Cancel",
+	"edit user information": "Edit user information",
+	"current password": "Current password",
+	"new password": "New password",
+	"type new password again": "Type new password again",
+	"save new password": "Save new password",
+
+	"friend's name": "Friend's name",
+	"send request": "Send request",
+	"remove friend": "Remove friend",
+
+	"wins": "Wins",
+	"losses": "Losses"
+
+
+
+
+
+
 
 
 }

@@ -5,15 +5,15 @@
 	"stats": "Статистика",
 	"login": "Выйти",
 
-	"Log In": "Войти",
-	"Username": "Имя пользователя",
-	"Password": "Пароль",
-	"Don't have an account?": "У вас нет учетной записи?",
-	"Register": "Регистрация",
+	"log in": "Войти",
+	"username": "Имя пользователя",
+	"password": "Пароль",
+	"don't have an account?": "У вас нет учетной записи?",
+	"register": "Регистрация",
 
-	"Back": "Назад",
-	"First Name": "Имя",
-	"Last Name": "Фамилия"
+	"back": "Назад",
+	"first name": "Имя",
+	"last name": "Фамилия"
 
 
 }
