@@ -13,6 +13,10 @@ from . import views
 #curl -v -X POST -F username=jon
  #-F password=jon http://localhost:8000/login/
 
+def is_valid_string(value, min_length, max_length):
+    return value and not value.isspace() and min_length <= len(value) <= max_length
+
+
 @login_required
 def home(request):
     return JsonResponse({'message': 'Welcome to the home page!!'})
@@ -53,6 +57,13 @@ def register_page(request):
 
         if not all([first_name, last_name, username, password]):
                 return JsonResponse({'error': 'Missing required fields'}, status=400)
+
+        if not is_valid_string(first_name, 1, 10):
+            return JsonResponse({'error': 'Invalid first name. It should be between 1 and 10 characters long.'}, status=400)
+        if not is_valid_string(last_name, 1, 10):
+            return JsonResponse({'error': 'Invalid last name. It should be between 1 and 10 characters long.'}, status=400)
+        if not is_valid_string(username, 1, 10):
+            return JsonResponse({'error': 'Invalid username. It should be between 1 and 10 characters long.'}, status=400)
 
         user = User.objects.filter(username=username)
          
@@ -98,13 +109,20 @@ def update_profile(request):
         display_name = request.POST.get('display_name')
         avatar = request.FILES.get('avatar')
 
+        if first_name and not is_valid_string(first_name, 1, 10):
+            return JsonResponse({'error': 'Invalid first name'}, status=400)
+        if last_name and not is_valid_string(last_name, 1, 10):
+            return JsonResponse({'error': 'Invalid last name'}, status=400)
+        if display_name and not is_valid_string(display_name, 1, 10):
+            return JsonResponse({'error': 'Invalid display name'}, status=400)
+
         if first_name:
             user.first_name = first_name
         if last_name:
             user.last_name = last_name
         if display_name:
-     #       if UserProfile.objects.filter(display_name=display_name).exclude(user=user).exists():
-      #          return JsonResponse({'error': 'Display name already taken'}, status=400)
+          #  if UserProfile.objects.filter(display_name=display_name).exclude(user=user).exists():
+            #    return JsonResponse({'error': 'Display name already taken'}, status=400)
             user_profile.display_name = display_name
         if avatar:
             #avatar_response = upload_avatar(request)
@@ -134,7 +152,9 @@ def change_password(request):
             return JsonResponse({'error': 'All fields are required'}, status=400)
         if new_password != confirm_password:
             return JsonResponse({'error': 'New password and confirm password do not match'}, status=400)
-
+        if new_password == current_password:
+            return JsonResponse({'error': 'New password cannot be the same as the current password'}, status=400)
+        
         user.set_password(new_password)
         user.save()
         login(request, user)
