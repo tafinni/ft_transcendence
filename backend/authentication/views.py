@@ -8,6 +8,8 @@ import json
 from .models import UserStats, UserProfile, MatchHistory, Friendship
 from django.conf import settings
 from . import views
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
 
 # Create your views here.  
 #curl -v -X POST -F username=jon
@@ -69,6 +71,12 @@ def register_page(request):
          
         if user.exists():
             return JsonResponse({'error': 'Username already taken!'}, status=400)
+
+        try:
+            validate_password(password)
+        except ValidationError as e:
+            return JsonResponse({'error': e.messages}, status=400)
+
         user = User.objects.create_user(
             first_name=first_name,
             last_name=last_name,
@@ -125,6 +133,11 @@ def update_profile(request):
             #    return JsonResponse({'error': 'Display name already taken'}, status=400)
             user_profile.display_name = display_name
         if avatar:
+            # Implement size and type checks for avatar
+            if avatar.size > 5 * 1024 * 1024:  # 5 MB limit ? or 3
+                return JsonResponse({'error': 'Avatar file is too large'}, status=400)
+            if not avatar.name.lower().endswith(('.png', '.jpg', '.jpeg')):
+                return JsonResponse({'error': 'Invalid file type for avatar'}, status=400)
             #avatar_response = upload_avatar(request)
             user_profile.avatar.save(avatar.name, avatar, save=True)
             #if avatar_response.status_code != 200:
@@ -154,7 +167,11 @@ def change_password(request):
             return JsonResponse({'error': 'New password and confirm password do not match'}, status=400)
         if new_password == current_password:
             return JsonResponse({'error': 'New password cannot be the same as the current password'}, status=400)
-        
+
+        try:
+            validate_password(new_password)  # Validate password
+        except ValidationError as e:
+            return JsonResponse({'error': e.messages}, status=400)
         user.set_password(new_password)
         user.save()
         login(request, user)
