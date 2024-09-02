@@ -1,3 +1,6 @@
+import { loadContent } from './router.js';
+
+
 export function loadGame(test) {
     console.log(test);
     goalsBlue = 0;
@@ -16,6 +19,8 @@ export function loadGame(test) {
 }
 // blue is left
 // red is right
+var gameRunning = true;
+var goalsNeeded = 1;
 
 let paddleSpeed = 0.05;
 
@@ -282,8 +287,6 @@ function aiMoveBlue() {
         paddleBlue.position.z -= paddleSpeed;
     }
 }
-var gameRunning = true;
-var goalsNeeded = 5;
 
 const tick = () => {
     const elapsedTime = clock.getElapsedTime()
@@ -338,7 +341,7 @@ const tick = () => {
     if (gameRunning)
         window.requestAnimationFrame(tick)
     else {
-        console.log("ENDED")
+        loadContent('result', goalsBlue, goalsRed);
     };
 }
 

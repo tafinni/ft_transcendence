@@ -5,7 +5,7 @@ import { loadRegister, initializeRegister } from './register.js';
 import { loadProfile } from './profile.js';
 import { updateContent } from './i18n.js';
 import { loadGame } from './game.js';
-import { loadRemote} from './pong_client.js';
+import { loadResult } from './result.js';
 
 function navLinkVisibility(state) {
 	const homeLink = document.getElementById('home-link');
@@ -14,7 +14,6 @@ function navLinkVisibility(state) {
 	const loginLink = document.getElementById('login-link');
 	const gameLink = document.getElementById('game-link');
 	const extra = document.getElementById('ai-link');
-	const remote = document.getElementById('remote-link');
 
 	if (state == 1) {
 		homeLink.style.display = 'block';
@@ -23,7 +22,6 @@ function navLinkVisibility(state) {
 		loginLink.style.display = 'block';
 		gameLink.style.display = 'block';
 		extra.style.display = 'block';
-		remote.style.display = 'block';
 	}
 	else if (state == 2) {
 		homeLink.style.display ='block';
@@ -32,7 +30,6 @@ function navLinkVisibility(state) {
 		loginLink.style.display ='none';
 		gameLink.style.display = 'block';
 		extra.style.display = 'none';
-		remote.style.display = 'none';
 	}
 	else {
 		homeLink.style.display ='none';
@@ -41,12 +38,11 @@ function navLinkVisibility(state) {
 		loginLink.style.display ='none';
 		gameLink.style.display = 'none';
 		extra.style.display = 'none';
-		remote.style.display = 'none';
 	}
 }
 
 // Update content
-export async function loadContent(content) {
+export async function loadContent(content, scoreLeft, scoreRight) {
 	const contentElement = document.getElementById('content');
 
 	if (content === 'home') {
@@ -77,9 +73,9 @@ export async function loadContent(content) {
 		contentElement.innerHTML = await loadGame(0);
 		navLinkVisibility(2);
 	}
-	else if (content === 'remote'){
-		contentElement.innerHTML = await loadRemote();
-		navLinkVisibility(2);
+	else if (content === 'result'){
+		contentElement.innerHTML = await loadResult(scoreLeft, scoreRight);
+		navLinkVisibility(1);
 	}
 	else {
 		contentElement.innerHTML = `<h1> 404 Page not found</h1>`;
@@ -113,11 +109,6 @@ document.getElementById('game-link').addEventListener('click', (event) => {
 document.getElementById('ai-link').addEventListener('click', (event) => {
 	event.preventDefault(); // Stops normal link
 	loadContent('ai');
-});
-
-document.getElementById('remote-link').addEventListener('click', (event) => {
-	event.preventDefault(); // Stops normal link
-	loadContent('remote');
 });
 
 /* Default content */
