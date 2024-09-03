@@ -37,8 +37,10 @@ def login_page(request):
             return JsonResponse({'error': 'Invalid Password or Username'}, status=400)
         else:
             login(request, user)
-            user.userprofile.is_online = True
-            user.userprofile.save()
+            if hasattr(user, 'userprofile'):
+                user.userprofile.is_online = True
+                user.userprofile.save()
+
             return JsonResponse({'message': 'Login successful', 'redirect': '/home/'})
 #return JsonResponse({"status": "ok"})
 #return JsonResponse({})
@@ -95,7 +97,7 @@ def register_page(request):
 def logout_page(request):
     if request.method == "POST":
         user = request.user
-        if hasattr(user, 'userprofile'):
+        if user.is_authenticated and hasattr(user, 'userprofile'):
             user.userprofile.is_online = False 
             user.userprofile.save()
         logout(request)
@@ -142,7 +144,6 @@ def update_profile(request):
             user_profile.avatar.save(avatar.name, avatar, save=True)
             #if avatar_response.status_code != 200:
             #    return avatar_response
-            #user_profile.avatar.save(avatar.name, avatar, save=True) upload_avatar or?
         user.save()
         user_profile.save()
         return JsonResponse({'message': 'Profile updated successfully'})
@@ -278,7 +279,7 @@ def add_friend(request):
         if friend == request.user:
             return JsonResponse({'error': 'You cannot add yourself as a friend'}, status=400)
 
-        friendship, created = Friendship.objects.get_or_create(user=request.user, friend=friend, is_request=True)
+        friendship, created = Friendship.objects.get_or_create(user=request.user, friend=friend)
         if not created:
             return JsonResponse({'error': 'Friend request already sent or already friends'}, status=400)
 
