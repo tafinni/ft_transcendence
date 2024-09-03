@@ -1,6 +1,9 @@
 ###multiplayer branch:
 
-http://localhost:7000
+mpdev: http://localhost:7000
+
+chantest: http://localhost:9000
+
 
 27.8 first server, player versus ai only but game logic works on server and client updates object positions with info from server
 

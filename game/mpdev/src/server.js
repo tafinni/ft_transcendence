@@ -3,7 +3,6 @@ import { createServer } from 'node:http';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { Server } from 'socket.io';
-//import * as THREE from 'three';
 
 // Initialize app and socket.io server
 const app = express();
@@ -122,7 +121,6 @@ let bounce = 0
 var tick = 0
 const gamedata = { tick: 0, left: 0, right: 0, ballX: 0, ballY: 0, ballDX: 0, ballDY: 0, ballpass: 0, run: false }
 const score = { left: 0, right: 0 }
-
 
 function serverStart() {
   serverEnd()

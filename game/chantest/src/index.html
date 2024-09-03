@@ -30,20 +30,31 @@
       </form>
     </div>
     <div align="center">
-      <form id="channelform" method="POST">
-        <input type="text" id="chan" name="chan" placeholder="c1">
+      <form id="chanform" method="POST">
+        <input type="text" id="chan" name="chan" placeholder="">
         <button id="addchanbtn" type="submit">Add channel</button>
-        <button id="rmvchanbtn" type="button" disabled>Remove channel</button>
+        <button id="rmvchanbtn" type="button">Remove channel</button>
         <span id="loginresult">Empty</span>
       </form>
     </div>
+    <div align="center">
+      <label for="chanlist">Broadcast to channel</label>
+        <select name="chanlist" id="chanlist">
+          <!-- <option value="volvo">Volvo</option>
+          <option value="saab">Saab</option>
+          <option value="mercedes">Mercedes</option>
+          <option value="audi">Audi</option> -->
+        </select>
+        <input type="text" id="casttext">
+        <button id="castbtn" type="button">Broadcast</button>
+    </div>
     <div align="center" id="info" class="info">Connection: User:</div>
-    <div align="center"><button id="start" type="button">Start game</button></div>
+    <div align="center"><button id="startb" type="button">Start game</button></div>
     <div align="center" id="users" class="users"> - </div>
     <div align="center" id="score" class="score">0 - 0</div>
     <div id="channels" align="center">
-      <div id="messageLog" class="channel">fsfas</div>
-      <div id="messageLog2" class="channel">fasf</div>
+      <div id="messageLog" class="channel"></div>
+      <div id="messageLog2" class="channel"></div>
     </div>
     <script src="socket.io/socket.io.js"></script>
     <script type="module" src="client.js"></script>
