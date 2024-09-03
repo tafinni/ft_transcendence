@@ -1,22 +1,23 @@
 import { loadContent } from './router.js';
 
-
-export function loadGame(test) {
-    console.log(test);
+export async function loadGame(oppStatus) {
+    console.log("Opp is human =", oppStatus);
     goalsBlue = 0;
     goalsRed = 0;
     gameRunning = true;
     timerBlue = 0;
     timerRed = 0;
-    if (test == 1)
-        blueIsAi = false;
+    blueIsAi = false;
+    oppIsHuman = oppStatus
+    if (oppIsHuman == 1)
+        redIsAi = false;
     else
-        blueIsAi = true;
-    // redIsAi = false;
+        redIsAi = true;
     paddleBlue.position.z = 0;
     paddleRed.position.z = 0;
     tick();
 }
+
 // blue is left
 // red is right
 var gameRunning = true;
@@ -31,12 +32,13 @@ let timerRed = 0;
 let timerBlue = 0;
 
 let areaSize = 4;
+let oppIsHuman = 0;
 
 //import './style.css'
 import * as THREE from 'three'
 //import * as THREE from "../node_modules/three/build/three.module.js"
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
-import { updateContent } from './i18n';
+import { updateContent } from './i18n.js';
 //import GUI from 'lil-gui'
 
 /**
@@ -341,7 +343,8 @@ const tick = () => {
     if (gameRunning)
         window.requestAnimationFrame(tick)
     else {
-        loadContent('result', goalsBlue, goalsRed);
+        console.log("Opp is human =", oppIsHuman);
+        loadContent('result', goalsBlue, goalsRed, oppIsHuman);
     };
 }
 

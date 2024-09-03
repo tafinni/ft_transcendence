@@ -1,3 +1,5 @@
+version: '3.5'
+
 services:
   db:
     image: postgres:latest
@@ -7,11 +9,13 @@ services:
       POSTGRES_USER: your_user
       POSTGRES_PASSWORD: your_password
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data_new:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+#      -"5432:1532"
     networks:
        - t_intra
+
 
   backend:
     image: backend
@@ -26,6 +30,7 @@ services:
       - "8000:8000"
     volumes:
       - ./backend:/backend
+      - ./media:/app/media 
     environment:
       - DATABASE_HOST=db
       - DATABASE_NAME=pong_project
@@ -42,7 +47,8 @@ services:
     networks:
       - t_extra
     volumes:
-      - ./frontend/src:/app/src
+     - ./frontend/src:/app/src
+    #  - ./frontend/src:/app/src
     ports:
       - "3000:3000"
     environment:
@@ -50,9 +56,10 @@ services:
 
 networks:
   t_intra:
-    name: t_intra
+#    name: t_intra
   t_extra:
-    name: t_extra
+#    name: t_extra
 
 volumes:
-  postgres_data:
+#  postgres_data:
+  postgres_data_new:

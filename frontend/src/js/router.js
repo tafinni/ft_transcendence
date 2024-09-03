@@ -2,18 +2,18 @@ import { loadHome } from './home.js';
 import { loadStats } from './stats.js';
 import { loadLogIn, initializeLogIn } from './login.js';
 import { loadRegister, initializeRegister } from './register.js';
-import { loadProfile } from './profile.js';
-import { updateContent } from './i18n.js';
+import { loadProfile } from './profile/profile.js';
+import { updateContent, initI18next } from './i18n.js';
 import { loadGame } from './game.js';
 import { loadResult } from './result.js';
 
+/* Set navigation bar visibility */
 function navLinkVisibility(state) {
 	const homeLink = document.getElementById('home-link');
 	const profileLink = document.getElementById('profile-link');
 	const statsLink = document.getElementById('stats-link');
 	const loginLink = document.getElementById('login-link');
 	const gameLink = document.getElementById('game-link');
-	const extra = document.getElementById('ai-link');
 
 	if (state == 1) {
 		homeLink.style.display = 'block';
@@ -21,7 +21,6 @@ function navLinkVisibility(state) {
 		statsLink.style.display = 'block';
 		loginLink.style.display = 'block';
 		gameLink.style.display = 'block';
-		extra.style.display = 'block';
 	}
 	else if (state == 2) {
 		homeLink.style.display ='block';
@@ -29,7 +28,6 @@ function navLinkVisibility(state) {
 		statsLink.style.display ='none';
 		loginLink.style.display ='none';
 		gameLink.style.display = 'block';
-		extra.style.display = 'none';
 	}
 	else {
 		homeLink.style.display ='none';
@@ -37,81 +35,95 @@ function navLinkVisibility(state) {
 		statsLink.style.display ='none';
 		loginLink.style.display ='none';
 		gameLink.style.display = 'none';
-		extra.style.display = 'none';
 	}
 }
 
-// Update content
-export async function loadContent(content, scoreLeft, scoreRight) {
-	const contentElement = document.getElementById('content');
+/* Update page content */
+export async function loadContent(content, scoreLeft, scoreRight, oppIsHuman, addHistory = true) {
+  await initI18next;
 
-	if (content === 'home') {
-		contentElement.innerHTML = await loadHome();
-		navLinkVisibility(1);
+  const contentElement = document.getElementById('content');
+
+	if (!localStorage.getItem("username") && !sessionStorage.getItem("username") && content !== 'login' && content !== 'register')
+	{
+		content = 'login';
+		console.log('Redirected to login');
+		alert('Please log in');
 	}
-	else if (content === 'stats') {
-		contentElement.innerHTML = await loadStats();
+
+	if (addHistory)
+	{
+		const current = window.location.pathname.replace('/', '');
+		if (current !== content)
+			window.history.pushState({ content: content }, '', `/${content}#`);
 	}
-	else if (content === 'login') {
-		contentElement.innerHTML = loadLogIn();
-		initializeLogIn();
-		navLinkVisibility(0);
+  
+	switch (content)
+	{
+		case 'home':
+			contentElement.innerHTML = await loadHome();
+			navLinkVisibility(1);
+			break ;
+		case 'stats':
+			contentElement.innerHTML = await loadStats();
+			break ;
+		case 'login':
+			contentElement.innerHTML = loadLogIn();
+			initializeLogIn();
+			navLinkVisibility(0);
+			break ;
+		case 'register':
+			contentElement.innerHTML = loadRegister();
+			initializeRegister();
+			navLinkVisibility(0);
+			break ;
+		case 'profile':
+			loadProfile();
+			break ;
+		case 'game':
+			contentElement.innerHTML = await loadGame(1);
+			navLinkVisibility(2);
+			break;
+		case 'result':
+			contentElement.innerHTML = await loadResult(scoreLeft, scoreRight, oppIsHuman);
+			navLinkVisibility(1);
+			break;
+		default:
+			loadContent('home');
+			return ;
 	}
-	else if (content === 'register') {
-		contentElement.innerHTML = loadRegister();
-		initializeRegister();
-		navLinkVisibility(0);
-	}
-	else if (content === 'profile') {
-		contentElement.innerHTML = await loadProfile();
-	}
-	else if (content === 'game'){
-		contentElement.innerHTML = await loadGame(1);
-		navLinkVisibility(2);
-	}
-	else if (content === 'ai'){
-		contentElement.innerHTML = await loadGame(0);
-		navLinkVisibility(2);
-	}
-	else if (content === 'result'){
-		contentElement.innerHTML = await loadResult(scoreLeft, scoreRight);
-		navLinkVisibility(1);
-	}
-	else {
-		contentElement.innerHTML = `<h1> 404 Page not found</h1>`;
-	}
-	updateContent();
+  updateContent();
 }
 
-// Navigation events
+/* Navigation bar events */
 document.getElementById('home-link').addEventListener('click', (event) => {
-	event.preventDefault(); // Stops normal link
-	loadContent('home');
+  event.preventDefault();
+  loadContent('home');
 });
+
 document.getElementById('stats-link').addEventListener('click', (event) => {
-	event.preventDefault(); // Stops normal link
-	loadContent('stats');
+  event.preventDefault();
+  loadContent('stats');
 });
+
 document.getElementById('login-link').addEventListener('click', (event) => {
-	event.preventDefault(); // Stops normal link
-	loadContent('login');
+  event.preventDefault();
+  sessionStorage.removeItem("username");
+  localStorage.removeItem("username");
+  loadContent('login');
 });
+
 document.getElementById('profile-link').addEventListener('click', (event) => {
-	event.preventDefault(); // Stops normal link
-	loadContent('profile');
+  event.preventDefault();
+  loadContent('profile');
+});
+
+document.getElementById('languageDropdown').addEventListener('change', (event) => {
+  setLanguage(e.target.value);
+  event.preventDefault(); 
 });
 
 document.getElementById('game-link').addEventListener('click', (event) => {
 	event.preventDefault(); // Stops normal link
 	loadContent('game');
 });
-
-document.getElementById('ai-link').addEventListener('click', (event) => {
-	event.preventDefault(); // Stops normal link
-	loadContent('ai');
-});
-
-/* Default content */
-window.onload = () => {
-	loadContent('login');
-}

@@ -17,8 +17,12 @@
 	<!-- i18next -->
 	<script src="https://unpkg.com/i18next/i18next.min.js"></script>
 	<script src="https://unpkg.com/i18next-http-backend/i18nextHttpBackend.min.js"></script>
+  <script type="module" src="./js/index.js" defer></script>
+
 	<script type="module" src="./js/i18n.js"></script>
 	
+  <!-- Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 
     <title>PONG</title>
   </head>
@@ -28,13 +32,10 @@
 
       <!-- Navigation -->
       <nav class="navbar navbar-expand-ls navbar-dark bg-dark">
-        <a class="navbar-brand" href="#" id="home-link"></a>
-        <a class="navbar-brand" href="#" id="profile-link"></a>
-        <a class="navbar-brand" href="#" id="stats-link"></a>
-        <a class="navbar-brand" href="#" id="login-link"></a>
-        <a class="navbar-brand" href="#" id="game-link"></a>
-        <a class="navbar-brand" href="#" id="ai-link"></a>
-        <a class="navbar-brand" href="#" id="remote-link"></a>
+        <a class="navbar-brand" href="#" id="home-link" translate="home"></a>
+        <a class="navbar-brand" href="#" id="profile-link" translate="profile"></a>
+        <a class="navbar-brand" href="#" id="stats-link" translate="stats"></a>
+        <a class="navbar-brand" href="#" id="game-link"></a><a class="navbar-brand" href="#" id="login-link" translate="login"></a>
         <div class="dropdown ml-auto">
           <button class="btn btn-secondary dropdown-toggle" type="button" id="languageDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
           <div class="dropdown-menu" aria-labelledby="languageDropdown">

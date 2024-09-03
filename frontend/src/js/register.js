@@ -4,27 +4,27 @@ export function loadRegister() {
     return `
         <div class="bg-fade container-fluid d-flex justify-content-center align-items-center">
             <div class="card p-4" style="width: 20rem;">
-				<button type="button" id="cancel-button" class="btn btn-link" translate="Back"></button>
-				<h3 class="card-title text-center mb-4" translate="Register"></h3>
+				<button type="button" id="cancel-button" class="btn btn-link" translate="back"></button>
+				<h3 class="card-title text-center mb-4" translate="register"></h3>
                 <form id="register-form" method="POST">
                     <div id="error-message" class="text-danger mb-3" style="display: none;"></div>
                     <div class="form-group mb-3">
-                        <label for="first_name" class="form-label" translate="First Name"></label>
+                        <label for="first_name" class="form-label" translate="first name"></label>
                         <input type="text" class="form-control" id="first_name" required>
                     </div>
                     <div class="form-group mb-3">
-                        <label for="last_name" class="form-label" translate="Last Name"></label>
+                        <label for="last_name" class="form-label" translate="last name"></label>
                         <input type="text" class="form-control" id="last_name" required>
                     </div>
                     <div class="form-group mb-3">
-                        <label for="username" class="form-label" translate="Username"></label>
+                        <label for="username" class="form-label" translate="username"></label>
                         <input type="text" class="form-control" id="username" required>
                     </div>
                     <div class="form-group mb-3">
-                        <label for="password" class="form-label" translate="Password"></label>
+                        <label for="password" class="form-label" translate="password"></label>
                         <input type="password" class="form-control" id="password" required>
                     </div>
-                    <button type="submit" class="btn btn-primary w-100" translate="Register"></button>
+                    <button type="submit" class="btn btn-primary w-100" translate="register"></button>
                 </form>
             </div>
         </div>
@@ -49,7 +49,7 @@ export function initializeRegister() {
 		const username = document.getElementById('username').value;
 		const password = document.getElementById('password').value;
 
-		console.log('Form submitted:', {first_name, last_name, username, password }); // Debuggin, testing
+		console.log('Form submitted'); // Debuggin, testing
 
 		try
 		{
