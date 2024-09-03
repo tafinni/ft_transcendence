@@ -10,6 +10,7 @@ from django.conf import settings
 from . import views
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
+from django.db.models import Q
 
 # Create your views here.  
 #curl -v -X POST -F username=jon
@@ -99,7 +100,7 @@ def logout_page(request):
         user = request.user
         if user.is_authenticated and hasattr(user, 'userprofile'):
             user.userprofile.is_online = False 
-            user.userprofile.save()
+            user.userprofile.save() 
         logout(request)
         return JsonResponse({'message': 'Logout successful'})
 
@@ -131,8 +132,8 @@ def update_profile(request):
         if last_name:
             user.last_name = last_name
         if display_name:
-          #  if UserProfile.objects.filter(display_name=display_name).exclude(user=user).exists():
-            #    return JsonResponse({'error': 'Display name already taken'}, status=400)
+            if UserProfile.objects.filter(display_name=display_name).exclude(user=user).exists():
+                return JsonResponse({'error': 'Display name already taken'}, status=400)
             user_profile.display_name = display_name
         if avatar:
             # Implement size and type checks for avatar
@@ -278,6 +279,14 @@ def add_friend(request):
 
         if friend == request.user:
             return JsonResponse({'error': 'You cannot add yourself as a friend'}, status=400)
+
+        existing_friendship = Friendship.objects.filter(
+            (Q(user=request.user, friend=friend) | Q(user=friend, friend=request.user)),
+            accepted=False
+        ).first() #?
+
+        if existing_friendship:
+            return JsonResponse({'error': 'Friend request already sent or pending'}, status=400)
 
         friendship, created = Friendship.objects.get_or_create(user=request.user, friend=friend)
         if not created:
