@@ -131,3 +131,8 @@ const tick = () =>
 }
 
 tick()
+
+//external functions
+export function startQuickGame() {
+    console.log("game.js: startQuickGame called")
+}

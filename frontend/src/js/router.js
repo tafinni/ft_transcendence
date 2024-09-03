@@ -1,4 +1,4 @@
-import { loadHome } from './home.js';
+import { initializeHome, loadHome } from './home.js';
 import { loadStats } from './stats.js';
 import { loadLogIn, initializeLogIn } from './login.js';
 import { loadRegister, initializeRegister } from './register.js';
@@ -52,6 +52,7 @@ export async function loadContent(content, addHistory = true) {
 	{
 		case 'home':
 			contentElement.innerHTML = await loadHome();
+			initializeHome();
 			navLinkVisibility(true);
 			break ;
 		case 'stats':
