@@ -68,7 +68,6 @@ export function initializeLogIn() {
 			} 
 			else 
 			{
-                console.error('Login failed:', response.statusText);
 				const errorData = await response.json();
                 console.error('Login failed:', errorData);
                 errorMessage.textContent = errorData.error;

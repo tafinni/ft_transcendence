@@ -76,7 +76,11 @@ export async function loadProfile() {
 								<!-- Friends here dinamically -->
 							</ul>
 
-							<h5>Requests</h5>
+							<hr></hr>
+
+							<h5>
+								<span translate="requests"></span>
+							</h5>
 							<ul id="friend-requests" class="list-group">
 								<!-- Friends here dinamically -->
 							</ul>
@@ -129,10 +133,10 @@ export async function loadProfile() {
 	const contentElement = document.getElementById('content');
 	if (contentElement) {
 		contentElement.innerHTML = profileHTML;
+		updateContent();
 		await displayFriends();
 		await displayFriendRequests();
 		buttonListener();
-		updateContent();
 
 	}
 	else
@@ -160,13 +164,15 @@ async function matchHistory () {
 					<div class="col-md-12">
 						<div class="card">
 							<div class="card-body">
-								<h5 class="card-title">Match History</h5>
+								<h5 class="card-title">
+									<span translate="match history"></span>
+								</h5>
 								<table class="table table-striped">
 									<thead>
 										<tr>
-											<th>Date</th>
-											<th>Opponent</th>
-											<th>Result</th>
+											<th translate="date"></th>
+											<th translate="opponent"></th>
+											<th translate="result"></th>
 										</tr>
 									</thead>
 									<tbody>
@@ -179,7 +185,7 @@ async function matchHistory () {
 										`).join('')}
 									</tbody>
 								</table>
-								<button type="button" id="back-button" class="btn btn-primary">Back</button>
+								<button type="button" id="back-button" class="btn btn-primary" translate="back"></button>
 							</div>
 						</div>
 					</div>
@@ -190,6 +196,7 @@ async function matchHistory () {
 		const contentElement = document.getElementById('content');
 		if (contentElement) {
 			contentElement.innerHTML = matchHistoryHTML;
+			updateContent();
 			backButtonListener();
 
 		}

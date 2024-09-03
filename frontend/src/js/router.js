@@ -4,6 +4,7 @@ import { loadLogIn, initializeLogIn } from './login.js';
 import { loadRegister, initializeRegister } from './register.js';
 import { loadProfile } from './profile/profile.js';
 import { updateContent, initI18next } from './i18n.js';
+import { showAlert } from './index.js';
 
 /* Set navigation bar visibility */
 function navLinkVisibility(state) {
@@ -90,6 +91,7 @@ document.getElementById('stats-link').addEventListener('click', (event) => {
 
 document.getElementById('login-link').addEventListener('click', (event) => {
   event.preventDefault();
+  completeLogOut();
   sessionStorage.removeItem("username");
   localStorage.removeItem("username");
   loadContent('login');
@@ -105,3 +107,31 @@ document.getElementById('languageDropdown').addEventListener('change', (event) =
   event.preventDefault(); 
 });
 
+async function completeLogOut() {
+	try
+	{
+		const response = await fetch('http://localhost:8000/logout/',
+		{
+			method: 'POST',
+			credentials: 'include',
+		});
+
+		if (response.ok)
+		{
+			const data = await response.json();
+			console.log('Logged out succesfully');
+			showAlert(data.message, 'success');
+		}
+		else
+		{
+			const errorData = await response.json();
+			console.error('Log out failed');
+			showAlert(errorData, 'danger');
+		}
+	}
+	catch (error)
+	{
+		console.error('Error during log out', error);
+		showAlert('Error occured when logging out. Try again.', 'danger');
+	}
+}
