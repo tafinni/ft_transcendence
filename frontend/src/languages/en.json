@@ -37,7 +37,13 @@
 	"remove friend": "Remove friend",
 
 	"wins": "Wins",
-	"losses": "Losses"
+	"losses": "Losses",
+
+	"requests": "Requests",
+	"date": "Date",
+	"opponent": "Opponent",
+	"result": "Result"
+
 
 
 

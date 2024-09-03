@@ -36,5 +36,10 @@
 	"remove friend": "Poista ystävä",
 
 	"wins": "Voitot",
-	"losses": "Häviöt"
+	"losses": "Häviöt",
+
+	"requests": "Pyynnöt",
+	"date": "Päivä",
+	"opponent": "Vastustaja",
+	"result": "Tulos"
 }
