@@ -1,7 +1,7 @@
 import { loadContent } from "../router.js";
 import { editInfo, editAvatar } from "./userInfo.js";
 import { changePassword } from "./password.js";
-import { displayFriends, displayFriendRequests, addFriend, removeFriend } from "./friends.js";
+import { displayFriends, displayFriendRequests, addFriend } from "./friends.js";
 import { updateContent } from "../i18n.js";
 
 export async function loadProfile() {
@@ -65,8 +65,9 @@ export async function loadProfile() {
 								<span translate="friends"></span>
 							</h5>
 								<div class="float-right">
-									<button type="submit" id="add-friend-button" class="btn btn-success" translate="add"></button>
-									<button type="submit" id="remove-friend-button" class="btn btn-danger" translate="remove"></button>
+									<button type="submit" id="add-friend-button" class="btn btn-success" >
+										<i class="bi bi-person-plus-fill" style="font-size: 120%"></i>
+									</button>
 								</div>
 
 							</div>
@@ -234,7 +235,6 @@ export async function buttonListener () {
     const editButton = document.getElementById('edit-button');
 	const pwdButton = document.getElementById('change-password-button');
 	const addFriendButton = document.getElementById('add-friend-button');
-	const removeFriendButton = document.getElementById('remove-friend-button');
     const matchHistoryButton = document.getElementById('match-history-button');
 	const editAvatarButton = document.getElementById('edit-avatar-button');
 
@@ -263,13 +263,6 @@ export async function buttonListener () {
 	addFriendButton.addEventListener('click', () => {
 		console.log('Clicked add friend button');
 		addFriend();
-	});
-	}
-
-	if (removeFriendButton) {
-	removeFriendButton.addEventListener('click', () => {
-		console.log('Clicked remove friend button');
-		removeFriend();
 	});
 	}
 

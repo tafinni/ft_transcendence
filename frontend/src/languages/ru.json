@@ -13,7 +13,29 @@
 
 	"back": "Назад",
 	"first name": "Имя",
-	"last name": "Фамилия"
+	"last name": "Фамилия",
 
+	"match history": "История матчей",
+	"friends": "Друзья",
+	"add": "Добавить",
+	"remove": "Удалить",
+	"user info": "Информация о пользователе",
+	"display name": "Отображаемое имя",
+	"change password": "Изменить пароль",
+
+	"change avatar": "Изменить аватар",
+	"save changes": "Сохранить изменения",
+	"cancel": "Отмена",
+	"edit user information": "Редактировать информацию пользователя",
+	"current password": "Текущий пароль",
+	"new password": "Новый пароль",
+	"type new password again": "Введите новый пароль еще раз",
+
+	"friend's name": "Имя друга",
+	"send request": "Отправить запрос",
+	"remove friend": "Удалить друга",
+
+	"wins": "Победы",
+	"losses": "Поражения"
 
 }

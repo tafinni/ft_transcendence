@@ -24,27 +24,40 @@ export async function displayFriends() {
 
 		friendItem.style.backgroundColor = colors[index % colors.length];
 		friendItem.style.padding = '10px';
+		friendItem.style.display = 'flex';
+		friendItem.style.alignItems = 'center';
+
+		const onlineStatus = document.createElement('span');
+		onlineStatus.className = 'online-status';
+		onlineStatus.style.marginRight = '10px';
+		onlineStatus.style.fontSize = '80%';
+		if (friend.online_status == true)
+		{
+			onlineStatus.innerHTML = '<i class="bi bi-circle-fill"></i>';
+			onlineStatus.style.color = 'green';
+		}
+		else if (friend.online_status == false)
+		{
+			acceptButton.innerHTML = '<i class="bi bi-circle-fill"></i>';
+			onlineStatus.style.color = 'red';
+		}
 
 		const friendName = document.createElement('span');
 		friendName.className = 'friend-name';
 		friendName.textContent = friend.username;
 
+        const removeFriendButton = document.createElement('button');
+        removeFriendButton.className = 'btn btn-link btn-sm';
+		removeFriendButton.innerHTML = '<i class="bi bi-trash3-fill"></i>';
+	    removeFriendButton.style.marginRight = '10px';
+		removeFriendButton.style.marginLeft = 'auto';
+		removeFriendButton.style.color = 'red';
+		removeFriendButton.style.fontSize = '110%';
+        removeFriendButton.onclick = () => removeFriend(friend.username);
 
-		const onlineStatus = document.createElement('span');
-		onlineStatus.className = 'online-status';
-		if (friend.online_status == true)
-		{
-			onlineStatus.textContent = 'Online';
-			onlineStatus.style.color = 'green';
-		}
-		else if (friend.online_status == false)
-		{
-			onlineStatus.textContent = 'Offline';
-			onlineStatus.style.color = 'red';
-		}
-
-		friendItem.appendChild(friendName);
 		friendItem.appendChild(onlineStatus);
+		friendItem.appendChild(friendName);
+		friendItem.appendChild(removeFriendButton);
 
 		friendsListContainer.appendChild(friendItem);
 	});
@@ -266,95 +279,36 @@ async function saveFriend() {
 	});
 }
 
-export async function removeFriend() {
-	const response = await fetch('http://localhost:8000/profile/', {
-		method: 'GET',
-		credentials: 'include'
-	});
-	if (!response.ok) { console.error('Failed loading profile:', response.statusText); return `<h1>Error loading profile</h1>`; }
-
-	const removeFriendHTML = `
-	<div class="container mt-5">
-        <div class="card" style="background-color: white; padding: 20px; border-radius: 10px;">
-		<form id="remove-friends-form">
-			<div class="form-group">
-				<label for="friends-name">Friend's name</label>
-				<input type="text" id="remove-friend" class="form-control" required>
-			</div>
-			<button type="submit" class="btn btn-danger mt-3">Remove friend</button>
-			<button type="button" id="cancel-button" class="btn btn-link" >Cancel</button>
-		</form>
-		</div>
-	</div>
-`;
-
-	const contentElement = document.getElementById('content');
-	if (contentElement) {
-		contentElement.innerHTML = removeFriendHTML;
-		confirmRemoval();
-	}
-	else
+async function removeFriend(friend_username) {
+	try
 	{
-		console.error('Content element not found');
-	}	
+		const response = await fetch('http://localhost:8000/remove_friend/',
+		{
+			method: 'POST',
+			credentials: 'include',
+			headers: { 'Content-Type' : 'application/json' },
+			body: JSON.stringify({ friend_username })
+		});
 
+		if (response.ok)
+		{
+			const data = await response.json();
+			console.log('Friend removed succesfully');
+			alert(data.message);
+			loadContent('profile');
+		}
+		else
+		{
+			const errorData = await response.json();
+			console.error('Removing friend failed');
+			alert(errorData);
+			loadContent('profile');
+		}
+	}
+	catch (error)
+	{
+		console.error('Error during removing friend', error);
+		alert('Error occured when removing friend. Try again.');
+	}
 }
 
-async function confirmRemoval() {
-	const response = await fetch('http://localhost:8000/profile/', {
-		method: 'GET',
-		credentials: 'include'
-	});
-	if (!response.ok) { console.error('Failed loading profile:', response.statusText); return `<h1>Error loading profile</h1>`; }
-
-    console.log('removeFriend called'); // Debugging
-
-	const removeFriendsForm = document.getElementById('remove-friends-form');
-	if (!removeFriendsForm) { console.error('Remove friends form not found'); return ; }
-
-	const cancelButton = document.getElementById('cancel-button');
-
-	removeFriendsForm.addEventListener('submit', async (event) => {
-		event.preventDefault();
-
-		const friend_username = document.getElementById('remove-friend').value;
-		
-		console.log('Remove friend form submitted');
-
-		try
-		{
-			const response = await fetch('http://localhost:8000/remove_friend/',
-				{
-					method: 'POST',
-					credentials: 'include',
-					headers: { 'Content-Type' : 'application/json' },
-					body: JSON.stringify({ friend_username })
-				});
-
-			if (response.ok)
-			{
-				const data = await response.json();
-				console.log('Friend removed succesfully');
-				alert(data.message);
-				loadContent('profile');
-			}
-			else
-			{
-				const errorData = await response.json();
-				console.error('Removing friend failed');
-				alert(errorData);
-				loadContent('profile');
-			}
-		}
-		catch (error)
-		{
-			console.error('Error during removing friend', error);
-			alert('Error occured when removing friend. Try again.');
-		}
-	});
-
-	cancelButton.addEventListener('click', () => {
-		console.log('Cancelled remove friend'); // Debugging
-		loadContent('profile');
-	});
-}
