@@ -119,7 +119,6 @@ def update_profile(request):
         last_name = request.POST.get('last_name')
         display_name = request.POST.get('display_name')
         avatar = request.FILES.get('avatar')
-        preferred_language = request.POST.get('preferred_language')
 
         if first_name and not is_valid_string(first_name, 1, 10):
             return JsonResponse({'error': 'Invalid first name'}, status=400)
@@ -127,8 +126,6 @@ def update_profile(request):
             return JsonResponse({'error': 'Invalid last name'}, status=400)
         if display_name and not is_valid_string(display_name, 1, 10):
             return JsonResponse({'error': 'Invalid display name'}, status=400)
-        if preferred_language and preferred_language not in dict(UserProfile.LANGUAGE_CHOICES):
-            return JsonResponse({'error': 'Invalid preferred language'}, status=400)
 
         if first_name:
             user.first_name = first_name
@@ -148,8 +145,6 @@ def update_profile(request):
             user_profile.avatar.save(avatar.name, avatar, save=True)
             #if avatar_response.status_code != 200:
             #    return avatar_response
-        if preferred_language:
-            user_profile.preferred_language = preferred_language
         user.save()
         user_profile.save()
         return JsonResponse({'message': 'Profile updated successfully'})
@@ -244,7 +239,6 @@ def profile(request):
         'losses': user_stats.losses,
         'display_name': user_profile.display_name,
         'avatar': avatar_url,
-        'preferred_language': user_profile.preferred_language,
         'friends': friends,
         'friend_requests': requests,
     }
