@@ -1,5 +1,6 @@
 import i18next from 'i18next';
 import i18nextHttpBackend from 'i18next-http-backend';
+import { showAlert } from './index.js';
 
 const initI18next = i18next
   .use(i18nextHttpBackend)
@@ -38,6 +39,36 @@ export async function setLanguage(lang) {
   } catch (error) {
     console.error('Error changing language:', error);
   }
+}
+
+export async function checkUserLanguage() {
+
+	const response = await fetch('http://localhost:8000/profile/', {
+		method: 'GET',
+		credentials: 'include'
+	});
+
+	if (!response.ok)
+  {
+    console.error('Failed checking language:', response.statusText);
+    showAlert('Error checking language. Try again.', 'danger');
+    return ;
+  }
+
+	const userData = await response.json();
+
+  switch (userData.preferred_language)
+  {
+    case 'FI':
+      setLanguage('fi');
+      break ;
+    case 'RU':
+      setLanguage('ru');
+      break ;
+    default:
+      setLanguage('en');
+  }
+
 }
 
 /* Make setLanguage available */

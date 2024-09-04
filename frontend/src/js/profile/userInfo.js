@@ -1,6 +1,7 @@
 
 import { updateContent } from "../i18n.js";
 import { loadContent } from "../router.js";
+import { checkUserLanguage } from "../i18n.js";
 import { showAlert } from "../index.js";
 
 export async function editInfo() {
@@ -39,11 +40,11 @@ export async function editInfo() {
         				<input type="text" id="username" name="username" class="form-control" value="${userData.username}" readonly>
     				</div>
 					<div class="form-group">
-					    <label for="language" translate="preferred language"></label>
-					    <select id="language" name="language" class="form-control">
-							<option value="en" ${userData.language === 'en' ? 'selected' : ''} translate="english"></option>
-							<option value="fi" ${userData.language === 'fi' ? 'selected' : ''} translate="finnish"></option>
-							<option value="ru" ${userData.language === 'ru' ? 'selected' : ''} translate="russian"></option>
+					    <label for="preferred_language" translate="preferred language"></label>
+					    <select id="preferred_language" name="preferred_language" class="form-control">
+							<option value="EN" ${userData.language === 'en' ? 'selected' : ''} translate="english"></option>
+							<option value="FI" ${userData.language === 'fi' ? 'selected' : ''} translate="finnish"></option>
+							<option value="RU" ${userData.language === 'ru' ? 'selected' : ''} translate="russian"></option>
 					    </select>
   					</div>
 					<button type="submit" class="btn btn-primary mt-3" translate="save changes"></button>
@@ -70,7 +71,12 @@ export async function saveInfo() {
     console.log('saveInfo called'); // Debugging
 
     const editInfoForm = document.getElementById('edit-info-form');
-    if (!editInfoForm) { console.error('Edit form not found'); return;}
+    if (!editInfoForm)
+	{
+		console.error('Edit form not found');
+		showAlert('Error occured. Try again', 'danger');
+		return ;
+	}
 
 	const cancelButton = document.getElementById('cancel-button');
 	const errorMessage = document.getElementById('error-message');
@@ -94,6 +100,7 @@ export async function saveInfo() {
                 const data = await response.json();
                 console.log('Edit info successful');
                 showAlert(data.message, 'success');
+				await checkUserLanguage()
                 loadContent('profile');
             }
             else
@@ -154,7 +161,12 @@ async function saveAvatar() {
     console.log('saveInfo called'); // Debugging
 
     const editAvatarForm = document.getElementById('edit-avatar-form');
-    if (!editAvatarForm) { console.error('Edit form not found'); return;}
+    if (!editAvatarForm)
+	{
+		console.error('Edit Avatar form not found');
+		showAlert('Error occured. Try again.', 'danger');
+		return ;
+	}
 
    const cancelButton = document.getElementById('cancel-button');
    const errorMessage = document.getElementById('error-message');
@@ -176,14 +188,14 @@ async function saveAvatar() {
             if (response.ok)
             {
                 const data = await response.json();
-                console.log('Edit info successful'); // Debugging
+                console.log('Edit avatar successful'); // Debugging
                 showAlert(data.message, 'success');
                 loadContent('profile');
             }
             else
             {
                 const errorData = await response.json();
-                console.error('Edit info failed', errorData);
+                console.error('Edit avatar failed', errorData);
 				errorMessage.textContent = errorData.error;
 				errorMessage.style.display = 'block';
             }

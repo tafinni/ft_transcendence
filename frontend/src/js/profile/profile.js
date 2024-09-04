@@ -38,7 +38,9 @@ export async function loadProfile() {
 				<div class="col-md-4">
 					<div class="card profile-card">
 						<div class="card-body">
-							<h5 class="card-title"></h5>
+							<h5 class="card-title">
+								<span translate="stats"></span>
+							</h5>
 								<table class="table table-striped">
 								<tbody>
 									<tr>
@@ -116,6 +118,10 @@ export async function loadProfile() {
 									<tr>
 										<th scope="row" translate="username"></th>
 										<td>${userData.username}</td>
+									</tr>
+									<tr>
+										<th scope="row" translate="language"></th>
+										<td>${userData.preferred_language}</td>
 									</tr>
 								</tbody>
 							</table>
