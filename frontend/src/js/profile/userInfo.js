@@ -1,4 +1,5 @@
 
+import { updateContent } from "../i18n.js";
 import { loadContent } from "../router.js";
 
 export async function editInfo() {
@@ -16,6 +17,9 @@ export async function editInfo() {
             <div class="card" style="background-color: white; padding: 20px; border-radius: 10px;">
             
 				<h2 translate="edit user information"></h2>
+			
+				<div id="error-message" class="text-danger mb-3" styl2="display: none;"></div>
+
 				<form id="edit-info-form" enctype="multipart/form-data">
 					<div class="form-group">
 						<label for="first_name" translate="first name"></label>
@@ -33,8 +37,8 @@ export async function editInfo() {
         				<label for="username" translate="username"></label>
         				<input type="text" id="username" name="username" class="form-control" value="${userData.username}" readonly>
     				</div>
-					<button type="submit" class="btn btn-primary mt-3">Save Changes</button>
-					<button type="button" id="cancel-button" class="btn btn-link" >Cancel</button>
+					<button type="submit" class="btn btn-primary mt-3" translate="save changes"></button>
+					<button type="button" id="cancel-button" class="btn btn-link" translate="cancel"></button>
 				</form>
 			</div>
         </div>
@@ -44,6 +48,7 @@ export async function editInfo() {
 	if (contentElement) {
 		contentElement.innerHTML = editInfoHTML;
 		saveInfo();
+		updateContent();
 	}
 	else
 	{
@@ -64,7 +69,8 @@ export async function saveInfo() {
     const editInfoForm = document.getElementById('edit-info-form');
     if (!editInfoForm) { console.error('Edit form not found'); return;}
 
-   const cancelButton = document.getElementById('cancel-button');
+	const cancelButton = document.getElementById('cancel-button');
+	const errorMessage = document.getElementById('error-message');
 
     editInfoForm.addEventListener('submit', async (event) => {
         event.preventDefault();
@@ -91,6 +97,8 @@ export async function saveInfo() {
             {
                 const errorData = await response.json();
                 console.error('Edit info failed', errorData);
+				errorMessage.textContent = errorData.error;
+				errorMessage.style.display = 'block';
             }
         }
         catch (error)
@@ -117,14 +125,16 @@ export async function editAvatar() {
 	const editAvatarHTML = `
        <div class="container mt-5">
             <div class="card" style="background-color: white; padding: 20px; border-radius: 10px;">
-				<h2 >Edit Profile Information</h2>
+				<h5>
+					<span translate="change avatar"></span>
+				</h5>
 				<form id="edit-avatar-form" enctype="multipart/form-data">
 					<div class="form-group">
-						<label for="avatar">Change Avatar</label>
+						<label for="avatar"></label>
 						<input type="file" id="avatar" name="avatar" class="form-control">
 					</div>
-					<button type="submit" class="btn btn-primary mt-3">Save Changes</button>
-					<button type="button" id="cancel-button" class="btn btn-link" >Cancel</button>
+					<button type="submit" class="btn btn-primary mt-3" translate="save changes"></button>
+					<button type="button" id="cancel-button" class="btn btn-link" translate="cancel"></button>
 				</form>
 			</div>
         </div>
@@ -133,6 +143,7 @@ export async function editAvatar() {
 	const contentElement = document.getElementById('content');
 	if (contentElement) {
 		contentElement.innerHTML = editAvatarHTML;
+		updateContent();
 		saveAvatar();
 	}
 	else

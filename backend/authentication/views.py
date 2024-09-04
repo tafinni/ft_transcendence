@@ -11,6 +11,7 @@ from . import views
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 
+import datetime
 # Create your views here.  
 #curl -v -X POST -F username=jon
  #-F password=jon http://localhost:8000/login/
@@ -386,4 +387,16 @@ def add_result(request):
     else:
         user_stats.losses += 1
     user_stats.save()
+
+    if (sLeft > sRight):
+        result = 'WIN'
+    else:
+        result = 'LOST'
+    history = MatchHistory.objects.create(
+        user = user,
+        opponent = 'AI',
+        date = datetime.datetime.now(),
+        result = result
+    )
+    history.save()
     return JsonResponse({'message': 'Result saved successfully'})

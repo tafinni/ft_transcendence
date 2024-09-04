@@ -1,7 +1,6 @@
 import { loadContent } from './router.js';
 
 export async function loadGame(oppStatus) {
-    console.log("Opp is human =", oppStatus);
     goalsBlue = 0;
     goalsRed = 0;
     gameRunning = true;
@@ -21,7 +20,7 @@ export async function loadGame(oppStatus) {
 // blue is left
 // red is right
 var gameRunning = true;
-var goalsNeeded = 1;
+var goalsNeeded = 2;
 
 let paddleSpeed = 0.05;
 

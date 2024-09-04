@@ -7,15 +7,17 @@ export async function loadResult(scoreLeft, scoreRight, oppIsHuman) {
 	if (!response.ok) { console.error('Failed loading profile:', response.statusText); return `<h1>Error loading profile</h1>`; }
 
 	const userData = await response.json();
-    await fetch('http://localhost:8000/add_result/',
-        {
-            method: 'POST',
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({scoreLeft, scoreRight})
-        });
+    if (scoreLeft > 0 || scoreRight > 0){
+        await fetch('http://localhost:8000/add_result/',
+            {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({scoreLeft, scoreRight})
+            });
+    }
     if (scoreLeft > scoreRight)
     {
         return `

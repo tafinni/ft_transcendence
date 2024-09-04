@@ -1,3 +1,4 @@
+import { updateContent } from "../i18n";
 import { loadContent } from "../router";
 
 export async function changePassword() {
@@ -11,22 +12,24 @@ export async function changePassword() {
 	<div class="container mt-5">
         <div class="card" style="background-color: white; padding: 20px; border-radius: 10px;">
 
-		<h2>Change password</h2>
+		<h2>
+			<span translate="change password"></span>
+		</h2>
 		<form id="change-password-form">
 			<div class="form-group">
-				<label for="current_password">Old password</label>
+				<label for="current_password" translate="current password"></label>
 				<input type="text" id="current_password" class="form-control" required>
 			</div>
 			<div class="form-group">
-				<label for="new_password">New password</label>
+				<label for="new_password" translate="new password"></label>
 				<input type="text" id="new_password" class="form-control" required>
 			</div>
 			<div class="form-group">
-				<label for="confirm_password">Type new password again</label>
+				<label for="confirm_password" translate="type new password again"></label>
 				<input type="text" id="confirm_password" class="form-control" required>
 			</div>
-			<button type="submit" class="btn btn-primary mt-3">Save new password</button>
-			<button type="button" id="cancel-button" class="btn btn-link" >Cancel</button>
+			<button type="submit" class="btn btn-primary mt-3" translate="save changes"></button>
+			<button type="button" id="cancel-button" class="btn btn-link" translate="cancel"></button>
 		</form>
 		</div>
 	</div>
@@ -35,6 +38,7 @@ export async function changePassword() {
 	const contentElement = document.getElementById('content');
 	if (contentElement) {
 		contentElement.innerHTML = passwordHTML;
+		updateContent();
 		savePassword();
 	}
 	else

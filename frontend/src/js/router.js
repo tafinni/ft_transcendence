@@ -13,35 +13,30 @@ function navLinkVisibility(state) {
 	const profileLink = document.getElementById('profile-link');
 	const statsLink = document.getElementById('stats-link');
 	const loginLink = document.getElementById('login-link');
-	const gameLink = document.getElementById('game-link');
-
+	
 	if (state == 1) {
 		homeLink.style.display = 'block';
 		profileLink.style.display = 'block';
 		statsLink.style.display = 'block';
 		loginLink.style.display = 'block';
-		gameLink.style.display = 'block';
 	}
 	else if (state == 2) {
 		homeLink.style.display ='block';
 		profileLink.style.display ='none';
 		statsLink.style.display ='none';
 		loginLink.style.display ='none';
-		gameLink.style.display = 'block';
 	}
 	else {
 		homeLink.style.display ='none';
 		profileLink.style.display ='none';
 		statsLink.style.display ='none';
 		loginLink.style.display ='none';
-		gameLink.style.display = 'none';
 	}
 }
 
 /* Update page content */
 export async function loadContent(content, scoreLeft, scoreRight, oppIsHuman, addHistory = true) {
   await initI18next;
-
   const contentElement = document.getElementById('content');
 
 	if (!localStorage.getItem("username") && !sessionStorage.getItem("username") && content !== 'login' && content !== 'register')
@@ -80,7 +75,11 @@ export async function loadContent(content, scoreLeft, scoreRight, oppIsHuman, ad
 		case 'profile':
 			loadProfile();
 			break ;
-		case 'game':
+		case 'single':
+			contentElement.innerHTML = await loadGame(0);
+			navLinkVisibility(2);
+			break;
+		case 'localMulti':
 			contentElement.innerHTML = await loadGame(1);
 			navLinkVisibility(2);
 			break;
@@ -108,6 +107,7 @@ document.getElementById('stats-link').addEventListener('click', (event) => {
 
 document.getElementById('login-link').addEventListener('click', (event) => {
   event.preventDefault();
+  completeLogOut();
   sessionStorage.removeItem("username");
   localStorage.removeItem("username");
   loadContent('login');
@@ -123,7 +123,31 @@ document.getElementById('languageDropdown').addEventListener('change', (event) =
   event.preventDefault(); 
 });
 
-document.getElementById('game-link').addEventListener('click', (event) => {
-	event.preventDefault(); // Stops normal link
-	loadContent('game');
-});
+async function completeLogOut() {
+	try
+	{
+		const response = await fetch('http://localhost:8000/logout/',
+		{
+			method: 'POST',
+			credentials: 'include',
+		});
+
+		if (response.ok)
+		{
+			const data = await response.json();
+			console.log('Logged out succesfully');
+			showAlert(data.message, 'success');
+		}
+		else
+		{
+			const errorData = await response.json();
+			console.error('Log out failed');
+			showAlert(errorData, 'danger');
+		}
+	}
+	catch (error)
+	{
+		console.error('Error during log out', error);
+		showAlert('Error occured when logging out. Try again.', 'danger');
+	}
+}

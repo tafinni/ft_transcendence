@@ -1,4 +1,7 @@
-import { loadContent } from "../router";
+import { updateContent } from "../i18n.js";
+import { loadContent } from "../router.js";
+import { showAlert } from "../index.js";
+
 
 export async function displayFriends() {
 	const response = await fetch('http://localhost:8000/profile/', {
@@ -38,7 +41,7 @@ export async function displayFriends() {
 		}
 		else if (friend.online_status == false)
 		{
-			acceptButton.innerHTML = '<i class="bi bi-circle-fill"></i>';
+			onlineStatus.innerHTML = '<i class="bi bi-circle-fill"></i>';
 			onlineStatus.style.color = 'red';
 		}
 
@@ -131,21 +134,21 @@ async function acceptFriend(request_user_username) {
 		{
 			const data = await response.json();
 			console.log('Friend added succesfully');
-			alert(data.message);
+			showAlert(data.message, 'success');
 			loadContent('profile');
 		}
 		else
 		{
 			const errorData = await response.json();
 			console.error('Adding friend failed');
-			alert(errorData);
+			showAlert('errorData', 'danger');
 			loadContent('profile');
 		}
 	}
 	catch (error)
 	{
 		console.error('Error during adding friend', error);
-		alert('Error occured when adding friend. Try again.');
+		showAlert('Error occured when adding friend. Try again.', 'danger');
 	}
 }
 
@@ -164,21 +167,21 @@ async function declineFriend(request_user_username) {
 		{
 			const data = await response.json();
 			console.log('Friend declined succesfully');
-			alert(data.message);
+			showAlert(data.message, 'success');
 			loadContent('profile');
 		}
 		else
 		{
 			const errorData = await response.json();
 			console.error('Declining friend failed');
-			alert(errorData);
+			showAlert(errorData, 'danger');
 			loadContent('profile');
 		}
 	}
 	catch (error)
 	{
 		console.error('Error during adding friend', error);
-		alert('Error occured when adding friend. Try again.');
+		showAlert('Error occured when adding friend. Try again.', 'danger');
 	}
 }
 
@@ -196,11 +199,11 @@ export async function addFriend() {
         <div class="card" style="background-color: white; padding: 20px; border-radius: 10px;">
 		<form id="add-friends-form">
 			<div class="form-group">
-				<label for="friends-name" >Friend's name</label>
+				<label for="friends-name" translate="friend's name"></label>
 				<input type="text" id="new-friend" class="form-control" required>
 			</div>
-			<button type="submit" class="btn btn-success mt-3">Send request</button>
-			<button type="button" id="cancel-button" class="btn btn-link" >Cancel</button>
+			<button type="submit" class="btn btn-success mt-3" translate="send request"></button>
+			<button type="button" id="cancel-button" class="btn btn-link" translate="cancel"></button>
 		</form>
 		</div>
 	</div>
@@ -210,6 +213,7 @@ export async function addFriend() {
 	const contentElement = document.getElementById('content');
 	if (contentElement) {
 		contentElement.innerHTML = addFriendHTML;
+		updateContent();
 		saveFriend();
 	}
 	else
@@ -255,21 +259,21 @@ async function saveFriend() {
 			{
 				const data = await response.json();
 				console.log('Friend added succesfully');
-				alert(data.message);
+				showAlert(data.message, 'success');
 				loadContent('profile');
 			}
 			else
 			{
 				const errorData = await response.json();
-				console.error('Adding friend failed');
-				alert(errorData);
+				console.error('Adding friend failed', errorData);
+				showAlert('test', 'danger');
 				loadContent('profile');
 			}
 		}
 		catch (error)
 		{
 			console.error('Error during adding friend', error);
-			alert('Error occured when adding friend. Try again.');
+			showAlert('Error occured when adding friend. Try again.', 'danger');
 		}
 	});
 
@@ -294,7 +298,7 @@ async function removeFriend(friend_username) {
 		{
 			const data = await response.json();
 			console.log('Friend removed succesfully');
-			alert(data.message);
+			showAlert(data.message, 'success');
 			loadContent('profile');
 		}
 		else
