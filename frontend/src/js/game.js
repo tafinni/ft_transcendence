@@ -14,6 +14,7 @@ export async function loadGame(oppStatus) {
         redIsAi = true;
     paddleBlue.position.z = 0;
     paddleRed.position.z = 0;
+    dataSent = 0;
     tick();
 }
 
@@ -288,7 +289,7 @@ function aiMoveBlue() {
         paddleBlue.position.z -= paddleSpeed;
     }
 }
-
+let dataSent = 0;
 const tick = () => {
     const elapsedTime = clock.getElapsedTime()
 
@@ -342,8 +343,12 @@ const tick = () => {
     if (gameRunning)
         window.requestAnimationFrame(tick)
     else {
-        console.log("Opp is human =", oppIsHuman);
-        loadContent('result', goalsBlue, goalsRed, oppIsHuman);
+        if (dataSent === 0){
+
+            console.log("Opp is human =", oppIsHuman);
+            loadContent('result', goalsBlue, goalsRed, oppIsHuman);
+        }
+        dataSent = 1;
     };
 }
 
