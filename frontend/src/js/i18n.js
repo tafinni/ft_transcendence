@@ -18,7 +18,6 @@ export function updateContent() {
   if (i18next.isInitialized) {
     document.getElementById('home-link').innerText = i18next.t('home');
     document.getElementById('profile-link').innerText = i18next.t('profile');
-    document.getElementById('stats-link').innerText = i18next.t('stats');
     document.getElementById('login-link').innerText = i18next.t('login');
     document.getElementById('languageDropdown').innerText = i18next.t('languageDropdown');
   

@@ -41,5 +41,11 @@
 	"requests": "Pyynnöt",
 	"date": "Päivä",
 	"opponent": "Vastustaja",
-	"result": "Tulos"
+	"result": "Tulos",
+
+
+	"preferred language": "Valittu kieli",
+	"english": "Englanti",
+	"finnish": "Suomi",
+	"russian": "Venäjä"
 }

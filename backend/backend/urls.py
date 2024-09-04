@@ -41,6 +41,7 @@ urlpatterns = [
     path('match_history/', views.match_history, name='match_history'),
     path('accept_friend_request/', views.accept_friend_request, name='accept_friend_request'),
     path('decline_friend_request/', views.decline_friend_request, name='decline_friend_request'),
+    path('public_profile/', views.public_profile, name='public_profile'),
 ]
 
 if settings.DEBUG:

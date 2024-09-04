@@ -42,7 +42,12 @@
 	"requests": "Requests",
 	"date": "Date",
 	"opponent": "Opponent",
-	"result": "Result"
+	"result": "Result",
+
+	"preferred language": "Preferred language",
+	"english": "English",
+	"finnish": "Finnish",
+	"russian": "Russian"
 
 
 
