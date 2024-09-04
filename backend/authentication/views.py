@@ -386,3 +386,23 @@ def decline_friend_request(request):
             return JsonResponse({'error': 'Friend request does not exist or already processed'}, status=404)
 
     return JsonResponse({'error': 'Invalid request method'}, status=405)
+
+@login_required
+@csrf_exempt
+def public_profile(request):
+    if request.method == "POST":
+        body = json.loads(request.body)
+        user_username = body.get('user_username')
+
+        user = User.objects.get(username=user_username)
+        user_stats = UserStats.objects.get(user=user)
+        user_profile = UserProfile.objects.get(user=user)
+        
+        data = {
+            'username': user.username,
+            'display_name': user_profile.display_name,
+            'wins': user_stats.wins,
+            'losses': user_stats.losses,
+            'avatar': user_profile.avatar.url,
+        }
+        return JsonResponse(data) #ADD ERRORS

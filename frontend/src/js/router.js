@@ -1,5 +1,4 @@
 import { loadHome } from './home.js';
-import { loadStats } from './stats.js';
 import { loadLogIn, initializeLogIn } from './login.js';
 import { loadRegister, initializeRegister } from './register.js';
 import { loadProfile } from './profile/profile.js';
@@ -10,21 +9,18 @@ import { showAlert } from './index.js';
 function navLinkVisibility(state) {
 	const homeLink = document.getElementById('home-link');
 	const profileLink = document.getElementById('profile-link');
-	const statsLink = document.getElementById('stats-link');
 	const loginLink = document.getElementById('login-link');
 
 	if (state)
 	{
 		homeLink.style.display = 'block';
 		profileLink.style.display = 'block';
-		statsLink.style.display = 'block';
 		loginLink.style.display = 'block';
 	}
 	else 
 	{
 		homeLink.style.display = 'none';
 		profileLink.style.display = 'none';
-		statsLink.style.display = 'none';
 		loginLink.style.display = 'none';
   	}
 }
@@ -55,9 +51,6 @@ export async function loadContent(content, addHistory = true) {
 			contentElement.innerHTML = await loadHome();
 			navLinkVisibility(true);
 			break ;
-		case 'stats':
-			contentElement.innerHTML = await loadStats();
-			break ;
 		case 'login':
 			contentElement.innerHTML = loadLogIn();
 			initializeLogIn();
@@ -73,7 +66,7 @@ export async function loadContent(content, addHistory = true) {
 			break ;
 		default:
 			loadContent('home');
-			return ;
+			break ;
 	}
   updateContent();
 }
@@ -82,11 +75,6 @@ export async function loadContent(content, addHistory = true) {
 document.getElementById('home-link').addEventListener('click', (event) => {
   event.preventDefault();
   loadContent('home');
-});
-
-document.getElementById('stats-link').addEventListener('click', (event) => {
-  event.preventDefault();
-  loadContent('stats');
 });
 
 document.getElementById('login-link').addEventListener('click', (event) => {
@@ -102,10 +90,11 @@ document.getElementById('profile-link').addEventListener('click', (event) => {
   loadContent('profile');
 });
 
-document.getElementById('languageDropdown').addEventListener('change', (event) => {
-  setLanguage(e.target.value);
+document.getElementById('languageDropdown').addEventListener('click', (event) => {
+  setLanguage(event.target.value);
   event.preventDefault(); 
 });
+
 
 async function completeLogOut() {
 	try

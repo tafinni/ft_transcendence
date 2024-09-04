@@ -26,9 +26,6 @@ from django.views.generic import RedirectView
 urlpatterns = [
     path('home/', home, name='home'),
     path('admin/', admin.site.urls),
-#    path('pong_app/', include('pong_app.urls')),
-#    path('stats/', include('pong_app.urls')),
-    path('', include('pong_app.urls')),
     path('register/', register_page, name='register'),
     path('login/', login_page, name='login'),
     path('logout/', logout_page, name='logout'),
@@ -36,6 +33,7 @@ urlpatterns = [
     path('profile/', profile, name='profile'),
     path('match_history/', views.match_history, name='match_history'),
     path('change_password/', views.change_password, name='change_password'),
+    path('public_profile/', views.public_profile, name='public_profile'),
     path('add_friend/', views.add_friend, name='add_friend'),
     path('remove_friend/', views.remove_friend, name='remove_friend'),
     path('accept_friend_request/', views.accept_friend_request, name='accept_friend_request'),
