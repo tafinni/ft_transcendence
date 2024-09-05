@@ -1,4 +1,33 @@
 services:
+  dev:
+    image: dev
+    container_name: dev
+    build:
+      context: dev
+      dockerfile: Dockerfile
+#    pull_policy: build
+    networks:
+      - t_extra
+    volumes:
+      - ./dev/src:/app/src
+    ports:
+      - "5173:5173"
+
+  server:
+    image: server
+    container_name: server
+    build:
+      context: server
+      dockerfile: Dockerfile
+    pull_policy: build
+    networks:
+      - t_extra
+    volumes:
+      - ./server/src:/app/src
+    ports:
+      - "5174:5173"
+      - "8001:8001"
+
   mpdev:
     image: mpdev
     container_name: mpdev
@@ -10,6 +39,7 @@ services:
     volumes:
       - ./mpdev/src:/app/src
     ports:
+      - "5000:5000"
       - "7000:7000"
 
 networks:

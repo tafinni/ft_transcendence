@@ -35,23 +35,6 @@ class Friendship(models.Model):
     accepted = models.BooleanField(default=False)
     is_request = models.BooleanField(default=True)
 
-  #  class Meta:
-   #     unique_together = ('user', 'friend',)
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(fields=['user', 'friend'], name='user_friend_unique')
-        ]
-
-    def clean(self):
-        if self.accepted and self.is_request:
-            raise ValidationError('Friendship cannot be both accepted and still a request.')
-        if not self.accepted and not self.is_request:
-            raise ValidationError('Friendship must be either accepted or a request.')
-
-    def save(self, *args, **kwargs):
-        self.clean()
-        super(Friendship, self).save(*args, **kwargs)
-
     def __str__(self):
         return f'{self.user.username} -> {self.friend.username} (Accepted: {self.accepted})'
 
