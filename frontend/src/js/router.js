@@ -2,7 +2,7 @@ import { loadHome } from './home.js';
 import { loadLogIn, initializeLogIn } from './login.js';
 import { loadRegister, initializeRegister } from './register.js';
 import { loadProfile } from './profile/profile.js';
-import { updateContent, initI18next } from './i18n.js';
+import { updateContent, initI18next, i18next } from './i18n.js';
 import { showAlert } from './index.js';
 
 /* Set navigation bar visibility */
@@ -27,7 +27,6 @@ function navLinkVisibility(state) {
 
 /* Update page content */
 export async function loadContent(content, addHistory = true) {
-  await initI18next;
 
   const contentElement = document.getElementById('content');
 

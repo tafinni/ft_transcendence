@@ -1,3 +1,4 @@
+import { checkUserLanguage } from './i18n.js';
 import { loadContent } from './router.js';
 
 function getCsrfToken() { return document.querySelector('meta[name="csrf-token"]').getAttribute('content'); }
@@ -63,7 +64,7 @@ export function initializeLogIn() {
                 console.log('Login successful:', data); // debugging, testing
 				sessionStorage.setItem("username", username); // added for savin log in
 				localStorage.setItem('username', username); // added, testing
-				//maybe set language	
+				checkUserLanguage();
 				loadContent('home');
 			} 
 			else 

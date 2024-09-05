@@ -2,41 +2,36 @@ import { updateContent } from "../i18n";
 import { loadContent } from "../router";
 
 export async function changePassword() {
-	const response = await fetch('http://localhost:8000/profile/', {
-		method: 'GET',
-		credentials: 'include'
-	});
-	if (!response.ok) { console.error('Failed loading profile:', response.statusText); return `<h1>Error loading profile</h1>`; }
 
 	const passwordHTML = `
-	<div class="container mt-5">
-        <div class="card" style="background-color: white; padding: 20px; border-radius: 10px;">
-
-		<h2>
-			<span translate="change password"></span>
-		</h2>
-		<form id="change-password-form">
-			<div class="form-group">
-				<label for="current_password" translate="current password"></label>
-				<input type="text" id="current_password" class="form-control" required>
+		<div class="container mt-5">
+			<div class="card" style="background-color: white; padding: 20px; border-radius: 10px;">
+				<h2>
+					<span translate="change password"></span>
+				</h2>
+				<form id="change-password-form">
+					<div class="form-group">
+						<label for="current_password" translate="current password"></label>
+						<input type="text" id="current_password" class="form-control" required>
+					</div>
+					<div class="form-group">
+						<label for="new_password" translate="new password"></label>
+						<input type="text" id="new_password" class="form-control" required>
+					</div>
+					<div class="form-group">
+						<label for="confirm_password" translate="type new password again"></label>
+						<input type="text" id="confirm_password" class="form-control" required>
+					</div>
+					<button type="submit" class="btn btn-primary mt-3" translate="save changes"></button>
+					<button type="button" id="cancel-button" class="btn btn-link" translate="cancel"></button>
+				</form>
 			</div>
-			<div class="form-group">
-				<label for="new_password" translate="new password"></label>
-				<input type="text" id="new_password" class="form-control" required>
-			</div>
-			<div class="form-group">
-				<label for="confirm_password" translate="type new password again"></label>
-				<input type="text" id="confirm_password" class="form-control" required>
-			</div>
-			<button type="submit" class="btn btn-primary mt-3" translate="save changes"></button>
-			<button type="button" id="cancel-button" class="btn btn-link" translate="cancel"></button>
-		</form>
 		</div>
-	</div>
 	`;
 
 	const contentElement = document.getElementById('content');
-	if (contentElement) {
+	if (contentElement)
+	{
 		contentElement.innerHTML = passwordHTML;
 		updateContent();
 		savePassword();
