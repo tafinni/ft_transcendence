@@ -15,7 +15,7 @@ export async function loadResult(scoreLeft, scoreRight, oppIsHuman) {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({scoreLeft, scoreRight})
+                body: JSON.stringify({scoreLeft, scoreRight, oppIsHuman})
             });
     }
     if (scoreLeft > scoreRight)

@@ -311,7 +311,7 @@ const tick = () => {
     else
         moveRed();
 
-    if (paddleRed.position.z > 2)
+    if (paddleRed.position.z > 2) //area boundaries
         paddleRed.position.z = 2;
     if (paddleRed.position.z < -2)
         paddleRed.position.z = -2;
@@ -321,7 +321,7 @@ const tick = () => {
     else
         moveBlue();
     
-    if (paddleBlue.position.z > 2)
+    if (paddleBlue.position.z > 2) //area boundaries
         paddleBlue.position.z = 2;
     if (paddleBlue.position.z < -2)
         paddleBlue.position.z = -2;

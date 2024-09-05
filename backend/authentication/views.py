@@ -39,6 +39,8 @@ def login_page(request):
         else:
             login(request, user)
             if hasattr(user, 'userprofile'):
+                if user.userprofile.is_online == True:
+                    return JsonResponse({'error': 'User already logged in'}, status=400)
                 user.userprofile.is_online = True
                 user.userprofile.save()
 
@@ -382,19 +384,23 @@ def add_result(request):
     user_stats = UserStats.objects.get(user=user)
     sLeft = data.get('scoreLeft')
     sRight = data.get('scoreRight')
+    oppStatus = data.get('oppIsHuman')
     if (sLeft > sRight):
         user_stats.wins += 1
-        result = 'WIN'
+        result = 'WIN' + ' ' + str(sLeft) + '-' + str(sRight)
     else:
         user_stats.losses += 1
-        result = 'LOST'
+        result = 'LOST' + ' ' + str(sLeft) + '-' + str(sRight)
     user_stats.save()
 
-    history = MatchHistory.objects.create(
+    if oppStatus == 0:
+        opp = 'AI'
+    else:
+        opp = 'Human'
+    MatchHistory.objects.create(
         user = user,
-        opponent = 'AI',
+        opponent = opp,
         date = datetime.datetime.now(),
         result = result
     )
-    history.save()
     return JsonResponse({'message': 'Result saved successfully'})
