@@ -55,7 +55,8 @@ export async function editInfo() {
     `;
 
 	const contentElement = document.getElementById('content');
-	if (contentElement) {
+	if (contentElement)
+	{
 		contentElement.innerHTML = editInfoHTML;
 		saveInfo();
 		updateContent();
@@ -146,7 +147,8 @@ export async function editAvatar() {
     `;
 
 	const contentElement = document.getElementById('content');
-	if (contentElement) {
+	if (contentElement)
+	{
 		contentElement.innerHTML = editAvatarHTML;
 		updateContent();
 		saveAvatar();
