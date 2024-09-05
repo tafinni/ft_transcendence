@@ -218,7 +218,7 @@ async function matchHistory () {
 	catch (error)
 	{
 		console.error('Error fetching match history:', error);
-		showAlertlert('Error fetching match history. Try Again.', 'danger');
+		showAlert('Error fetching match history. Try Again.', 'danger');
 		loadContent('profile');
 	}
 
