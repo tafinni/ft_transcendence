@@ -384,14 +384,12 @@ def add_result(request):
     sRight = data.get('scoreRight')
     if (sLeft > sRight):
         user_stats.wins += 1
-    else:
-        user_stats.losses += 1
-    user_stats.save()
-
-    if (sLeft > sRight):
         result = 'WIN'
     else:
+        user_stats.losses += 1
         result = 'LOST'
+    user_stats.save()
+
     history = MatchHistory.objects.create(
         user = user,
         opponent = 'AI',
