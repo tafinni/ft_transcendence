@@ -2,10 +2,16 @@ from django.db import models
 from django.contrib.auth.models import User
 
 class UserProfile(models.Model):
+    LANGUAGE_CHOICES = [
+        ('RU', 'Russian'),
+        ('FI', 'Finnish'),
+        ('EN', 'English'),
+    ]
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     display_name = models.CharField(max_length=100, unique=True, blank=True, null=True)
     avatar = models.ImageField(upload_to='avatars/', default='avatars/default.jpg')
-    is_online = models.BooleanField(default=False)  # new field
+    is_online = models.BooleanField(default=False)
+    preferred_language = models.CharField(max_length=2, choices=LANGUAGE_CHOICES, default='EN')
 
     def __str__(self):
         return self.user.username
@@ -34,6 +40,23 @@ class Friendship(models.Model):
     friend = models.ForeignKey(User, related_name='friends', on_delete=models.CASCADE)
     accepted = models.BooleanField(default=False)
     is_request = models.BooleanField(default=True)
+
+  #  class Meta:
+   #     unique_together = ('user', 'friend',)
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['user', 'friend'], name='user_friend_unique')
+        ]
+
+    def clean(self):
+        if self.accepted and self.is_request:
+            raise ValidationError('Friendship cannot be both accepted and still a request.')
+        if not self.accepted and not self.is_request:
+            raise ValidationError('Friendship must be either accepted or a request.')
+
+    def save(self, *args, **kwargs):
+        self.clean()
+        super(Friendship, self).save(*args, **kwargs)
 
     def __str__(self):
         return f'{self.user.username} -> {self.friend.username} (Accepted: {self.accepted})'

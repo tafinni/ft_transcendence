@@ -1,35 +1,31 @@
 import { loadHome } from './home.js';
-import { loadStats } from './stats.js';
 import { loadLogIn, initializeLogIn } from './login.js';
 import { loadRegister, initializeRegister } from './register.js';
 import { loadProfile } from './profile/profile.js';
 import { updateContent, initI18next } from './i18n.js';
 import { loadGame } from './game.js';
 import { loadResult } from './result.js';
+import { showAlert } from './index.js';
 
 /* Set navigation bar visibility */
 function navLinkVisibility(state) {
 	const homeLink = document.getElementById('home-link');
 	const profileLink = document.getElementById('profile-link');
-	const statsLink = document.getElementById('stats-link');
 	const loginLink = document.getElementById('login-link');
 	
 	if (state == 1) {
 		homeLink.style.display = 'block';
 		profileLink.style.display = 'block';
-		statsLink.style.display = 'block';
 		loginLink.style.display = 'block';
 	}
 	else if (state == 2) {
 		homeLink.style.display ='block';
 		profileLink.style.display ='none';
-		statsLink.style.display ='none';
 		loginLink.style.display ='none';
 	}
 	else {
 		homeLink.style.display ='none';
 		profileLink.style.display ='none';
-		statsLink.style.display ='none';
 		loginLink.style.display ='none';
 	}
 }
@@ -58,9 +54,6 @@ export async function loadContent(content, scoreLeft, scoreRight, oppIsHuman, ad
 		case 'home':
 			contentElement.innerHTML = await loadHome();
 			navLinkVisibility(1);
-			break ;
-		case 'stats':
-			contentElement.innerHTML = await loadStats();
 			break ;
 		case 'login':
 			contentElement.innerHTML = loadLogIn();
@@ -98,11 +91,6 @@ export async function loadContent(content, scoreLeft, scoreRight, oppIsHuman, ad
 document.getElementById('home-link').addEventListener('click', (event) => {
   event.preventDefault();
   loadContent('home');
-});
-
-document.getElementById('stats-link').addEventListener('click', (event) => {
-  event.preventDefault();
-  loadContent('stats');
 });
 
 document.getElementById('login-link').addEventListener('click', (event) => {

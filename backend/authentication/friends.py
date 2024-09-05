@@ -10,8 +10,8 @@ from django.conf import settings
 from . import views
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
+from django.db.models import Q
 
-import datetime
 # Create your views here.  
 #curl -v -X POST -F username=jon
  #-F password=jon http://localhost:8000/login/
@@ -39,8 +39,6 @@ def login_page(request):
         else:
             login(request, user)
             if hasattr(user, 'userprofile'):
-                if user.userprofile.is_online == True:
-                    return JsonResponse({'error': 'User already logged in'}, status=400)
                 user.userprofile.is_online = True
                 user.userprofile.save()
 
@@ -102,7 +100,7 @@ def logout_page(request):
         user = request.user
         if user.is_authenticated and hasattr(user, 'userprofile'):
             user.userprofile.is_online = False 
-            user.userprofile.save()
+            user.userprofile.save() 
         logout(request)
         return JsonResponse({'message': 'Logout successful'})
 
@@ -134,8 +132,8 @@ def update_profile(request):
         if last_name:
             user.last_name = last_name
         if display_name:
-          #  if UserProfile.objects.filter(display_name=display_name).exclude(user=user).exists():
-            #    return JsonResponse({'error': 'Display name already taken'}, status=400)
+            if UserProfile.objects.filter(display_name=display_name).exclude(user=user).exists():
+                return JsonResponse({'error': 'Display name already taken'}, status=400)
             user_profile.display_name = display_name
         if avatar:
             # Implement size and type checks for avatar
@@ -230,7 +228,6 @@ def profile(request):
     requests = [
         {
             'username': request.user.username,
-        #    'display_name': request.user.userprofile.display_name, #?
         } for request in friend_requests
     ]
 
@@ -281,6 +278,14 @@ def add_friend(request):
 
         if friend == request.user:
             return JsonResponse({'error': 'You cannot add yourself as a friend'}, status=400)
+
+        existing_friendship = Friendship.objects.filter(
+            (Q(user=request.user, friend=friend) | Q(user=friend, friend=request.user)),
+            accepted=False
+        ).first() #?
+
+        if existing_friendship:
+            return JsonResponse({'error': 'Friend request already sent or pending'}, status=400)
 
         friendship, created = Friendship.objects.get_or_create(user=request.user, friend=friend)
         if not created:
@@ -375,32 +380,3 @@ def decline_friend_request(request):
             return JsonResponse({'error': 'Friend request does not exist or already processed'}, status=404)
 
     return JsonResponse({'error': 'Invalid request method'}, status=405)
-
-@login_required
-@csrf_exempt
-def add_result(request):
-    data = json.loads(request.body)
-    user = request.user
-    user_stats = UserStats.objects.get(user=user)
-    sLeft = data.get('scoreLeft')
-    sRight = data.get('scoreRight')
-    oppStatus = data.get('oppIsHuman')
-    if (sLeft > sRight):
-        user_stats.wins += 1
-        result = 'WIN' + ' ' + str(sLeft) + '-' + str(sRight)
-    else:
-        user_stats.losses += 1
-        result = 'LOST' + ' ' + str(sLeft) + '-' + str(sRight)
-    user_stats.save()
-
-    if oppStatus == 0:
-        opp = 'AI'
-    else:
-        opp = 'Human'
-    MatchHistory.objects.create(
-        user = user,
-        opponent = opp,
-        date = datetime.datetime.now(),
-        result = result
-    )
-    return JsonResponse({'message': 'Result saved successfully'})

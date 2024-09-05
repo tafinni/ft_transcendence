@@ -1,6 +1,8 @@
 
 import { updateContent } from "../i18n.js";
 import { loadContent } from "../router.js";
+import { checkUserLanguage } from "../i18n.js";
+import { showAlert } from "../index.js";
 
 export async function editInfo() {
 
@@ -37,6 +39,14 @@ export async function editInfo() {
         				<label for="username" translate="username"></label>
         				<input type="text" id="username" name="username" class="form-control" value="${userData.username}" readonly>
     				</div>
+					<div class="form-group">
+					    <label for="preferred_language" translate="preferred language"></label>
+					    <select id="preferred_language" name="preferred_language" class="form-control">
+							<option value="EN" ${userData.language === 'en' ? 'selected' : ''} translate="english"></option>
+							<option value="FI" ${userData.language === 'fi' ? 'selected' : ''} translate="finnish"></option>
+							<option value="RU" ${userData.language === 'ru' ? 'selected' : ''} translate="russian"></option>
+					    </select>
+  					</div>
 					<button type="submit" class="btn btn-primary mt-3" translate="save changes"></button>
 					<button type="button" id="cancel-button" class="btn btn-link" translate="cancel"></button>
 				</form>
@@ -45,7 +55,8 @@ export async function editInfo() {
     `;
 
 	const contentElement = document.getElementById('content');
-	if (contentElement) {
+	if (contentElement)
+	{
 		contentElement.innerHTML = editInfoHTML;
 		saveInfo();
 		updateContent();
@@ -58,16 +69,15 @@ export async function editInfo() {
 
 export async function saveInfo() {
 
-	const response = await fetch('http://localhost:8000/profile/', {
-		method: 'GET',
-		credentials: 'include'
-	});
-	if (!response.ok) { console.error('Failed loading profile:', response.statusText); return `<h1>Error loading profile</h1>`; }
-
     console.log('saveInfo called'); // Debugging
 
     const editInfoForm = document.getElementById('edit-info-form');
-    if (!editInfoForm) { console.error('Edit form not found'); return;}
+    if (!editInfoForm)
+	{
+		console.error('Edit form not found');
+		showAlert('Error occured. Try again', 'danger');
+		return ;
+	}
 
 	const cancelButton = document.getElementById('cancel-button');
 	const errorMessage = document.getElementById('error-message');
@@ -89,8 +99,9 @@ export async function saveInfo() {
             if (response.ok)
             {
                 const data = await response.json();
-                console.log('Edit info successful'); // Debugging
-                alert(data.message);
+                console.log('Edit info successful');
+                showAlert(data.message, 'success');
+				await checkUserLanguage()
                 loadContent('profile');
             }
             else
@@ -104,6 +115,7 @@ export async function saveInfo() {
         catch (error)
         {
             console.error('Error during edit info', error);
+			showAlert('Error editin user info. Try again.', 'danger');
         }
     });
 
@@ -114,13 +126,6 @@ export async function saveInfo() {
 }
 
 export async function editAvatar() {
-	const response = await fetch('http://localhost:8000/profile/', {
-		method: 'GET',
-		credentials: 'include'
-	});
-	if (!response.ok) { console.error('Failed loading profile:', response.statusText); return `<h1>Error loading profile</h1>`; }
-
-	const userData = await response.json();
 
 	const editAvatarHTML = `
        <div class="container mt-5">
@@ -128,6 +133,7 @@ export async function editAvatar() {
 				<h5>
 					<span translate="change avatar"></span>
 				</h5>
+				<div id="error-message" class="text-danger mb-3" styl2="display: none;"></div>
 				<form id="edit-avatar-form" enctype="multipart/form-data">
 					<div class="form-group">
 						<label for="avatar"></label>
@@ -141,7 +147,8 @@ export async function editAvatar() {
     `;
 
 	const contentElement = document.getElementById('content');
-	if (contentElement) {
+	if (contentElement)
+	{
 		contentElement.innerHTML = editAvatarHTML;
 		updateContent();
 		saveAvatar();
@@ -153,18 +160,18 @@ export async function editAvatar() {
 }
 
 async function saveAvatar() {
-	const response = await fetch('http://localhost:8000/profile/', {
-		method: 'GET',
-		credentials: 'include'
-	});
-	if (!response.ok) { console.error('Failed loading profile:', response.statusText); return `<h1>Error loading profile</h1>`; }
-
     console.log('saveInfo called'); // Debugging
 
     const editAvatarForm = document.getElementById('edit-avatar-form');
-    if (!editAvatarForm) { console.error('Edit form not found'); return;}
+    if (!editAvatarForm)
+	{
+		console.error('Edit Avatar form not found');
+		showAlert('Error occured. Try again.', 'danger');
+		return ;
+	}
 
    const cancelButton = document.getElementById('cancel-button');
+   const errorMessage = document.getElementById('error-message');
 
     editAvatarForm.addEventListener('submit', async (event) => {
         event.preventDefault();
@@ -183,24 +190,27 @@ async function saveAvatar() {
             if (response.ok)
             {
                 const data = await response.json();
-                console.log('Edit info successful'); // Debugging
-                alert(data.message);
+                console.log('Edit avatar successful'); // Debugging
+                showAlert(data.message, 'success');
                 loadContent('profile');
             }
             else
             {
                 const errorData = await response.json();
-                console.error('Edit info failed', errorData);
+                console.error('Edit avatar failed', errorData);
+				errorMessage.textContent = errorData.error;
+				errorMessage.style.display = 'block';
             }
         }
         catch (error)
         {
-            console.error('Error during edit info', error);
+            console.error('Error during edit avatar', error);
+			showAlert('Error during edit avatar. Try Again');
         }
     });
 
 	cancelButton.addEventListener('click', () => {
-		console.log('Cancelled edit info'); // Debugging
+		console.log('Cancelled edit info');
 		loadContent('profile');
 	});
 }

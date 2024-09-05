@@ -1,6 +1,7 @@
-import { updateContent } from "../i18n.js";
-import { loadContent } from "../router.js";
+import { updateContent } from "../i18n";
+import { loadContent } from "../router";
 import { showAlert } from "../index.js";
+import { loadPublicProfile } from "./publicProfile.js";
 
 
 export async function displayFriends() {
@@ -45,9 +46,11 @@ export async function displayFriends() {
 			onlineStatus.style.color = 'red';
 		}
 
-		const friendName = document.createElement('span');
-		friendName.className = 'friend-name';
-		friendName.textContent = friend.username;
+		const friendNameButton = document.createElement('button');
+		friendNameButton.className = 'btn btn-link';
+		friendNameButton.style.transform = 'scale(1.3)';
+		friendNameButton.textContent = friend.username;
+		friendNameButton.onclick = () => loadPublicProfile(friend.username);
 
         const removeFriendButton = document.createElement('button');
         removeFriendButton.className = 'btn btn-link btn-sm';
@@ -59,7 +62,7 @@ export async function displayFriends() {
         removeFriendButton.onclick = () => removeFriend(friend.username);
 
 		friendItem.appendChild(onlineStatus);
-		friendItem.appendChild(friendName);
+		friendItem.appendChild(friendNameButton);
 		friendItem.appendChild(removeFriendButton);
 
 		friendsListContainer.appendChild(friendItem);
