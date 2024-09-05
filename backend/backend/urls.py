@@ -38,6 +38,7 @@ urlpatterns = [
     path('public_profile/', profile_views.public_profile, name='public_profile'),
 
     path('match_history/', match_views.match_history, name='match_history'),
+    path('add_result/', match_views.add_result, name='add_result'),
 
     path('add_friend/', friends_views.add_friend, name='add_friend'),
     path('remove_friend/', friends_views.remove_friend, name='remove_friend'),
