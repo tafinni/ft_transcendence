@@ -153,6 +153,7 @@ async function acceptFriend(request_user_username) {
 		console.error('Error during adding friend', error);
 		showAlert('Error occured when adding friend. Try again.', 'danger');
 	}
+	sessionStorage.setItem('timeoutTimer', Date.now());
 }
 
 async function declineFriend(request_user_username) {
@@ -186,6 +187,7 @@ async function declineFriend(request_user_username) {
 		console.error('Error during adding friend', error);
 		showAlert('Error occured when adding friend. Try again.', 'danger');
 	}
+	sessionStorage.setItem('timeoutTimer', Date.now());
 }
 
 
@@ -223,6 +225,7 @@ export async function addFriend() {
 	{
 		console.error('Content element not found');
 	}
+	sessionStorage.setItem('timeoutTimer', Date.now());
 }
 
 
@@ -284,6 +287,7 @@ async function saveFriend() {
 		console.log('Cancelled add friend'); // Debugging
 		loadContent('profile');
 	});
+	sessionStorage.setItem('timeoutTimer', Date.now());
 }
 
 async function removeFriend(friend_username) {
@@ -317,5 +321,6 @@ async function removeFriend(friend_username) {
 		console.error('Error during removing friend', error);
 		alert('Error occured when removing friend. Try again.');
 	}
+	sessionStorage.setItem('timeoutTimer', Date.now());
 }
 

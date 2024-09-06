@@ -272,6 +272,7 @@ export async function buttonListener () {
 			matchHistory();
 	});
 	}
+	sessionStorage.setItem('timeoutTimer', Date.now());
 
 }
 

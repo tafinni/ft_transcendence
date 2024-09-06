@@ -377,11 +377,13 @@ const tick = () => {
     else {
         if (dataSent === 0){
             console.log("Opp is human =", Boolean(oppIsHuman));
-            if (prematureEnding == 0)
+            if (prematureEnding == 0 && blueIsAi == 0)
                 loadContent('result', goalsBlue, goalsRed, oppIsHuman);
         }
         dataSent = 1;
     };
+    if (blueIsAi == 0)
+	    sessionStorage.setItem('timeoutTimer', Date.now());
 }
 
 document.addEventListener('keydown', (e) => {

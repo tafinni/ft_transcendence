@@ -104,4 +104,5 @@ export async function savePassword() {
 		console.log('Cancelled change password'); // Debugging
 		loadContent('profile');
 	});
+	sessionStorage.setItem('timeoutTimer', Date.now());
 }
