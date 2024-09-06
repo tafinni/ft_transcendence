@@ -20,7 +20,7 @@ export async function displayFriends() {
 	friendsListContainer.innerHTML = ''; // Clear existing content
 
 	friends.forEach((friend, index) => {
-		const colors = ['#f0f0f0', '#fffff'];
+		const colors = ['#f0f0f0', '#ffffff'];
 
 
 		const friendItem = document.createElement('div');

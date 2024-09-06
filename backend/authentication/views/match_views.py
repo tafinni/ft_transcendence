@@ -36,9 +36,11 @@ def add_result(request):
     if (sLeft > sRight):
         user_stats.wins += 1
         result = 'WIN' + ' ' + str(sLeft) + '-' + str(sRight)
-    else:
+    elif (sRight > sLeft):
         user_stats.losses += 1
         result = 'LOST' + ' ' + str(sLeft) + '-' + str(sRight)
+    else:
+        result = 'DRAW' + ' ' + str(sLeft) + '-' + str(sRight)
     user_stats.save()
 
     if oppStatus == 0:

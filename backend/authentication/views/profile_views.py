@@ -158,7 +158,7 @@ def profile(request):
     }
     return JsonResponse(data)
 
-
+# duplicate?
 @login_required
 def match_history(request):
     user = request.user

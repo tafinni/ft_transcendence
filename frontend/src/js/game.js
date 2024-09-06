@@ -1,4 +1,22 @@
 import { loadContent } from './router.js';
+import * as THREE from 'three'
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
+import { updateContent } from './i18n.js';
+
+export async function endGame() {
+    gameRunning = 0; //ends the game, if score 0-0, result not sent
+    prematureEnding = 1;
+}
+
+export async function startGame() {
+    const startButton = document.getElementById('start-button');
+    startButton.addEventListener('click', (event) => {
+    event.preventDefault();
+    startButton.remove();
+    tick();
+    });
+}
+
 
 export async function loadGame(oppStatus) {
     goalsBlue = 0;
@@ -15,11 +33,28 @@ export async function loadGame(oppStatus) {
     paddleBlue.position.z = 0;
     paddleRed.position.z = 0;
     dataSent = 0;
-    tick();
+    prematureEnding = 0;
+    if (oppStatus == 0)
+    {
+        return`
+        <button type="button" id="start-button" class="btn btn-link" translate="start"></button>
+        <p>Player (blue) uses keys W and S</p>
+        `;
+    }
+    else
+    {
+        return`
+        <button type="button" id="start-button" class="btn btn-link" translate="start"></button>
+        <p>Blue player uses keys W and S</p>
+        <p>Red player uses Arrowkeys up and down</p>
+        `;
+
+    }
 }
 
 // blue is left
 // red is right
+let prematureEnding = 0;
 var gameRunning = true;
 var goalsNeeded = 2;
 
@@ -35,10 +70,7 @@ let areaSize = 4;
 let oppIsHuman = 0;
 
 //import './style.css'
-import * as THREE from 'three'
 //import * as THREE from "../node_modules/three/build/three.module.js"
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
-import { updateContent } from './i18n.js';
 //import GUI from 'lil-gui'
 
 /**
@@ -344,9 +376,9 @@ const tick = () => {
         window.requestAnimationFrame(tick)
     else {
         if (dataSent === 0){
-
-            console.log("Opp is human =", oppIsHuman);
-            loadContent('result', goalsBlue, goalsRed, oppIsHuman);
+            console.log("Opp is human =", Boolean(oppIsHuman));
+            if (prematureEnding == 0)
+                loadContent('result', goalsBlue, goalsRed, oppIsHuman);
         }
         dataSent = 1;
     };
