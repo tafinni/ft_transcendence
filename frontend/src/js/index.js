@@ -5,7 +5,6 @@ import { loadContent } from './router.js';
 async function initApp() {
 	try 
 	{
-		await i18next;
 		await initI18next;
 
 		const path = window.location.pathname.replace('/', '');

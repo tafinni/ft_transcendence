@@ -186,13 +186,16 @@ async function matchHistory () {
 										</tr>
 									</thead>
 									<tbody>
-										${matches.map(matchData => `
+									${matches.map(matchData => {
+										const localDate = new Date(matchData.date).toLocaleString(); 
+										return `
 											<tr>
-												<td>${matchData.date}</td>
+												<td>${localDate}</td>
 												<td>${matchData.opponent}</td>
 												<td>${matchData.result}</td>
 											</tr>
-										`).join('')}
+											`;
+										}).join('')}
 									</tbody>
 								</table>
 								<button type="button" id="back-button" class="btn btn-primary" translate="back"></button>
@@ -218,7 +221,7 @@ async function matchHistory () {
 	catch (error)
 	{
 		console.error('Error fetching match history:', error);
-		showAlertlert('Error fetching match history. Try Again.', 'danger');
+		showAlert('Error fetching match history. Try Again.', 'danger');
 		loadContent('profile');
 	}
 

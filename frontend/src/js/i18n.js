@@ -20,7 +20,7 @@ export function updateContent() {
     document.getElementById('home-link').innerText = i18next.t('home');
     document.getElementById('profile-link').innerText = i18next.t('profile');
     document.getElementById('login-link').innerText = i18next.t('login');
-    document.getElementById('languageDropdown').innerText = i18next.t('languageDropdown');
+		 document.getElementById('languageDropdown').innerText = i18next.t('languageDropdown');
   
     document.querySelectorAll('[translate]').forEach(element => {
       const key = element.getAttribute('translate');
@@ -73,3 +73,17 @@ export async function checkUserLanguage() {
 
 /* Make setLanguage available */
 window.setLanguage = setLanguage;
+
+i18next
+  .use(i18nextHttpBackend)
+  .init({
+    lng: localStorage.getItem('language') || 'en', // Default language
+    backend: {
+      loadPath: 'http://localhost:3000/languages/{{lng}}.json'
+    },
+    fallbackLng: 'en',
+    debug: true
+  }, function(err, t) {
+    if (err) return console.error(err);
+    updateContent();
+  });

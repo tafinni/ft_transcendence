@@ -25,7 +25,7 @@ def match_history(request):
     return JsonResponse({'matches': match_list})
 
 @login_required
-@csrf_exempt
+#@csrf_exempt
 def add_result(request):
     data = json.loads(request.body)
     user = request.user

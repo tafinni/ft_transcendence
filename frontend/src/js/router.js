@@ -2,7 +2,9 @@ import { loadHome } from './home.js';
 import { loadLogIn, initializeLogIn } from './login.js';
 import { loadRegister, initializeRegister } from './register.js';
 import { loadProfile } from './profile/profile.js';
-import { updateContent, initI18next, i18next } from './i18n.js';
+import { updateContent, initI18next } from './i18n.js';
+import { loadGame } from './game.js';
+import { loadResult } from './result.js';
 import { showAlert } from './index.js';
 
 /* Set navigation bar visibility */
@@ -10,24 +12,27 @@ function navLinkVisibility(state) {
 	const homeLink = document.getElementById('home-link');
 	const profileLink = document.getElementById('profile-link');
 	const loginLink = document.getElementById('login-link');
-
-	if (state)
-	{
+	
+	if (state == 1) {
 		homeLink.style.display = 'block';
 		profileLink.style.display = 'block';
 		loginLink.style.display = 'block';
 	}
-	else 
-	{
-		homeLink.style.display = 'none';
-		profileLink.style.display = 'none';
-		loginLink.style.display = 'none';
-  	}
+	else if (state == 2) {
+		homeLink.style.display ='block';
+		profileLink.style.display ='none';
+		loginLink.style.display ='none';
+	}
+	else {
+		homeLink.style.display ='none';
+		profileLink.style.display ='none';
+		loginLink.style.display ='none';
+	}
 }
 
 /* Update page content */
-export async function loadContent(content, addHistory = true) {
-
+export async function loadContent(content, scoreLeft, scoreRight, oppIsHuman, addHistory = true) {
+  await initI18next;
   const contentElement = document.getElementById('content');
 
 	if (!localStorage.getItem("username") && !sessionStorage.getItem("username") && content !== 'login' && content !== 'register')
@@ -48,24 +53,36 @@ export async function loadContent(content, addHistory = true) {
 	{
 		case 'home':
 			contentElement.innerHTML = await loadHome();
-			navLinkVisibility(true);
+			navLinkVisibility(1);
 			break ;
 		case 'login':
 			contentElement.innerHTML = loadLogIn();
 			initializeLogIn();
-			navLinkVisibility(false);
+			navLinkVisibility(0);
 			break ;
 		case 'register':
 			contentElement.innerHTML = loadRegister();
 			initializeRegister();
-			navLinkVisibility(false);
+			navLinkVisibility(0);
 			break ;
 		case 'profile':
 			loadProfile();
 			break ;
+		case 'single':
+			contentElement.innerHTML = await loadGame(0);
+			navLinkVisibility(2);
+			break;
+		case 'localMulti':
+			contentElement.innerHTML = await loadGame(1);
+			navLinkVisibility(2);
+			break;
+		case 'result':
+			contentElement.innerHTML = await loadResult(scoreLeft, scoreRight, oppIsHuman);
+			navLinkVisibility(1);
+			break;
 		default:
 			loadContent('home');
-			break ;
+			return ;
 	}
   updateContent();
 }
@@ -89,11 +106,10 @@ document.getElementById('profile-link').addEventListener('click', (event) => {
   loadContent('profile');
 });
 
-document.getElementById('languageDropdown').addEventListener('click', (event) => {
-  setLanguage(event.target.value);
+document.getElementById('languageDropdown').addEventListener('change', (event) => {
+  setLanguage(e.target.value);
   event.preventDefault(); 
 });
-
 
 async function completeLogOut() {
 	try

@@ -36,18 +36,6 @@
 	"remove friend": "Удалить друга",
 
 	"wins": "Победы",
-	"losses": "Поражения",
-
-	"requests": "Запросы",
-	"date": "Дата",
-	"opponent": "Противник",
-	"result": "Результат",
-
-	"preferred language": "Предпочитаемый язык",
-	"english": "Английский",
-	"finnish": "Финский",
-	"russian": "Русский",
-	"language": "Язык"
-
+	"losses": "Поражения"
 
 }

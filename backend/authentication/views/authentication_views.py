@@ -38,6 +38,8 @@ def login_page(request):
         else:
             login(request, user)
             if hasattr(user, 'userprofile'):
+              #  if user.userprofile.is_online == True:
+                #    return JsonResponse({'error': 'User already logged in'}, status=400)
                 user.userprofile.is_online = True
                 user.userprofile.save()
 
