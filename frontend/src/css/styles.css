@@ -32,6 +32,10 @@ canvas {
     float: right;
 }
 
+.float-right {
+    float: left;
+}
+
 .start-game-buttons {
     position: absolute;
     top: 25%;
@@ -42,5 +46,4 @@ canvas {
     width: 250px;
     z-index: 1000;
 }
-
 

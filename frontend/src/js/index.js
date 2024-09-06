@@ -49,4 +49,3 @@ export function showAlert(message, type) {
         $(alertDiv).alert('close');
     }, 5000); // Change 3000 to the number of milliseconds you want
 }
-

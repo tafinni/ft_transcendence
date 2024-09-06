@@ -29,7 +29,6 @@ export function loadLogIn() {
 	`;
 }
 
-
 export function initializeLogIn() {
 
 	console.log('initializeLogIn called'); // Debugging

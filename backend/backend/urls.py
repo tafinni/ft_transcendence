@@ -13,9 +13,10 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from authentication.views import *
-#from authentication.views import login_page, register_page, home, logout_page, update_profile
-#from  authentication.views import match_history
+from authentication.views import authentication_views
+from authentication.views import friends_views
+from authentication.views import profile_views
+from authentication.views import match_views
 from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
@@ -24,20 +25,26 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.views.generic import RedirectView
 
 urlpatterns = [
-    path('home/', home, name='home'),
+    path('home/', authentication_views.home, name='home'),
     path('admin/', admin.site.urls),
-    path('register/', register_page, name='register'),
-    path('login/', login_page, name='login'),
-    path('logout/', logout_page, name='logout'),
-    path('update_profile/', update_profile, name='update_profile'),
-    path('profile/', profile, name='profile'),
-    path('match_history/', views.match_history, name='match_history'),
-    path('change_password/', views.change_password, name='change_password'),
-    path('public_profile/', views.public_profile, name='public_profile'),
-    path('add_friend/', views.add_friend, name='add_friend'),
-    path('remove_friend/', views.remove_friend, name='remove_friend'),
-    path('accept_friend_request/', views.accept_friend_request, name='accept_friend_request'),
-    path('decline_friend_request/', views.decline_friend_request, name='decline_friend_request'),
+
+    path('register/', authentication_views.register_page, name='register'),
+    path('login/', authentication_views.login_page, name='login'),
+    path('logout/', authentication_views.logout_page, name='logout'),
+
+    path('update_profile/', profile_views.update_profile, name='update_profile'),
+    path('profile/', profile_views.profile, name='profile'),
+    path('change_password/', profile_views.change_password, name='change_password'),
+    path('public_profile/', profile_views.public_profile, name='public_profile'),
+
+    path('match_history/', match_views.match_history, name='match_history'),
+    path('public_match_history/', match_views.public_match_history, name='public_match_history'),
+    path('add_result/', match_views.add_result, name='add_result'),
+
+    path('add_friend/', friends_views.add_friend, name='add_friend'),
+    path('remove_friend/', friends_views.remove_friend, name='remove_friend'),
+    path('accept_friend_request/', friends_views.accept_friend_request, name='accept_friend_request'),
+    path('decline_friend_request/', friends_views.decline_friend_request, name='decline_friend_request'),
 ]
 
 if settings.DEBUG:

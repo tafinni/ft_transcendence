@@ -1,6 +1,8 @@
 FROM node:20-alpine
 WORKDIR /app
 COPY . .
-#RUN npm install
-#CMD ["npm", "run", "dev"]
-CMD ["tail", "-f", "/dev/null"]
+RUN npm install
+RUN npm install -g nodemon
+CMD ["npm", "run", "dev"]
+#CMD ["tail", "-f", "/dev/null"]
+

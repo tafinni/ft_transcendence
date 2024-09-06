@@ -205,7 +205,7 @@ async function saveAvatar() {
         catch (error)
         {
             console.error('Error during edit avatar', error);
-			showAlert('Error during edit avatar. Try Again');
+			showAlert('Error during edit avatar. Try Again', 'danger');
         }
     });
 

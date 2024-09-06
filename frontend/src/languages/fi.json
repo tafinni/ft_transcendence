@@ -48,5 +48,7 @@
 	"english": "Englanti",
 	"finnish": "Suomi",
 	"russian": "Venäjä",
-	"language": "Kieli"
+	"language": "Kieli",
+
+	"win %": "Voitto %"
 }

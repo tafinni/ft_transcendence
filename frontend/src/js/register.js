@@ -1,3 +1,4 @@
+import { showAlert } from './index.js';
 import { loadContent } from './router.js';
 
 export function loadRegister() {
@@ -36,7 +37,12 @@ export function initializeRegister() {
 	console.log('initializeRegister called'); // Debugging
 
 	const registerForm = document.getElementById('register-form');
-	if (!registerForm) { console.error('Register form not found'); return; }
+	if (!registerForm)
+	{
+		console.error('Register form not found');
+		showAlert('Error getting registeration form. Try Again.', 'danger');
+		return ;
+	}
 
 	const errorMessage = document.getElementById('error-message');
 	const cancelButton = document.getElementById('cancel-button');
@@ -64,7 +70,7 @@ export function initializeRegister() {
 			{
 				const data = await response.json();
 				console.log('Registration successful:', data); // debugging, testing
-				alert(data.message);
+				showAlert(data.message, 'success');
 				loadContent('login');
 			}
 			else
