@@ -35,9 +35,17 @@ const right = new THREE.Mesh(
     new THREE.BoxGeometry(0.2, 0.2, 0.7),
     new THREE.MeshBasicMaterial()
 )
+right.name = "right"
 right.material.color = new THREE.Color('purple')
 right.position.set(2.1, -0.1, 0)
 t.scene.add(right)
+const top = new THREE.Mesh(
+    new THREE.BoxGeometry(4, 0.2, 0.2),
+    new THREE.MeshBasicMaterial()
+)
+top.material.color = new THREE.Color('darkblue')
+top.position.set(0, -0.1, 2.1)
+t.scene.add(top)
 
 // cube.position.x = -1
 // let movecube = gsap.to(cube.position, { x: 1, duration: 1, paused: true, overwrite: true })
