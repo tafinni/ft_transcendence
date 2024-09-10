@@ -22,7 +22,7 @@ export function getAspect() { return sizes.width / sizes.height }
 export const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
 
 const d = 2.5
-export const gcamera = new THREE.OrthographicCamera(-d * getAspect(), d * getAspect(), -d, d, 1, 1000)
+export const gcamera = new THREE.OrthographicCamera(-d * getAspect(), d * getAspect(), d, -d, 1, 1000)
 export const controls = new OrbitControls(gcamera, canvas)
 controls.enableDamping = true
 
