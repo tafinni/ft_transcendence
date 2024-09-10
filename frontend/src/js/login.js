@@ -1,7 +1,26 @@
 import { checkUserLanguage } from './i18n.js';
 import { loadContent } from './router.js';
+import { getCookie } from './csrf.js';
 
-function getCsrfToken() { return document.querySelector('meta[name="csrf-token"]').getAttribute('content'); }
+//function getCsrfToken() { return document.querySelector('meta[name="csrf-token"]').getAttribute('content'); }
+
+// function getCookie(name) {
+//     let cookieValue = null;
+//     if (document.cookie && document.cookie !== '') {
+//         const cookies = document.cookie.split(';');
+//         for (let i = 0; i < cookies.length; i++) {
+//             const cookie = cookies[i].trim();
+//             // Does this cookie string begin with the name we want?
+//             if (cookie.substring(0, name.length + 1) === (name + '=')) {
+//                 cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+//                 break;
+//             }
+//         }
+//     }
+//     return cookieValue;
+// }
+
+
 
 export function loadLogIn() {
 	return `
@@ -40,7 +59,8 @@ export function initializeLogIn() {
 	const errorMessage = document.getElementById('error-message');
     const registerButton = document.getElementById('register-button');
 
-	const csrfToken = getCsrfToken();
+	//const csrfToken = getCsrfToken();
+	const csrftoken = getCookie('csrftoken');
 
     loginForm.addEventListener('submit', async (event) => {
 		event.preventDefault();
@@ -53,7 +73,7 @@ export function initializeLogIn() {
             const response = await fetch('http://localhost:8000/login/',
 			{
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken },
+                headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrftoken },
 				credentials: 'include',
                 body: JSON.stringify({ username, password })
             });

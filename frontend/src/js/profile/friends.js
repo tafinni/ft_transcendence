@@ -2,7 +2,7 @@ import { updateContent } from "../i18n";
 import { loadContent } from "../router";
 import { showAlert } from "../index.js";
 import { loadPublicProfile } from "./publicProfile.js";
-
+import { getCookie } from '../csrf.js';
 
 export async function displayFriends() {
 	const response = await fetch('http://localhost:8000/profile/', {
@@ -123,13 +123,15 @@ export async function displayFriendRequests() {
 }
 
 async function acceptFriend(request_user_username) {
+
 	try
 	{
+		const csrftoken = getCookie('csrftoken');
 		const response = await fetch('http://localhost:8000/accept_friend_request/',
 		{
 			method: 'POST',
 			credentials: 'include',
-			headers: { 'Content-Type' : 'application/json' },
+			headers: { 'Content-Type' : 'application/json', 'X-CSRFToken': csrftoken },
 			body: JSON.stringify({ request_user_username })
 		});
 
@@ -158,11 +160,12 @@ async function acceptFriend(request_user_username) {
 async function declineFriend(request_user_username) {
 	try
 	{
+		const csrftoken = getCookie('csrftoken');
 		const response = await fetch('http://localhost:8000/decline_friend_request/',
 		{
 			method: 'POST',
 			credentials: 'include',
-			headers: { 'Content-Type' : 'application/json' },
+			headers: { 'Content-Type' : 'application/json', 'X-CSRFToken': csrftoken  },
 			body: JSON.stringify({ request_user_username })
 		});
 
@@ -250,11 +253,12 @@ async function saveFriend() {
 
 		try
 		{
+			const csrftoken = getCookie('csrftoken');
 			const response = await fetch('http://localhost:8000/add_friend/',
 				{
 					method: 'POST',
 					credentials: 'include',
-					headers: { 'Content-Type' : 'application/json' },
+					headers: { 'Content-Type' : 'application/json', 'X-CSRFToken': csrftoken  },
 					body: JSON.stringify({ friend_username })
 				});
 
@@ -289,11 +293,12 @@ async function saveFriend() {
 async function removeFriend(friend_username) {
 	try
 	{
+		const csrftoken = getCookie('csrftoken');
 		const response = await fetch('http://localhost:8000/remove_friend/',
 		{
 			method: 'POST',
 			credentials: 'include',
-			headers: { 'Content-Type' : 'application/json' },
+			headers: { 'Content-Type' : 'application/json', 'X-CSRFToken': csrftoken  },
 			body: JSON.stringify({ friend_username })
 		});
 

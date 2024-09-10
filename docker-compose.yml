@@ -5,9 +5,9 @@ services:
     image: postgres:latest
     container_name: postgres
     environment:
-      POSTGRES_DB: pong_project
-      POSTGRES_USER: your_user
-      POSTGRES_PASSWORD: your_password
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - postgres_data_new:/var/lib/postgresql/data
     ports:
@@ -32,10 +32,10 @@ services:
       - ./backend:/backend
       - ./media:/app/media 
     environment:
-      - DATABASE_HOST=db
-      - DATABASE_NAME=pong_project
-      - DATABASE_USER=your_user
-      - DATABASE_PASSWORD=your_password
+      - DATABASE_HOST=${DATABASE_HOST}
+      - DATABASE_NAME=${DATABASE_NAME}
+      - DATABASE_USER=${DATABASE_USER}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
 
   frontend:
     image: frontend
@@ -52,7 +52,7 @@ services:
     ports:
       - "3000:3000"
     environment:
-      REACT_APP_BACKEND_URL: http://backend:8000
+      REACT_APP_BACKEND_URL: ${REACT_APP_BACKEND_URL}
 
 networks:
   t_intra:

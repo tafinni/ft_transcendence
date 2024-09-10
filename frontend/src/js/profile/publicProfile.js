@@ -1,13 +1,15 @@
 import { updateContent } from "../i18n";
 import { showAlert } from "../index.js";
+import { getCookie } from '../csrf.js';
 
 export async function loadPublicProfile(user_username) {
 	console.log('clicked public profile');
+	const csrftoken = getCookie('csrftoken');
 	const response = await fetch('http://localhost:8000/public_profile/',
 	{
 		method: 'POST',
 		credentials: 'include',
-		headers: { 'Content-Type' : 'application/json' },
+		headers: { 'Content-Type' : 'application/json', 'X-CSRFToken': csrftoken  },
 		body: JSON.stringify({ user_username })
 	});
 

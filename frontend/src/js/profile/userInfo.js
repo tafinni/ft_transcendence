@@ -3,6 +3,7 @@ import { updateContent } from "../i18n.js";
 import { loadContent } from "../router.js";
 import { checkUserLanguage } from "../i18n.js";
 import { showAlert } from "../index.js";
+import { getCookie } from '../csrf.js';
 
 export async function editInfo() {
 
@@ -25,7 +26,7 @@ export async function editInfo() {
 				<form id="edit-info-form" enctype="multipart/form-data">
 					<div class="form-group">
 						<label for="first_name" translate="first name"></label>
-						<input type="text" id="first_name" name="first_name" class="form-control" value="${userData.first_name}" required>
+						<input type="text" id="first_name" name="first_name" class="form-control" value="${userData.first_name || 'null'}" required>
 					</div>
 					<div class="form-group">
 						<label for="last_name" translate="last name"></label>
@@ -86,12 +87,13 @@ export async function saveInfo() {
         event.preventDefault();
 
 		const formData = new FormData(editInfoForm);
-
+		const csrftoken = getCookie('csrftoken');
         try 
         {
             const response = await fetch('http://localhost:8000/update_profile/',
             {
                 method: 'POST',
+				headers: { 'X-CSRFToken': csrftoken },
                 credentials: 'include',
                 body: formData
             });
@@ -177,12 +179,13 @@ async function saveAvatar() {
         event.preventDefault();
 
 		const formData = new FormData(editAvatarForm);
-
+		const csrftoken = getCookie('csrftoken');
         try 
         {
             const response = await fetch('http://localhost:8000/update_profile/',
             {
                 method: 'POST',
+				headers: { 'X-CSRFToken': csrftoken },
                 credentials: 'include',
                 body: formData
             });

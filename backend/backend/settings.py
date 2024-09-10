@@ -29,13 +29,15 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 # Allow all origins #testing
-CORS_ALLOWED_ORIGINS = [
-    'http://localhost:3000',  # testing
-]
+# CORS_ALLOWED_ORIGINS = [
+#     'http://localhost:3000',  # testing
+# ]
+
+CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', 'http://localhost:3000').split(',')
 
 CORS_ALLOW_CREDENTIALS = True # testing
 
-
+CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', 'http://localhost:3000').split(',') #?
 
 
 # Application definition
@@ -89,10 +91,10 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'pong_project',
-        'USER': 'your_user',
-        'PASSWORD': 'your_password',
-        'HOST': 'db',  # name from docker-compose.yml
+        'NAME': os.getenv('DATABASE_NAME'),
+        'USER': os.getenv('DATABASE_USER'),
+        'PASSWORD': os.getenv('DATABASE_PASSWORD'),
+        'HOST': os.getenv('DATABASE_HOST'),
         'PORT': '5432',
     }
 }

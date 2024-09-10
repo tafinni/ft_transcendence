@@ -1,5 +1,6 @@
 import { updateContent } from "../i18n";
 import { loadContent } from "../router";
+import { getCookie } from '../csrf.js';
 
 export async function changePassword() {
 
@@ -66,14 +67,14 @@ export async function savePassword() {
 		const confirm_password = document.getElementById('confirm_password').value;
 
 		console.log('Change password form submitted');
-
+		const csrftoken = getCookie('csrftoken');
 		try
 		{
             const response = await fetch('http://localhost:8000/change_password/',
 				{
 					method: 'POST',
 					credentials: 'include',
-					headers: { 'Content-Type': 'application/json' },
+					headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrftoken  },
 					body: JSON.stringify({ current_password, new_password, confirm_password })
 				});
 			

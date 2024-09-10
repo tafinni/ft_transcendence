@@ -41,8 +41,6 @@ class Friendship(models.Model):
     accepted = models.BooleanField(default=False)
     is_request = models.BooleanField(default=True)
 
-  #  class Meta:
-   #     unique_together = ('user', 'friend',)
     class Meta:
         constraints = [
             models.UniqueConstraint(fields=['user', 'friend'], name='user_friend_unique')

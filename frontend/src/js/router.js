@@ -6,6 +6,7 @@ import { updateContent, initI18next } from './i18n.js';
 import { loadGame } from './game.js';
 import { loadResult } from './result.js';
 import { showAlert } from './index.js';
+import { getCookie } from './csrf.js';
 
 /* Set navigation bar visibility */
 function navLinkVisibility(state) {
@@ -112,11 +113,13 @@ document.getElementById('languageDropdown').addEventListener('change', (event) =
 });
 
 async function completeLogOut() {
+	const csrftoken = getCookie('csrftoken');
 	try
 	{
 		const response = await fetch('http://localhost:8000/logout/',
 		{
 			method: 'POST',
+			headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrftoken },
 			credentials: 'include',
 		});
 

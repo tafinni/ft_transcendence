@@ -13,8 +13,8 @@ from django.db.models import Q
 
 # Add friend view
 @login_required
-@csrf_exempt
-#@csrf_protect
+#@csrf_exempt
+@csrf_protect
 def add_friend(request):
     if request.method == "POST":
         body = json.loads(request.body)
@@ -49,7 +49,8 @@ def add_friend(request):
 
 # Remove friend view
 @login_required
-@csrf_exempt
+#@csrf_exempt
+@csrf_protect
 #@csrf_protect
 def remove_friend(request):
     if request.method == "POST":
@@ -77,7 +78,8 @@ def remove_friend(request):
 
 # Accept friend request
 @login_required
-@csrf_exempt
+#@csrf_exempt
+@csrf_protect
 #@csrf_protect
 def accept_friend_request(request):
     if request.method == "POST":
@@ -110,7 +112,8 @@ def accept_friend_request(request):
 
 
 @login_required
-@csrf_exempt
+#@csrf_exempt
+@csrf_protect
 def decline_friend_request(request):
     if request.method == "POST":
         body = json.loads(request.body)
