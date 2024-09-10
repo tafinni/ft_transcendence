@@ -18,10 +18,12 @@ export function initializeHome() {
         if (key_code === 27) {
             if (contentdiv.style.visibility === "visible") {
                 contentdiv.style.visibility = "hidden";
-                //webgl.style.zIndex = 1;
+                webgl.style.zIndex = 1;
             }
-            else
+            else {
                 contentdiv.style.visibility = "visible";
+                webgl.style.zIndex = -9999
+            }
         }
         //console.log(event.which);
     }
@@ -29,7 +31,7 @@ export function initializeHome() {
     const sologameButton = document.getElementById("solo-game-button");
     sologameButton.addEventListener('click', () => {
         console.log('Pressed solo game button'); // Debugging
-		contentdiv.style.visibility = "hidden";
+		//contentdiv.style.visibility = "hidden";
         startQuickGame();
 	})
 }

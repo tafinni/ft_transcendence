@@ -1,6 +1,6 @@
 FROM node:20-alpine
 WORKDIR /app
 COPY . .
-RUN npm install
-RUN npm install i18next i18next-http-backend
+RUN yarn
+#RUN yarn add i18next i18next-http-backend
 CMD ["npm", "run", "dev"]

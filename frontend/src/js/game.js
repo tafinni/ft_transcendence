@@ -1,138 +1,83 @@
-//import './style.css'
 import * as THREE from 'three'
-//import * as THREE from "../node_modules/three/build/three.module.js"
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
-//import GUI from 'lil-gui'
+import gsap from 'gsap'
 
-/**
- * Base
- */
-// Debug
-//const gui = new GUI()
+import * as t from './game.defs.js'
+import * as i from './idle.js'
 
-// Canvas
-const canvas = document.querySelector('canvas.webgl')
-
-// Scene
-const scene = new THREE.Scene()
-
-/**
- * Textures
- */
-const textureLoader = new THREE.TextureLoader()
-
-/**
- * Object
- */
-const cube = new THREE.Mesh(
-    new THREE.BoxGeometry(0.25, 1, 0.25),
-    new THREE.MeshBasicMaterial()
-)
-cube.position.x = -2
-
-const cube2 = new THREE.Mesh(
-    new THREE.BoxGeometry(0.25, 1, 0.25),
-    new THREE.MeshBasicMaterial()
-)
-cube2.position.x = 2
-
-const ball = new THREE.Mesh(
-    new THREE.SphereGeometry(0.2, 16, 16),
-    new THREE.MeshNormalMaterial()
-)
-
-cube.material.color =  new THREE.Color('red')
-cube2.material.color = new THREE.Color('blue')
-//ball.material.color = new THREE.Color('yellow')
-
-scene.add(cube, cube2, ball)
-
-/**
- * Sizes
- */
-// const sizes = {
-//     width: window.innerWidth * .8,
-//     height: window.innerHeight / 2
-// }
-const sizes = { width: 0, height: 0 }
-function setWinSizes() {
-    sizes.width = window.innerWidth
-    sizes.height = window.innerHeight
-}
-setWinSizes()
-
-window.addEventListener('resize', () =>
-{
-    // Update sizes
-    setWinSizes()
-
-    // Update camera
-    //camera.aspect = sizes.width / sizes.height
-    //camera.updateProjectionMatrix()
-
-    // Update renderer
-    renderer.setSize(sizes.width, sizes.height)
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+window.addEventListener('resize', () => {
+    t.setWinSizes()
+    t.renderer.setSize(t.sizes.width, t.sizes.height)
+    t.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 })
 
-/**
- * Camera
- */
-// Base camera
-const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
-//const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 100)
-camera.position.x = 0
-camera.position.y = 0
-camera.position.z = 4
-scene.add(camera)
+// Grid Helper
+var grid = new THREE.GridHelper(5, 30);
+t.scene.add(grid);
 
-// Controls
-const controls = new OrbitControls(camera, canvas)
-controls.enableDamping = true
+const plate = new THREE.Mesh(
+    new THREE.BoxGeometry(4, 0.01, 4),
+    new THREE.MeshBasicMaterial()
+)
+plate.material.color = new THREE.Color('grey')
+plate.material.transparent = true
+plate.material.opacity = 0.25
+plate.position.set(0, -0.005, 0)
+t.scene.add(plate)
+const left = new THREE.Mesh(
+    new THREE.BoxGeometry(0.2, 0.2, 0.7),
+    new THREE.MeshBasicMaterial()
+)
+left.name = "left"
+left.material.color = new THREE.Color('yellow')
+left.position.set(-2.1, -0.1, 0)
+t.scene.add(left)
+const right = new THREE.Mesh(
+    new THREE.BoxGeometry(0.2, 0.2, 0.7),
+    new THREE.MeshBasicMaterial()
+)
+right.material.color = new THREE.Color('purple')
+right.position.set(2.1, -0.1, 0)
+t.scene.add(right)
 
-/**
- * Renderer
- */
-const renderer = new THREE.WebGLRenderer({
-    canvas: canvas
-})
-renderer.setSize(sizes.width, sizes.height)
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+// cube.position.x = -1
+// let movecube = gsap.to(cube.position, { x: 1, duration: 1, paused: true, overwrite: true })
+// t.scene.add(cube)
+// movecube.play()
 
-// Camera rotation values
-let angle = 0; // Start angle
-const radius = 5; // Distance from origin
-const speed = 0.01; // Rotation speed
+t.camera.position.z = 4
+t.scene.add(t.camera)
 
-/**
- * Animate
- */
-const clock = new THREE.Clock()
+t.gcamera.position.set(3, 3, 3)
+t.gcamera.lookAt(t.scene.position)
+t.scene.add(t.gcamera)
 
-const tick = () =>
+const itick = () =>
 {
-    const elapsedTime = clock.getElapsedTime()
-
-    // Update camera position
-    angle += speed;
-    camera.position.x = radius * Math.cos(angle);
-    camera.position.z = radius * Math.sin(angle);
-    camera.lookAt(scene.position); // Assuming the origin is at (0, 0, 0)
-
-
-    // Update controls
-    controls.update()
-
-    // Render
-    renderer.render(scene, camera)
-
-    // Call tick again on the next frame
-    window.requestAnimationFrame(tick)
+    const elapsedTime = t.clock.getElapsedTime()
+    t.camera.position.x = i.radius * Math.cos(elapsedTime);
+    t.camera.position.z = i.radius * Math.sin(elapsedTime);
+    t.camera.lookAt(t.scene.position);
+    
+    t.controls.update()
+    t.renderer.render(t.scene, t.camera)
+    window.requestAnimationFrame(curtick)
 }
-
-tick()
+const tick = () => {
+    //console.log(t.camera.x, t.camera.y, t.camera.z)
+    t.renderer.render(t.scene, t.gcamera)
+    window.requestAnimationFrame(curtick)
+}
+let curtick = itick
+curtick()
 
 //external functions
 export function startQuickGame() {
     console.log("game.js: startQuickGame called")
+    //cube.position.x = -1
+    //movecube.reverse()
+    t.scene.remove(t.scene.getObjectByName("idle1"))
+    t.scene.remove(t.scene.getObjectByName("idle2"))
+    t.scene.remove(t.scene.getObjectByName("idle3"))
+    t.controls 
+    curtick = tick
 }

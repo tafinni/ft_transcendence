@@ -1,13 +1,36 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3D Text</title>
-    <link rel="stylesheet" href="./style.css">
-</head>
-<body>
-    <div id="wrapper"><canvas class="webgl"></canvas></div>
+  <head>
+    <!-- <link rel="stylesheet" href="./css/styles.css"> -->
+    <title>PONG</title>
+    <style>
+      canvas {
+        display: flex;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        justify-content: center;
+        align-items: center;
+    top: 200px;
+    left: auto;
+    right: auto;
+    outline: none;
+      }
+      
+    </style>
+  </head>
+  <body class="bg-black">
+    <button type="submit" id="sologame" class="btn btn-info" translate="sologame">Solo Game</button>
+    <div><canvas id="webgl" class="webgl"></canvas></div>
     <script type="module" src="./js/game.js"></script>
-</body>
+    <script type="module">
+      import { startQuickGame } from "./js/game.js"
+      const sologameButton = document.getElementById("sologame");
+    sologameButton.addEventListener('click', () => {
+        console.log('Pressed solo game button'); // Debugging
+		    //contentdiv.style.visibility = "hidden";
+        startQuickGame();
+	})
+    </script>
+  </body>
 </html>

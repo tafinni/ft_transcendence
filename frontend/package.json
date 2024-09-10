@@ -12,7 +12,10 @@
         "vite-plugin-restart": "^0.4.1"
     },
     "dependencies": {
-        "three": "^0.167.1",
-        "lil-gui": "^0.19.2"
+        "gsap": "^3.12.5",
+        "i18next": "^23.14.0",
+        "i18next-http-backend": "^2.6.1",
+        "lil-gui": "^0.19.2",
+        "three": "^0.167.1"
     }
 }
