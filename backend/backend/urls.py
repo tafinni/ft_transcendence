@@ -17,6 +17,7 @@ from authentication.views import authentication_views
 from authentication.views import friends_views
 from authentication.views import profile_views
 from authentication.views import match_views
+from authentication.views import tournaments_views
 from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
@@ -44,6 +45,11 @@ urlpatterns = [
     path('remove_friend/', friends_views.remove_friend, name='remove_friend'),
     path('accept_friend_request/', friends_views.accept_friend_request, name='accept_friend_request'),
     path('decline_friend_request/', friends_views.decline_friend_request, name='decline_friend_request'),
+
+    path('invite_to_tournament/', tournaments_views.invite_to_tournament, name='invite_to_tournament'),
+    path('accept_tournament_invitation/', tournaments_views.accept_tournament_invitation, name='accept_tournament_invitation'),
+    path('decline_tournament_invitation/', tournaments_views.decline_tournament_invitation, name='decline_tournament_invitation'),
+
 ]
 
 if settings.DEBUG:
