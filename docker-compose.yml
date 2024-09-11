@@ -12,7 +12,6 @@ services:
       - postgres_data_new:/var/lib/postgresql/data
     ports:
       - "5432:5432"
-#      -"5432:1532"
     networks:
        - t_intra
 
@@ -48,7 +47,6 @@ services:
       - t_extra
     volumes:
      - ./frontend/src:/app/src
-    #  - ./frontend/src:/app/src
     ports:
       - "3000:3000"
     environment:
