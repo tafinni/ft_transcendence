@@ -1,5 +1,6 @@
 import { showAlert } from './index.js';
 import { loadContent } from './router.js';
+import { getCookie } from './csrf.js';
 
 export function loadRegister() {
     return `
@@ -57,12 +58,15 @@ export function initializeRegister() {
 
 		console.log('Form submitted'); // Debuggin, testing
 
+		const csrftoken = getCookie('csrftoken');
+
 		try
 		{
 			const response = await fetch('http://localhost:8000/register/',
 			{
 				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
+				headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrftoken  },
+				credentials: 'include',
 				body: JSON.stringify({ first_name, last_name, username, password })
 			});
 

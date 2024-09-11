@@ -3,6 +3,7 @@ import { updateContent } from "../i18n.js";
 import { loadContent } from "../router.js";
 import { checkUserLanguage } from "../i18n.js";
 import { showAlert } from "../index.js";
+import { getCookie } from '../csrf.js';
 
 export async function editInfo() {
 
@@ -87,11 +88,13 @@ export async function saveInfo() {
 
 		const formData = new FormData(editInfoForm);
 
+		const csrftoken = getCookie('csrftoken');
         try 
         {
             const response = await fetch('http://localhost:8000/update_profile/',
             {
                 method: 'POST',
+				headers: { 'X-CSRFToken': csrftoken },
                 credentials: 'include',
                 body: formData
             });
@@ -178,11 +181,13 @@ async function saveAvatar() {
 
 		const formData = new FormData(editAvatarForm);
 
+		const csrftoken = getCookie('csrftoken');
         try 
         {
             const response = await fetch('http://localhost:8000/update_profile/',
             {
                 method: 'POST',
+				headers: { 'X-CSRFToken': csrftoken },
                 credentials: 'include',
                 body: formData
             });

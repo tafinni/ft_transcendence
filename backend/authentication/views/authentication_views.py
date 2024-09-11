@@ -16,7 +16,19 @@ from django.core.exceptions import ValidationError
  #-F password=jon http://localhost:8000/login/
 
 def is_valid_string(value, min_length, max_length):
+<<<<<<< HEAD
     return value and not value.isspace() and min_length <= len(value) <= max_length
+=======
+    if not value:
+        return False
+    if value.isspace():
+        return False
+    if not min_length <= len(value) <= max_length:
+        return False
+    if not re.match(r'^[a-zA-Zа-яА-ЯйЙёЁäÄöÖåÅ0-9\s]*$', value):
+        return False
+    return True
+>>>>>>> Anastasia
 
 
 @login_required
@@ -24,8 +36,13 @@ def home(request):
     return JsonResponse({'message': 'Welcome to the home page!!'})
 
 # Define a view function for the login page
+<<<<<<< HEAD
 @csrf_exempt
 #@csrf_protect
+=======
+#@csrf_exempt
+@csrf_protect
+>>>>>>> Anastasia
 def login_page(request):
     if request.method == "POST":
         body = json.loads(request.body)
@@ -38,8 +55,13 @@ def login_page(request):
         else:
             login(request, user)
             if hasattr(user, 'userprofile'):
+<<<<<<< HEAD
                 if user.userprofile.is_online == True:
                     return JsonResponse({'error': 'User already logged in'}, status=400)
+=======
+              #  if user.userprofile.is_online == True:
+                #    return JsonResponse({'error': 'User already logged in'}, status=400)
+>>>>>>> Anastasia
                 user.userprofile.is_online = True
                 user.userprofile.save()
 
@@ -51,8 +73,13 @@ def login_page(request):
     return JsonResponse({'error': 'Invalid request method'}, status=405)
 
 # Define a view function for the registration page
+<<<<<<< HEAD
 @csrf_exempt
 #@csrf_protect
+=======
+#@csrf_exempt
+@csrf_protect
+>>>>>>> Anastasia
 def register_page(request):
     if request.method == 'POST':
         body = json.loads(request.body)
@@ -64,11 +91,19 @@ def register_page(request):
         if not all([first_name, last_name, username, password]):
                 return JsonResponse({'error': 'Missing required fields'}, status=400)
 
+<<<<<<< HEAD
         if not is_valid_string(first_name, 1, 10):
             return JsonResponse({'error': 'Invalid first name. It should be between 1 and 10 characters long.'}, status=400)
         if not is_valid_string(last_name, 1, 10):
             return JsonResponse({'error': 'Invalid last name. It should be between 1 and 10 characters long.'}, status=400)
         if not is_valid_string(username, 1, 10):
+=======
+        if first_name and not is_valid_string(first_name, 1, 10):
+            return JsonResponse({'error': 'Invalid first name. It should be between 1 and 10 characters long.'}, status=400)
+        if last_name and not is_valid_string(last_name, 1, 10):
+            return JsonResponse({'error': 'Invalid last name. It should be between 1 and 10 characters long.'}, status=400)
+        if username and not is_valid_string(username, 1, 10):
+>>>>>>> Anastasia
             return JsonResponse({'error': 'Invalid username. It should be between 1 and 10 characters long.'}, status=400)
 
         user = User.objects.filter(username=username)
@@ -94,8 +129,14 @@ def register_page(request):
     return JsonResponse({'error': 'Invalid request method'}, status=405)
 
 # Define a view function for the logout page
+<<<<<<< HEAD
 @csrf_exempt
 #@csrf_protect
+=======
+@login_required
+#@csrf_exempt
+@csrf_protect
+>>>>>>> Anastasia
 def logout_page(request):
     if request.method == "POST":
         user = request.user
