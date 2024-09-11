@@ -25,7 +25,6 @@ def match_history(request):
     return JsonResponse({'matches': match_list})
 
 @login_required
-<<<<<<< HEAD
 def public_match_history(request):
     if request.method == "GET":
         user_username = request.GET.get('user_username')
@@ -50,9 +49,6 @@ def public_match_history(request):
 
 @login_required
 @csrf_exempt
-=======
-#@csrf_exempt
->>>>>>> Anastasia
 def add_result(request):
     data = json.loads(request.body)
     user = request.user
@@ -63,17 +59,11 @@ def add_result(request):
     if (sLeft > sRight):
         user_stats.wins += 1
         result = 'WIN' + ' ' + str(sLeft) + '-' + str(sRight)
-<<<<<<< HEAD
     elif (sRight > sLeft):
         user_stats.losses += 1
         result = 'LOST' + ' ' + str(sLeft) + '-' + str(sRight)
     else:
         result = 'DRAW' + ' ' + str(sLeft) + '-' + str(sRight)
-=======
-    else:
-        user_stats.losses += 1
-        result = 'LOST' + ' ' + str(sLeft) + '-' + str(sRight)
->>>>>>> Anastasia
     user_stats.save()
 
     if oppStatus == 0:

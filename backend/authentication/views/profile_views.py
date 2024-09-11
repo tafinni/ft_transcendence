@@ -9,24 +9,13 @@ from authentication.models import UserStats, UserProfile, MatchHistory, Friendsh
 from django.conf import settings
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
-<<<<<<< HEAD
-
-=======
 import re
->>>>>>> Anastasia
 
 # Create your views here.  
 #curl -v -X POST -F username=jon
  #-F password=jon http://localhost:8000/login/
 
 def is_valid_string(value, min_length, max_length):
-<<<<<<< HEAD
-    return value and not value.isspace() and min_length <= len(value) <= max_length
-
-@login_required
-@csrf_exempt
-#@csrf_protect
-=======
     if not value:
         return False
     if value.isspace():
@@ -41,7 +30,6 @@ def is_valid_string(value, min_length, max_length):
 @login_required
 #@csrf_exempt
 @csrf_protect
->>>>>>> Anastasia
 def update_profile(request):
     if request.method == "POST":
         user = request.user
@@ -89,13 +77,8 @@ def update_profile(request):
 
 
 @login_required
-<<<<<<< HEAD
-@csrf_exempt
-#@csrf_protect
-=======
 #@csrf_exempt
 @csrf_protect
->>>>>>> Anastasia
 def change_password(request):
     if request.method == "POST":
         user = request.user
@@ -124,13 +107,8 @@ def change_password(request):
 
 
 #@login_required
-<<<<<<< HEAD
-@csrf_exempt
-#@csrf_protect
-=======
 #@csrf_exempt
 @csrf_protect
->>>>>>> Anastasia
 def upload_avatar(request):
     if request.method == "POST":
         user = request.user
@@ -189,11 +167,6 @@ def profile(request):
     }
     return JsonResponse(data)
 
-<<<<<<< HEAD
-# duplicate?
-=======
-
->>>>>>> Anastasia
 @login_required
 def match_history(request):
     user = request.user
@@ -209,12 +182,8 @@ def match_history(request):
 
 
 @login_required
-<<<<<<< HEAD
-@csrf_exempt #?
-=======
 #@csrf_exempt #?
 @csrf_protect
->>>>>>> Anastasia
 def public_profile(request):
     if request.method == "POST":
         body = json.loads(request.body)

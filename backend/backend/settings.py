@@ -28,7 +28,7 @@ DEBUG = True #? eval with False
 
 ALLOWED_HOSTS = []
 
-#CORS_ALLOW_ALL_ORIGINS = True # ONLY FOR TESTING
+CORS_ALLOW_ALL_ORIGINS = True # ONLY FOR TESTING
 
 # Allowed origins
 #CORS_ALLOWED_ORIGINS = [
@@ -36,11 +36,18 @@ ALLOWED_HOSTS = []
 #    "https://localhost:443",
 #]
 
-CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', 'http://localhost:3000', 'https://localhost:443', 'https://localhost').split(',')
+#//CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', 'http://localhost:3000, https://localhost:443, https://localhost').split(',')//
 
 CORS_ALLOW_CREDENTIALS = True
 
-CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', 'http://localhost:3000', 'https://localhost:443', 'https://localhost').split(',') #?
+CSRF_TRUSTED_ORIGINS = [
+    "https://localhost",
+    "https://localhost:443",
+	"http://localhost",
+	"http://localhost:3000",
+]
+
+#CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', 'http://localhost:3000, https://localhost:443, https://localhost').split(',') #?
 
 
 # Application definition
