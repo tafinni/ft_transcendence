@@ -177,13 +177,12 @@ function gametick() {
 }
 function checkPaddleHit() {
     // console.log(ballX)
-    // console.log('left', Math.abs(left_pos - ballY))
-    // console.log('right', Math.abs(right_pos - ballY))
+    //console.log('left', Math.abs(left_pos - ballY), ' right:', Math.abs(right_pos - ballY))
     // console.log(paddle_halfwidth)
-    // console.log('bY:', ballY, ' left:', left_pos, ' right:', right_pos)
+    //console.log('bY:', ballY, ' left:', left_pos, ' right:', right_pos)
     if (ballX > 0 && Math.abs(bounce_distance = left_pos - ballY) < paddle_halfwidth)
         return true
-    else if (Math.abs(bounce_distance = right_pos - ballY) < paddle_halfwidth)
+    else if (ballX < 0 && Math.abs(bounce_distance = right_pos - ballY) < paddle_halfwidth)
         return true
     if (ballX > 0) addScore('right')
     else addScore('left')
@@ -279,7 +278,8 @@ export function startQuickGame() {
         endRound()
         return
     }
-    addScore('left'); addScore('left'); addScore('right'); addScore('right')
+    else if (score_left != 0 || score_right != 0) {
+    }
     console.log("game.js: startQuickGame called", ball_direction * 180 / Math.PI)
     t.scene.remove(t.scene.getObjectByName("idle1"))
     t.scene.remove(t.scene.getObjectByName("idle2"))
@@ -300,7 +300,7 @@ export function startQuickGame() {
         else if (key_code === 68) { down_pressed = true }
         else if (key_code === 37) { up2_pressed = true }
         else if (key_code === 39) { down2_pressed = true }
-        else if (key_code === 80) { showVictory(); game_running = !game_running }
+        else if (key_code === 80) { game_running = !game_running }
     }
     document.addEventListener("keyup", onDocumentKeyUp, true);
     function onDocumentKeyUp(event) {
