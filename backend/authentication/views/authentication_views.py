@@ -9,7 +9,7 @@ from authentication.models import UserStats, UserProfile, MatchHistory, Friendsh
 from django.conf import settings
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
-
+import re
 
 # Create your views here.  
 #curl -v -X POST -F username=jon
