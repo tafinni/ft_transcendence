@@ -95,10 +95,12 @@ curtick()
 const area_max = 2
 const paddle_max = 1.65
 const pos_max = 1000000
+const paddle_halfwidth = (area_max - paddle_max) * pos_max / area_max * 2
 const ball_radius = 12500
 const ball_max = pos_max - ball_radius
 const player_speed = 12000
 let left_pos = 0
+let right_pos = 0
 let up_pressed = false
 let down_pressed = false
 let game_running = false
@@ -115,25 +117,34 @@ randomizeBallDir()
 let ball_speed = 8000
 let ball_dx = 0
 let ball_dy = 0
+let ball_passed = false
 function gametick() {
     if (!game_running) return
     if (up_pressed) left_pos -= player_speed
     if (down_pressed) left_pos += player_speed
     if (left_pos > pos_max) left_pos = pos_max
     else if (left_pos < -pos_max) left_pos = -pos_max
+    right_pos = left_pos
     ballX -= ball_speed * Math.sin(ball_direction)
     ballY -= ball_speed * Math.cos(ball_direction)
-    if (ballX > ball_max) {
-        ball_direction -= Math.PI
-        ball_direction = Math.PI - ball_direction
-    } else if (ballX < -ball_max) {
-        ball_direction = 2 * Math.PI - ball_direction
+    if (!ball_passed && (ballX > ball_max || ballX < -ball_max) && checkPaddleHit()) {
+        if (ballX > 0)
+            ball_direction = (Math.PI - ball_direction) - Math.PI
+        else if (ballX < 0)
+            ball_direction = 2 * Math.PI - ball_direction
     }
     if (ballY > ball_max) {
         ball_direction = Math.PI - ball_direction
     } else if (ballY < -ball_max) {
         ball_direction = Math.PI - ball_direction
     }
+}
+function checkPaddleHit() {
+    console.log(Math.abs(left_pos - ballY))
+    console.log(paddle_halfwidth)
+    if (Math.abs(left_pos - ballY) < paddle_halfwidth)
+        return true
+    return (ball_passed = true, false)
 }
 setInterval(gametick, 1000 / 120)
 
@@ -143,6 +154,12 @@ export function startQuickGame() {
         randomizeBallDir()
         ballX = 0
         ballY = 0
+        game_running = false
+        ball_passed = false
+        ball.position.y = 5
+        gsap.to(ball.position, { y: 0.05, duration: 0.5, onComplete: () => {
+            game_running = true
+        }})
     }
     console.log("game.js: startQuickGame called", ball_direction * 180 / Math.PI)
     t.scene.remove(t.scene.getObjectByName("idle1"))
