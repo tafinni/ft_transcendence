@@ -7,7 +7,7 @@ const initI18next = i18next
   .init({
     lng: localStorage.getItem('language') || 'en',
     backend: {
-      loadPath: 'http://localhost:3000/languages/{{lng}}.json',
+      loadPath: '/languages/{{lng}}.json',
     },
     fallbackLng: 'en',
     debug: true,

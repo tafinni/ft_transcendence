@@ -77,7 +77,7 @@ export function initializeLogIn() {
 		catch (error) 
 		{
             console.error('Error during login:', error);
-			errorMessage.textContent = errorData.error;
+			errorMessage.textContent = error;
 			errorMessage.style.display = 'block';
         }
     });

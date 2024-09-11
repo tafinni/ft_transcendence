@@ -50,5 +50,14 @@
 	"russian": "Venäjä",
 	"language": "Kieli",
 
-	"win %": "Voitto %"
+	"win %": "Voitto %",
+
+	"single player": "Yksinpeli",
+	"local multiplayer": "Paikallinen Moninpeli",
+	"remote multiplayer": "Etämoninpeli",
+	"tournament": "Turnaus",
+	"how many players?": "Montako pelaajaa?"
+
+
+
 }

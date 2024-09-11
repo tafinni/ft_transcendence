@@ -28,10 +28,13 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-# Allow all origins #testing
-CORS_ALLOWED_ORIGINS = [
-    'http://localhost:3000',  # testing
-]
+CORS_ALLOW_ALL_ORIGINS = True # ONLY FOR TESTING
+
+# Allowed origins
+#CORS_ALLOWED_ORIGINS = [
+#	"https://localhost",
+#    "https://localhost:443",
+#]
 
 CORS_ALLOW_CREDENTIALS = True # testing
 

@@ -50,5 +50,11 @@
 	"russian": "Russian",
 	"language": "Language",
 
-	"win %": "Win %"
+	"win %": "Win %",
+
+	"single player": "Single Player",
+	"local multiplayer": "Local Multiplayer",
+	"remote multiplayer": "Remote Multiplayer",
+	"tournament": "Tournament",
+	"how many players?": "How many players?"
 }
