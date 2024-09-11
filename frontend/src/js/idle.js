@@ -32,7 +32,10 @@ cube2.material.color = new THREE.Color('blue')
 
 const gsapAnim = null
 
-t.scene.add(cube, cube2, ball)
+export function addIdleObjs() {
+    t.scene.add(cube, cube2, ball)
+}
+addIdleObjs()
 
 export const radius = 5; // Distance from origin
 
