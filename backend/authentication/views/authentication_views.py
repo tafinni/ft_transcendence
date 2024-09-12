@@ -9,7 +9,7 @@ from authentication.models import UserStats, UserProfile, MatchHistory, Friendsh
 from django.conf import settings
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
-
+import re
 
 # Create your views here.  
 #curl -v -X POST -F username=jon
@@ -46,7 +46,7 @@ def login_page(request):
         else:
             login(request, user)
             if hasattr(user, 'userprofile'):
-              #  if user.userprofile.is_online == True:
+               # if user.userprofile.is_online == True:
                 #    return JsonResponse({'error': 'User already logged in'}, status=400)
                 user.userprofile.is_online = True
                 user.userprofile.save()
@@ -59,6 +59,7 @@ def login_page(request):
     return JsonResponse({'error': 'Invalid request method'}, status=405)
 
 # Define a view function for the registration page
+
 #@csrf_exempt
 @csrf_protect
 def register_page(request):
@@ -71,7 +72,6 @@ def register_page(request):
 
         if not all([first_name, last_name, username, password]):
                 return JsonResponse({'error': 'Missing required fields'}, status=400)
-
         if first_name and not is_valid_string(first_name, 1, 10):
             return JsonResponse({'error': 'Invalid first name. It should be between 1 and 10 characters long.'}, status=400)
         if last_name and not is_valid_string(last_name, 1, 10):

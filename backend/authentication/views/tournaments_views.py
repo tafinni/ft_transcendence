@@ -11,36 +11,76 @@ import json
 def invite_to_tournament(request):
     if request.method == "POST":
         body = json.loads(request.body)
-        opponent_username = body.get('opponent_username')
+        player_count = request.POST.get('player_count')
+        usernames = request.POST.getlist('players')
 
-        if not opponent_username:
+    try:
+        player_count = int(player_count)
+    except ValueError:
+        return JsonResponse({'error': 'Invalid value for player count'}, status=400)
+
+    if player_count not in {4, 8, 16}:
+            return JsonResponse({'error': 'Invalid number of players. Must be 4, 8, or 16.'}, status=400)
+
+    if len(usernames) != player_count:
+            return JsonResponse({'error': f'The number of provided players ({len(usernames)}) does not match the specified count ({player_count})'}, status=400)
+
+
+    # Remove the tournament initiator from the list of players
+    if request.user.username in usernames:
+        usernames.remove(request.user.username)
+
+    if len(usernames) < player_count - 1:
+        return JsonResponse({'error': f'Not enough valid opponents. Required: {player_count - 1}, Found: {len(usernames)}'}, status=400)
+
+
+    opponents = []
+    unique_usernames = set()
+    for username in usernames:
+        if not username:
             return JsonResponse({'error': 'Opponent username is required'}, status=400)
+        if username in unique_usernames:
+            return JsonResponse({'error': f'Username {username} is duplicated'}, status=400)
+
+        unique_usernames.add(username)
 
         try:
-            opponent = User.objects.get(username=opponent_username)
+            opponent = User.objects.get(username=username)
+            if opponent != request.user:
+                opponents.append(opponent)
+            else:
+                return JsonResponse({'error': 'You cannot invite yourself to the tournament'}, status=400)
         except User.DoesNotExist:
-            return JsonResponse({'error': 'User does not exist'}, status=404)
+            return JsonResponse({'error': f'User {username} does not exist'}, status=404)
+            
+    if len(opponents) < player_count - 1:
+        return JsonResponse({'error': f'Not enough valid opponents. Required: {player_count - 1}, Found: {len(opponents)}'}, status=400)
 
-        if opponent == request.user:
-            return JsonResponse({'error': 'You cannot invite yourself to a tournament'}, status=400)
 
+         # Check for existing tournament invitations
         existing_tournament = Tournament.objects.filter(
-            (Q(initiator=request.user, opponent=opponent) | Q(initiator=opponent, opponent=request.user)),
+            Q(initiator=request.user, opponent__in=opponents) |
+            Q(initiator__in=opponents, opponent=request.user),
             accepted=False
-        ).first() #?
+        ).first()
 
         if existing_tournament:
-            return JsonResponse({'error': 'Tournament invitation already sent or pending'}, status=400)
+            return JsonResponse({'error': 'Tournament invitation already sent or pending confirmation'}, status=400)
 
-        tournament, created = Tournament.objects.get_or_create(initiator=request.user, opponent=opponent)
+        # Create a new tournament
+        tournament, created = Tournament.objects.get_or_create(
+            initiator=request.user,
+            opponent__in=opponents
+        )
         if not created:
-            return JsonResponse({'error': 'Tournament invitation already sent or already active'}, status=400)
+            return JsonResponse({'error': 'Tournament invitation already sent or active'}, status=400)
 
-
+        # Prepare response message
         initiator_display = request.user.userprofile.display_name or request.user.username
-        opponent_display = opponent.userprofile.display_name or opponent.username
-        return JsonResponse({'message': f'Tournament invitation sent: {initiator_display} vs {opponent_display}'})
-     #   return JsonResponse({'message': 'Tournament invitation sent'})
+        opponent_display_names = [opponent.userprofile.display_name or opponent.username for opponent in opponents]
+        opponents_display = ', '.join(opponent_display_names)
+
+        return JsonResponse({'message': f'Tournament invitation sent: {initiator_display} vs {opponents_display}'})
 
     return JsonResponse({'error': 'Invalid request method'}, status=405)
 

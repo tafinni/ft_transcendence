@@ -167,7 +167,6 @@ def profile(request):
     }
     return JsonResponse(data)
 
-
 @login_required
 def match_history(request):
     user = request.user

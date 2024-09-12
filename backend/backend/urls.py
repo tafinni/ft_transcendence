@@ -39,6 +39,7 @@ urlpatterns = [
     path('public_profile/', profile_views.public_profile, name='public_profile'),
 
     path('match_history/', match_views.match_history, name='match_history'),
+    path('public_match_history/', match_views.public_match_history, name='public_match_history'),
     path('add_result/', match_views.add_result, name='add_result'),
 
     path('add_friend/', friends_views.add_friend, name='add_friend'),
