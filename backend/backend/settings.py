@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-xe3l)tqso(5e^3n2ql8(b#f=ia7*wgj)2_$ur@l!$ue9k=imzz'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = True #? eval with False
 
 ALLOWED_HOSTS = []
 
@@ -36,9 +36,18 @@ CORS_ALLOW_ALL_ORIGINS = True # ONLY FOR TESTING
 #    "https://localhost:443",
 #]
 
-CORS_ALLOW_CREDENTIALS = True # testing
+#//CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', 'http://localhost:3000, https://localhost:443, https://localhost').split(',')//
 
+CORS_ALLOW_CREDENTIALS = True #maybe delete
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://localhost",
+   "https://localhost:443",
+	"http://localhost", #delete
+	"http://localhost:3000", #delete 3000
+]
+
+#CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', 'http://localhost:3000, https://localhost:443, https://localhost').split(',') #?
 
 
 # Application definition
@@ -51,11 +60,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'authentication',
-	'corsheaders' #testing
+	'corsheaders'
 ]
 
 MIDDLEWARE = [
-	'corsheaders.middleware.CorsMiddleware', #testing
+	'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -92,10 +101,10 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'pong_project',
-        'USER': 'your_user',
-        'PASSWORD': 'your_password',
-        'HOST': 'db',  # name from docker-compose.yml
+        'NAME': os.getenv('DATABASE_NAME'),
+        'USER': os.getenv('DATABASE_USER'),
+        'PASSWORD': os.getenv('DATABASE_PASSWORD'),
+        'HOST': os.getenv('DATABASE_HOST'),
         'PORT': '5432',
     }
 }
