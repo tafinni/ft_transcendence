@@ -1,7 +1,6 @@
 import { checkUserLanguage } from './i18n.js';
 import { loadContent } from './router.js';
-
-function getCsrfToken() { return document.querySelector('meta[name="csrf-token"]').getAttribute('content'); }
+import { getCookie } from './csrf.js';
 
 export function loadLogIn() {
 	return `
@@ -39,7 +38,7 @@ export function initializeLogIn() {
 	const errorMessage = document.getElementById('error-message');
     const registerButton = document.getElementById('register-button');
 
-	const csrfToken = getCsrfToken();
+	const csrftoken = getCookie('csrftoken');
 
     loginForm.addEventListener('submit', async (event) => {
 		event.preventDefault();
@@ -51,11 +50,11 @@ export function initializeLogIn() {
 		{
             const response = await fetch('http://localhost:8000/login/',
 			{
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken },
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrftoken },
 				credentials: 'include',
-                body: JSON.stringify({ username, password })
-            });
+				body: JSON.stringify({ username, password })
+			});
 
             if (response.ok) 
 			{

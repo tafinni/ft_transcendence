@@ -10,6 +10,7 @@ RUN apk update && apk add xdg-utils
 
 RUN yarn add vite-plugin-static-copy --dev
 
+
 #testing only
 RUN yarn run build
 CMD ["yarn", "run", "dev"]

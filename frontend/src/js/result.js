@@ -1,3 +1,5 @@
+import { getCookie } from './csrf.js';
+
 export async function loadResult(scoreLeft, scoreRight, oppIsHuman) {
 
 	const response = await fetch('http://localhost:8000/profile/', {
@@ -8,13 +10,13 @@ export async function loadResult(scoreLeft, scoreRight, oppIsHuman) {
 
 	const userData = await response.json();
     if (scoreLeft > 0 || scoreRight > 0){
+        const csrftoken = getCookie('csrftoken');
         await fetch('http://localhost:8000/add_result/',
             {
                 method: 'POST',
                 credentials: 'include',
                 headers: {
-                    'Content-Type': 'application/json'
-                },
+                    'Content-Type': 'application/json', 'X-CSRFToken': csrftoken },
                 body: JSON.stringify({scoreLeft, scoreRight, oppIsHuman})
             });
     }
