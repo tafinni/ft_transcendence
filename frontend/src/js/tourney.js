@@ -8,93 +8,79 @@ export async function endGame() {
     prematureEnding = 1;
 }
 
-export async function startGame(checkOpp) {
-    const nameForm = document.getElementById('opp-name');
-    const submitbtn = document.getElementById('opp-name-submit');
-    const startButton = document.getElementById('start-button');
-
-    if (checkOpp == 1) {
-    submitbtn.addEventListener('click', (event) => {
-        event.preventDefault();
-        oppName = nameForm.value;
-        console.log(oppName);
-    });
-        startButton.addEventListener('click', (event) => {
+export async function startGame() {
+    const nameRed = document.getElementById('redName');
+    const submitbtn = document.getElementById('submitRed');
+    
+    startButton.addEventListener('click', (event) => {
             if (oppName !== "") {
                 event.preventDefault();
                 startButton.remove();
                 nameForm.remove();
                 submitbtn.remove();
                 tick();
-            }
-        });
-    }
-    else {
-        startButton.addEventListener('click', (event) => {
-            event.preventDefault();
-            startButton.remove();
-            tick();
-        });
-
-    }
+        }
+    });
 }
 
-export async function loadGame(oppStatus) {
-    oppName = "";
+export async function loadTournament() {
+    redName = "";
+    blueName = "";
     goalsBlue = 0;
     goalsRed = 0;
     gameRunning = true;
     timerBlue = 0;
     timerRed = 0;
     blueIsAi = false;
-    oppIsHuman = oppStatus
-    if (oppIsHuman == 1)
-        redIsAi = false;
-    else
-        redIsAi = true;
+    redIsAi = false;
     paddleBlue.position.z = 0;
     paddleRed.position.z = 0;
     dataSent = 0;
-    prematureEnding = 0;
-    if (oppStatus == 0) {
-        return `
-        <button type="button" id="start-button" class="btn btn-link" translate="start"></button>
-        <p>Player (blue) uses keys W and S</p>
-        `;
-    }
-    else {
-        return `
-        <button type="button" id="start-button" class="btn btn-link" translate="start"></button>
-        <p>Blue player uses keys W and S</p>
-        <p>Red player uses Arrowkeys up and down</p>
-        <form id="name-red">
-			<div class="form-group">
-                <input type="text" id="opp-name" class="form-control" required>
-            </div>
-        <button type="submit" class="btn btn-success mt-3" id="opp-name-submit" translate="set name"></button>
-        </form>
-        `;
+    return `
+    <button type="button" id="startTourney" class="btn btn-link" translate="start"></button>
+    <p>Blue player uses keys W and S</p>
+    <p>Red player uses Arrowkeys up and down</p>
+    <form>
+        <div class="form-group mb-3">
+            <label for="username" class="form-label">Username</label>
+            <input type="text" class="form-control" id="redName" placeholder="Enter username for red player" required>
+        </div>
+        <div class="form-group mb-3">
+            <label for="password" class="form-label">Password</label>
+            <input type="password" class="form-control" id="redPassword" placeholder="Enter password for red player" required>
+        </div>
+        <button type="submit" class="btn btn-primary w-100">Sign In</button>
+    </form>
 
-    }
+     <form>
+        <div class="form-group mb-3">
+            <label for="username" class="form-label">Username</label>
+            <input type="text" class="form-control" id="blueName" placeholder="Enter username for blue player" requiblue>
+        </div>
+        <div class="form-group mb-3">
+            <label for="password" class="form-label">Password</label>
+            <input type="password" class="form-control" id="bluePassword" placeholder="Enter password for blue player" required>
+        </div>
+        <button type="submit" class="btn btn-primary w-100">Sign In</button>
+    </form>
+    `;
 }
 
 // blue is left
 // red is right
-let prematureEnding = 0;
 var gameRunning = true;
 var goalsNeeded = 2;
 
 let oppName = "";
 let paddleSpeed = 0.05;
 
-let blueIsAi = true;
-let redIsAi = true;
+let blueIsAi = false;
+let redIsAi = false;
 
 let timerRed = 0;
 let timerBlue = 0;
 
 let areaSize = 4;
-let oppIsHuman = 0;
 
 //import './style.css'
 //import * as THREE from "../node_modules/three/build/three.module.js"
@@ -267,87 +253,6 @@ function moveBlue() {
     paddleBlue.position.z += paddleSpeed * dirBlue;
 }
 
-let supposedZRed;
-let supposedZBlue;
-
-function predictBallZRed() {
-    let predictedZ = ball.position.z;
-    let predictedDZ = dBallZ;
-    let distanceToPaddle = Math.abs(paddleRed.position.x - ball.position.x);
-
-    while (distanceToPaddle > 0) {
-        predictedZ += predictedDZ;
-        if (predictedZ < -2 || predictedZ > 2) {
-            predictedDZ *= -1;
-            predictedZ += 2 * predictedDZ;
-        }
-        distanceToPaddle -= Math.abs(dBallX);
-    }
-    return predictedZ;
-}
-
-function predictBallZBlue() {
-    let predictedZ = ball.position.z;
-    let predictedDZ = dBallZ;
-    let distanceToPaddle = Math.abs(paddleBlue.position.x - ball.position.x);
-    // console.log("Dist at begin ", distanceToPaddle);
-    while (distanceToPaddle > 0) {
-        // console.log("Dist now is ", distanceToPaddle);
-        predictedZ += predictedDZ;
-        if (predictedZ < -2 || predictedZ > 2) {
-            predictedDZ *= -1;
-            predictedZ += 2 * predictedDZ;
-        }
-        distanceToPaddle -= Math.abs(dBallX);
-    }
-    return predictedZ;
-}
-
-function aiMoveRed() {
-    let predictedZ;
-    if (Date.now() - timerRed > 1000) {
-        predictedZ = predictBallZRed() - 0.025; // half of paddle width
-        if (predictedZ < -2) {
-            predictedZ = -2;
-        } else if (predictedZ + 0.025 > 2) {
-            predictedZ = 2 - 0.025;
-        }
-        supposedZRed = predictedZ;
-        timerRed = Date.now();
-    }
-
-    // console.log("Red supposed is ", supposedZRed);
-    // console.log("Red place is ", paddleRed.position.z);
-    if (paddleRed.position.z < supposedZRed) {
-        // console.log("Red up");
-        paddleRed.position.z += paddleSpeed;
-    } else if (paddleRed.position.z > supposedZRed) {
-        // console.log("Red down");
-        paddleRed.position.z -= paddleSpeed;
-    }
-
-}
-function aiMoveBlue() {
-    let predictedZ;
-    if (Date.now() - timerBlue > 1000) {
-        predictedZ = predictBallZBlue() - 0.025;
-        if (predictedZ < -2) {
-            predictedZ = -2;
-        } else if (predictedZ + 0.025 > 2) {
-            predictedZ = 2 - 0.025;
-        }
-        supposedZBlue = predictedZ;
-        timerBlue = Date.now();
-    }
-    // console.log("Suppose ", supposedZBlue);
-    if (paddleBlue.position.z < supposedZBlue) {
-        // console.log("Blue up");
-        paddleBlue.position.z += paddleSpeed;
-    } else if (paddleBlue.position.z > supposedZBlue) {
-        // console.log("Blue down");
-        paddleBlue.position.z -= paddleSpeed;
-    }
-}
 let dataSent = 0;
 const tick = () => {
     const elapsedTime = clock.getElapsedTime()
@@ -365,21 +270,13 @@ const tick = () => {
     // console.log("Ball place = ", ball.position.x, ball.position.z);
     checkBorderZ();
 
-    if (redIsAi)
-        aiMoveRed();
-    else
-        moveRed();
-
+    moveRed();
     if (paddleRed.position.z > 2) //area boundaries
         paddleRed.position.z = 2;
     if (paddleRed.position.z < -2)
         paddleRed.position.z = -2;
 
-    if (blueIsAi)
-        aiMoveBlue();
-    else
-        moveBlue();
-
+    moveBlue();
     if (paddleBlue.position.z > 2) //area boundaries
         paddleBlue.position.z = 2;
     if (paddleBlue.position.z < -2)
@@ -403,9 +300,8 @@ const tick = () => {
         window.requestAnimationFrame(tick)
     else {
         if (dataSent === 0) {
-            console.log("Opp is human =", Boolean(oppIsHuman));
             if (prematureEnding == 0 && blueIsAi == 0)
-                loadContent('result', goalsBlue, goalsRed, oppIsHuman, oppName);
+                loadContent('result', goalsBlue, goalsRed, oppName);
         }
         dataSent = 1;
     };

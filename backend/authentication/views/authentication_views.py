@@ -115,4 +115,4 @@ def is_online(request):
         userProfile = user.userprofile
         is_online_status = userProfile.is_online
         return JsonResponse({'is_online': is_online_status})
-    return JsonResponse({'message': 'not logged in'}, status=400)
+    return JsonResponse({'is_online': False})

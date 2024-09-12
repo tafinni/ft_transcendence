@@ -36,7 +36,7 @@ sessionStorage.setItem('timeoutTimer', 0);
 let timeoutPeriod = 5 * 60 * 1000;
 
 setInterval(handleInactives, 1 * 60 * 1000); // Time in milliseconds
-	// runs even when user not logged in and complains, fix that
+
 async function handleInactives() {
 	const response = await fetch('http://localhost:8000/is_online/', {
 		method: 'GET',
@@ -52,7 +52,7 @@ async function handleInactives() {
 	}
 }
 
-export async function loadContent(content, scoreLeft, scoreRight, oppIsHuman, addHistory = true) {
+export async function loadContent(content, scoreLeft, scoreRight, oppIsHuman, oppName, addHistory = true) {
 	await initI18next;
 	const contentElement = document.getElementById('content');
 
@@ -89,16 +89,16 @@ export async function loadContent(content, scoreLeft, scoreRight, oppIsHuman, ad
 			break;
 		case 'single':
 			contentElement.innerHTML = await loadGame(0);
-			startGame();
+			startGame(0);
 			navLinkVisibility(2);
 			break;
 		case 'localMulti':
 			contentElement.innerHTML = await loadGame(1);
-			startGame();
+			startGame(1);
 			navLinkVisibility(2);
 			break;
 		case 'result':
-			contentElement.innerHTML = await loadResult(scoreLeft, scoreRight, oppIsHuman);
+			contentElement.innerHTML = await loadResult(scoreLeft, scoreRight, oppIsHuman, oppName);
 			navLinkVisibility(1);
 			break;
 		default:

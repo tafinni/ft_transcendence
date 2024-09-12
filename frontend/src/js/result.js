@@ -1,4 +1,4 @@
-export async function loadResult(scoreLeft, scoreRight, oppIsHuman) {
+export async function loadResult(scoreLeft, scoreRight, oppIsHuman, oppName) {
 
 	const response = await fetch('http://localhost:8000/profile/', {
 		method: 'GET',
@@ -15,7 +15,7 @@ export async function loadResult(scoreLeft, scoreRight, oppIsHuman) {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({scoreLeft, scoreRight, oppIsHuman})
+                body: JSON.stringify({scoreLeft, scoreRight, oppIsHuman, oppName})
             });
     }
     if (scoreLeft > scoreRight)
@@ -32,7 +32,7 @@ export async function loadResult(scoreLeft, scoreRight, oppIsHuman) {
         {
             return `
             <h1>Home</h1>
-                <p>Player red wins!<p>
+                <p>Player ${oppName} wins!<p>
                 <p>Final score is ${scoreLeft} - ${scoreRight}!</p>
             `;
         }
