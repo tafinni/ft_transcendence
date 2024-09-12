@@ -23,6 +23,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-xe3l)tqso(5e^3n2ql8(b#f=ia7*wgj)2_$ur@l!$ue9k=imzz'
 
+#SECRET_KEY = os.environ['SECRET_KEY']
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True #? eval with False
 
@@ -36,15 +38,15 @@ CORS_ALLOW_ALL_ORIGINS = True # ONLY FOR TESTING
 #    "https://localhost:443",
 #]
 
-#//CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', 'http://localhost:3000, https://localhost:443, https://localhost').split(',')//
+#//CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', 'http://localhost:3000, https://localhost:443, https://localhost').split(',')
 
-CORS_ALLOW_CREDENTIALS = True #maybe delete
+CORS_ALLOW_CREDENTIALS = True
 
 CSRF_TRUSTED_ORIGINS = [
     "https://localhost",
-   "https://localhost:443",
-	"http://localhost", #delete
-	"http://localhost:3000", #delete 3000
+    "https://localhost:443",
+	"http://localhost",
+	"http://localhost:3000",
 ]
 
 #CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', 'http://localhost:3000, https://localhost:443, https://localhost').split(',') #?

@@ -11,7 +11,6 @@ from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 import re
 
-
 # Create your views here.  
 #curl -v -X POST -F username=jon
  #-F password=jon http://localhost:8000/login/
@@ -47,8 +46,8 @@ def login_page(request):
         else:
             login(request, user)
             if hasattr(user, 'userprofile'):
-                if user.userprofile.is_online == True:
-                    return JsonResponse({'error': 'User already logged in'}, status=400)
+               # if user.userprofile.is_online == True:
+                #    return JsonResponse({'error': 'User already logged in'}, status=400)
                 user.userprofile.is_online = True
                 user.userprofile.save()
 

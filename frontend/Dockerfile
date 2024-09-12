@@ -1,5 +1,7 @@
 FROM node:20-alpine
+FROM node:20-alpine
 
+RUN mkdir -p ./src/dist/languages
 RUN mkdir -p ./src/dist/languages
 
 WORKDIR /app
