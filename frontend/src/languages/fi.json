@@ -48,5 +48,16 @@
 	"english": "Englanti",
 	"finnish": "Suomi",
 	"russian": "Venäjä",
-	"language": "Kieli"
+	"language": "Kieli",
+
+	"win %": "Voitto %",
+
+	"single player": "Yksinpeli",
+	"local multiplayer": "Paikallinen Moninpeli",
+	"remote multiplayer": "Etämoninpeli",
+	"tournament": "Turnaus",
+	"how many players?": "Montako pelaajaa?"
+
+
+
 }

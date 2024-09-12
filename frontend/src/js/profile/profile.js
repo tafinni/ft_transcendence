@@ -14,11 +14,13 @@ export async function loadProfile() {
 	if (!response.ok)
 	{
 		console.error('Failed loading profile:', response.statusText);
-		showAlert('Error occured loading profile. Try Again.');
+		showAlert('Error occured loading profile. Try Again.', 'danger');
 		return ;
 	}
 
 	const userData = await response.json();
+
+	const winPercentage = userData.wins + userData.losses > 0 ? ((userData.wins / (userData.wins + userData.losses)) * 100).toFixed(0) : 0;
 
 	const profileHTML = `
 		<div class="container mt-5">
@@ -55,6 +57,10 @@ export async function loadProfile() {
 									<tr>
 										<th scope="row" translate="losses"></th>
 										<td>${userData.losses}</td>
+									</tr>
+									<tr>
+										<th scope="row" translate="win %"></th>
+										<td>${winPercentage}%</td>
 									</tr>
 								</tbody>
 							</table>
@@ -186,16 +192,16 @@ async function matchHistory () {
 										</tr>
 									</thead>
 									<tbody>
-									${matches.map(matchData => {
-										const localDate = new Date(matchData.date).toLocaleString(); 
-										return `
-											<tr>
-												<td>${localDate}</td>
-												<td>${matchData.opponent}</td>
-												<td>${matchData.result}</td>
-											</tr>
-											`;
-										}).join('')}
+                            			${matches.map(matchData => {
+                                        	const localDate = new Date(matchData.date).toLocaleString(); 
+                                        	return `
+                                            	<tr>
+                                            	    <td>${localDate}</td>
+                                            	    <td>${matchData.opponent}</td>
+                                            	    <td>${matchData.result}</td>
+                                            	</tr>
+                                            	`;
+                                        }).join('')}
 									</tbody>
 								</table>
 								<button type="button" id="back-button" class="btn btn-primary" translate="back"></button>
@@ -224,8 +230,6 @@ async function matchHistory () {
 		showAlert('Error fetching match history. Try Again.', 'danger');
 		loadContent('profile');
 	}
-
-
 }
 
 export async function backButtonListener() {
@@ -277,4 +281,6 @@ export async function buttonListener () {
 	}
 
 }
+
+
 

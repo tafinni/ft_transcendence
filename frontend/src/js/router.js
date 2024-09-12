@@ -3,7 +3,7 @@ import { loadLogIn, initializeLogIn } from './login.js';
 import { loadRegister, initializeRegister } from './register.js';
 import { loadProfile } from './profile/profile.js';
 import { updateContent, initI18next } from './i18n.js';
-import { loadGame } from './game.js';
+import { loadGame, endGame, startGame } from './game.js';
 import { loadResult } from './result.js';
 import { showAlert } from './index.js';
 import { getCookie } from './csrf.js';
@@ -53,6 +53,7 @@ export async function loadContent(content, scoreLeft, scoreRight, oppIsHuman, ad
 	switch (content)
 	{
 		case 'home':
+			await endGame();
 			contentElement.innerHTML = await loadHome();
 			navLinkVisibility(1);
 			break ;
@@ -71,10 +72,12 @@ export async function loadContent(content, scoreLeft, scoreRight, oppIsHuman, ad
 			break ;
 		case 'single':
 			contentElement.innerHTML = await loadGame(0);
+			startGame();
 			navLinkVisibility(2);
 			break;
 		case 'localMulti':
 			contentElement.innerHTML = await loadGame(1);
+			startGame();
 			navLinkVisibility(2);
 			break;
 		case 'result':

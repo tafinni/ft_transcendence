@@ -48,9 +48,13 @@
 	"english": "English",
 	"finnish": "Finnish",
 	"russian": "Russian",
-	"language": "Language"
+	"language": "Language",
 
+	"win %": "Win %",
 
-
-
+	"single player": "Single Player",
+	"local multiplayer": "Local Multiplayer",
+	"remote multiplayer": "Remote Multiplayer",
+	"tournament": "Tournament",
+	"how many players?": "How many players?"
 }

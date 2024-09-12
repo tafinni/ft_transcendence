@@ -26,7 +26,7 @@ export async function editInfo() {
 				<form id="edit-info-form" enctype="multipart/form-data">
 					<div class="form-group">
 						<label for="first_name" translate="first name"></label>
-						<input type="text" id="first_name" name="first_name" class="form-control" value="${userData.first_name || 'null'}" required>
+						<input type="text" id="first_name" name="first_name" class="form-control" value="${userData.first_name}" required>
 					</div>
 					<div class="form-group">
 						<label for="last_name" translate="last name"></label>
@@ -87,6 +87,7 @@ export async function saveInfo() {
         event.preventDefault();
 
 		const formData = new FormData(editInfoForm);
+
 		const csrftoken = getCookie('csrftoken');
         try 
         {
@@ -179,6 +180,7 @@ async function saveAvatar() {
         event.preventDefault();
 
 		const formData = new FormData(editAvatarForm);
+
 		const csrftoken = getCookie('csrftoken');
         try 
         {
@@ -208,7 +210,7 @@ async function saveAvatar() {
         catch (error)
         {
             console.error('Error during edit avatar', error);
-			showAlert('Error during edit avatar. Try Again');
+			showAlert('Error during edit avatar. Try Again', 'danger');
         }
     });
 

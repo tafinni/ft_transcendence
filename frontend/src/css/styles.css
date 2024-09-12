@@ -32,14 +32,20 @@ canvas {
     float: right;
 }
 
-.start-game-buttons {
-    position: absolute;
-    top: 25%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    display: flex;
-    flex-direction: column;
-    width: 250px;
-    z-index: 1000;
+.float-right {
+    float: left;
 }
+
+#tournament-options {
+    transition: opacity 0.5s ease-in-out, max-height 0.5s ease-in-out;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+}
+
+#tournament-options.d-flex {
+    max-height: 200px; /* Adjust as needed */
+    opacity: 1;
+}
+
 
