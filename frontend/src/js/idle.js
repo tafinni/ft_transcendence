@@ -55,8 +55,6 @@ export const tick = () =>
     t.camera.position.x = radius * Math.cos(elapsedTime);
     t.camera.position.z = radius * Math.sin(elapsedTime);
     t.camera.lookAt(t.scene.position);
-    t.controls.update()
-    
 }
 
 //external functions

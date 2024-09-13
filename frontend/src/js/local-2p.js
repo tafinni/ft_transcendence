@@ -13,7 +13,6 @@ plate.material.color = new THREE.Color('grey')
 plate.material.transparent = true
 plate.material.opacity = 0.25
 plate.position.set(0, 0.005, 0)
-//t.scene.add(plate)
 const left = new THREE.Mesh(
     new THREE.BoxGeometry(0.7, 0.2, 0.2),
     new THREE.MeshBasicMaterial()
@@ -21,7 +20,6 @@ const left = new THREE.Mesh(
 left.name = "left"
 left.material.color = new THREE.Color('yellow')
 left.position.set(0, 0.1, 2.1)
-//t.scene.add(left)
 const right = new THREE.Mesh(
     new THREE.BoxGeometry(0.7, 0.2, 0.2),
     new THREE.MeshBasicMaterial()
@@ -29,7 +27,6 @@ const right = new THREE.Mesh(
 right.name = "right"
 right.material.color = new THREE.Color('purple')
 right.position.set(0, 0.1, -2.1)
-//t.scene.add(right)
 const top = new THREE.Mesh(
     new THREE.BoxGeometry(0.2, 0.125, 4),
     new THREE.MeshBasicMaterial()
@@ -66,8 +63,6 @@ export const tick = () => {
     right.position.x = v.right_pos * c.paddle_vmax / c.paddle_max
     ball.position.z = v.ballX * c.area_vmax / c.pos_max
     ball.position.x = v.ballY * c.area_vmax / c.pos_max
-    t.controls.update()
-    t.renderer.render(t.scene, t.gcamera)
 }
 
 const c = {

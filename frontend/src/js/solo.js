@@ -80,8 +80,6 @@ export const tick = () => {
     right.position.x = right_pos * paddle_max / paddle_pos_max
     ball.position.z = ballX * area_max / pos_max
     ball.position.x = ballY * area_max / pos_max
-    t.controls.update()
-    t.renderer.render(t.scene, t.gcamera)
 }
 // let curtick = itick
 // curtick()

@@ -31,6 +31,7 @@ let tickpointer = i.tick
 const tick = () => {
     //tickpointer()
     m.tick()
+    t.controls.update()
     t.renderer.render(t.scene, m.camera)
     window.requestAnimationFrame(tick)
 }
