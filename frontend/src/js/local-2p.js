@@ -54,6 +54,9 @@ const score = new THREE.Mesh(
     new THREE.SphereGeometry(0.1, 16, 16),
     new THREE.MeshBasicMaterial()
 )
+let ball_drop = gsap.to(ball.position, { y: 0.1, duration: 0.7, paused: true, onComplete: () => {
+    v.game_running = true
+}})
 score.name = "score_original"
 score.position.set(20, 0, 0)
 
@@ -88,6 +91,7 @@ const v = {
     down_pressed: false,
     up2_pressed: false,
     down2_pressed: false,
+    game_started: false,
     game_running: false,
     score_to_win: 3,
     score_left: 0,
@@ -111,7 +115,7 @@ function randomizeBallDir() {
 randomizeBallDir()
 
 function gametick() {
-    if (!v.game_running) {
+    if (!v.game_running && v.game_started) {
         if (v.score_left > v.score_to_win || v.score_right > v.score_to_win) 
             if (v.gameover_timer++ > 360)
                 switchToIdle()
@@ -125,6 +129,7 @@ function gametick() {
     if (v.down2_pressed) v.right_pos += c.player_speed
     if (v.right_pos > c.paddle_max) v.right_pos = c.paddle_max
     else if (v.right_pos < -c.paddle_max) v.right_pos = -c.paddle_max
+    if (!v.game_started) return
     v.ballX -= v.ball_speed * Math.sin(v.ball_direction)
     v.ballY -= v.ball_speed * Math.cos(v.ball_direction)
     if (!v.ball_passed && (v.ballX > c.ball_max || v.ballX < -c.ball_max) && checkPaddleHit()) {
@@ -229,14 +234,16 @@ function resetScore() {
 
 export function startGame() {
     t.scene.add(plate, left, right, top, bot)
-    gsap.to(ball.position, { y: 0.1, duration: 0.7, onComplete: () => {
-        v.game_running = true
-    }})
     t.scene.add(ball)
     document.addEventListener("keydown", onDocumentKeyDown, true);
     document.addEventListener("keyup", onDocumentKeyUp, true);
-    document.getElementById("playerSelectForm").remove()
-
+    const playerselect = document.getElementById("playerSelectForm")
+    playerselect.style.zIndex = 100
+    playerselect.addEventListener("submit", (e) => {
+        e.preventDefault()
+        startSolo()
+        playerselect.style.zIndex = -999
+    })
 }
 
 export function cleanUp() {
@@ -262,4 +269,8 @@ function onDocumentKeyUp(event) {
     else if (key_code === 68) { v.down_pressed = false }
     else if (key_code === 37) { v.up2_pressed = false }
     else if (key_code === 39) { v.down2_pressed = false }
+}
+function startSolo() {
+    v.game_started = true
+    ball_drop.play()
 }
