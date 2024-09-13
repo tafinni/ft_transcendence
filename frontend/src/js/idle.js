@@ -37,6 +37,15 @@ export function addIdleObjs() {
 }
 addIdleObjs()
 
+export function rmvIdleObjs() {
+    t.scene.remove(cube, cube2, ball)
+}
+
+export function cleanUp() {
+    rmvIdleObjs()
+    t.scene.remove(t.camera)
+}
+
 export const radius = 5; // Distance from origin
 
 export const tick = () =>
@@ -45,10 +54,9 @@ export const tick = () =>
     t.camera.position.x = radius * Math.cos(elapsedTime);
     t.camera.position.z = radius * Math.sin(elapsedTime);
     t.camera.lookAt(t.scene.position);
-
     t.controls.update()
-    t.renderer.render(t.scene, t.camera)
-    window.requestAnimationFrame(tick)
+    t.renderer.render(t.scene, t.gcamera)
+    // window.requestAnimationFrame(tick)
 }
 //tick()
 

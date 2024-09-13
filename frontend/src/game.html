@@ -11,26 +11,70 @@
         overflow: hidden;
         justify-content: center;
         align-items: center;
-    top: 200px;
-    left: auto;
-    right: auto;
-    outline: none;
+        top: 200px;
+        left: auto;
+        right: auto;
+        outline: none;
       }
-      
+      .player-select {
+        display: flex;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        top: 25%;
+        right: 25%;
+        outline: none;
+      }
+      #playerSelectForm {
+        position: absolute;
+        top: 10%; /* Adjust vertical positioning */
+        right: 10%; /* Adjust horizontal positioning */
+        z-index: 1000;
+        background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent background */
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+      }
+      #playerSelectForm label {
+        display: block;
+        margin-bottom: 10px;
+      }
+      #playerSelectForm input[type="text"],
+      #playerSelectForm input[type="submit"] {
+        width: 100%;
+        margin-bottom: 15px;
+        padding: 10px;
+        font-size: 16px;
+      }
     </style>
   </head>
   <body class="bg-black">
     <button type="submit" id="sologame" class="btn btn-info" translate="sologame">Solo Game</button>
+    <button type="submit" id="local2p" class="btn btn-info" translate="local2p">Local 2P</button>
+    <form id="playerSelectForm">
+      <label for="username">Player Name:</label><br>
+      <input type="text" id="username" name="username" list="players">
+      <datalist id="players">
+        <option value="Player1">
+        <option value="Player2">
+        <option value="Player3">
+        <!-- Add more options as needed -->
+      </datalist><br>
+      <input type="submit" value="Invite">
+    </form>
     <div><canvas id="webgl" class="webgl"></canvas></div>
     <script type="module" src="./js/game.js"></script>
     <script type="module">
       import { startQuickGame } from "./js/game.js"
+      import { startTwoLocal } from "./js/game.js"
       const sologameButton = document.getElementById("sologame");
       sologameButton.addEventListener('click', () => {
-        console.log('Pressed solo game button'); // Debugging
-		    //contentdiv.style.visibility = "hidden";
         startQuickGame();
-	})
+      })
+      const twopButton = document.getElementById("local2p");
+      twopButton.addEventListener('click', () => {
+        startTwoLocal();
+	    })
     </script>
   </body>
 </html>
