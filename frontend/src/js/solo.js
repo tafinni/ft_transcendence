@@ -73,6 +73,7 @@ score.position.set(20, 0, 0)
 //     t.renderer.render(t.scene, t.camera)
 //     window.requestAnimationFrame(curtick)
 // }
+export const camera = t.gcamera
 export const tick = () => {
     //console.log(t.camera.x, t.camera.y, t.camera.z)
     left.position.x = left_pos * paddle_max / paddle_pos_max

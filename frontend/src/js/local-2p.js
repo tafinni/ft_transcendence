@@ -60,6 +60,7 @@ let ball_drop = gsap.to(ball.position, { y: 0.1, duration: 0.7, paused: true, on
 score.name = "score_original"
 score.position.set(20, 0, 0)
 
+export const camera = t.gcamera
 export const tick = () => {
     left.position.x = v.left_pos * c.paddle_vmax / c.paddle_max
     right.position.x = v.right_pos * c.paddle_vmax / c.paddle_max
@@ -256,7 +257,6 @@ export function cleanUp() {
 // Key listeners
 function onDocumentKeyDown(event) {
     var key_code = event.which
-    console.log(key_code)
     if (key_code === 65) { v.up_pressed = true }
     else if (key_code === 68) { v.down_pressed = true }
     else if (key_code === 37) { v.up2_pressed = true }

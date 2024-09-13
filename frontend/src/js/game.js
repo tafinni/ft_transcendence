@@ -29,14 +29,16 @@ t.scene.add(t.gcamera)
 // Frame tick
 let tickpointer = i.tick
 const tick = () => {
-    tickpointer()
+    //tickpointer()
+    m.tick()
+    t.renderer.render(t.scene, m.camera)
     window.requestAnimationFrame(tick)
 }
 tick()
 
 export function switchToIdle() {
+    m.cleanUp()
     m = i
-    s.cleanUp()
     tickpointer = i.tick
     i.addIdleObjs()
 }

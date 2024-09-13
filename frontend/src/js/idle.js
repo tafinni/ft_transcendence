@@ -46,8 +46,9 @@ export function cleanUp() {
     t.scene.remove(t.camera)
 }
 
-export const radius = 5; // Distance from origin
+const radius = 5; // Distance from origin
 
+export const camera = t.camera
 export const tick = () =>
 {
     const elapsedTime = t.clock.getElapsedTime()
@@ -55,10 +56,8 @@ export const tick = () =>
     t.camera.position.z = radius * Math.sin(elapsedTime);
     t.camera.lookAt(t.scene.position);
     t.controls.update()
-    t.renderer.render(t.scene, t.gcamera)
-    // window.requestAnimationFrame(tick)
+    
 }
-//tick()
 
 //external functions
 export function startIdle() {
