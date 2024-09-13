@@ -100,7 +100,7 @@ let down_pressed = false
 let up2_pressed = false
 let down2_pressed = false
 let game_running = false
-const score_to_win = 3
+const score_to_win = 2
 let score_left = 0
 let score_right = 0
 let ballX = 0
@@ -243,18 +243,6 @@ function resetScore() {
     while (t.scene.getObjectByName("score"))
         t.scene.remove(t.scene.getObjectByName("score"))
 }
-
-// function switchToIdle() {
-//     resetScore()
-//     t.scene.remove(t.scene.getObjectByName("plate"))
-//     t.scene.remove(t.scene.getObjectByName("top"))
-//     t.scene.remove(t.scene.getObjectByName("bot"))
-//     t.scene.remove(t.scene.getObjectByName("ball"))
-//     t.scene.remove(t.scene.getObjectByName("left"))
-//     t.scene.remove(t.scene.getObjectByName("right"))
-//     i.addIdleObjs()
-//     curtick = itick
-// }
 
 // Key listener functions
 function onDocumentKeyDown(event) {

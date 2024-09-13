@@ -3,6 +3,36 @@ import { updateContent } from "./i18n";
 import { loadContent } from "./router";
 import { showAlert } from "./index.js";
 
+const trn_form_head = `
+	<div class="container-fluid d-flex justify-content-center align-items-center">
+	<div class="card p-4" style="width: 20rem;">
+	<div class="card-body d-flex flex-column align-items-center">
+	<button type="button" id="cancel-button" class="btn btn-link" translate="back"></button>
+	<h3 class="card-title text-center mb-4">Invite to tournament</h3>
+	<form id="tournament-form" method="POST">
+	<div id="error-message" class="text-danger mb-3" style="display: none;"></div>`;
+
+const trn_form_tail = `
+<input type="hidden" name="player_count" value="4">
+<button type="submit" class="btn btn-primary w-100">Invite</button>
+</form></div></div></div>`;
+
+function generateButton(plr_nbr) {
+	return `
+	<div class=form-group mb-3">
+		<label for="player-` + plr_nbr + `" class="form-label">Player ` + plr_nbr + `</label>
+		<input type="text" class="form-control" id="player-` + plr_nbr + `" required>
+	</div>`;
+}
+
+function generateHTML(num_players) {
+	let html = '';
+	for (var i = 2; i < num_players + 1; i++) {
+		html = html + generateButton(i);
+	}
+	return html;
+}
+
 export async function tournamentSetUp(value) {
 	console.log("Called tournamentSetUp", value);
 
@@ -18,7 +48,16 @@ export async function tournamentSetUp(value) {
 	}
 
 	const userData = await response.json();
-	if (value === 4)
+	if (value === 4) {
+		console.log('test4')
+		const setUpHTML = trn_form_head + generateHTML(4) + trn_form_tail;
+		const contentElement = document.getElementById('content');
+		if (contentElement)
+			contentElement.innerHTML = setUpHTML;
+		else
+			console.error('Content element not found');
+	}
+	else if (value === 5)
 	{
 		console.log('value is four 4'); //testing
 		const setUpHTML = `
@@ -238,7 +277,6 @@ export async function tournamentSetUp(value) {
 				</div>
 			</div>
 		`;
-
 
 		const contentElement = document.getElementById('content');
 		if (contentElement)

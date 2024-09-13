@@ -1,6 +1,7 @@
 import * as THREE from 'three'
 import gsap from 'gsap'
 
+import { loadContent } from './router.js'
 import * as t from './game.defs.js'
 import * as i from './idle.js'
 import * as s from './solo.js'
@@ -27,9 +28,7 @@ t.gcamera.lookAt(t.scene.position)
 t.scene.add(t.gcamera)
 
 // Frame tick
-let tickpointer = i.tick
 const tick = () => {
-    //tickpointer()
     m.tick()
     t.controls.update()
     t.renderer.render(t.scene, m.camera)
@@ -37,10 +36,40 @@ const tick = () => {
 }
 tick()
 
+var gametype = -1
+export function loadGame(nbr) {
+    gametype = nbr
+    if (nbr === 1) return `<form id="playerSelectForm">
+      <label for="username">Player Name:</label><br>
+      <input type="text" id="username" name="username" list="players">
+      <datalist id="players">
+        <option value="Player1">
+        <option value="Player2">
+        <option value="Player3">
+        <!-- Add more options as needed -->
+      </datalist><br>
+      <input type="submit" value="Invite">
+    </form>`
+    return ``
+}
+
+export function startGame() {
+    if (gametype === 0) startQuickGame()
+    else if (gametype === 1) startTwoLocal()
+    gametype = -1
+}
+
+export function endGame() {
+    gametype = -1
+}
+
+export function sendResults(scoreLeft, scoreRight, oppIsHuman) {
+    loadContent('result', scoreLeft, scoreRight, oppIsHuman)
+}
+
 export function switchToIdle() {
     m.cleanUp()
     m = i
-    tickpointer = i.tick
     i.addIdleObjs()
 }
 
@@ -48,13 +77,11 @@ export function switchToIdle() {
 export function startQuickGame() {
     m.cleanUp()
     m = s
-    tickpointer = m.tick
     m.startQuickGame()
 }
 
 export function startTwoLocal() {
     m.cleanUp()
     m = l2
-    tickpointer = m.tick
     m.startGame()
 }

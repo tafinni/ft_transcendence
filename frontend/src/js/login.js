@@ -62,6 +62,7 @@ export function initializeLogIn() {
                 console.log('Login successful:', data); // debugging, testing
 				sessionStorage.setItem("username", username); // added for savin log in
 				localStorage.setItem('username', username); // added, testing
+				document.getElementById('profile-name').innerHTML = username
 				checkUserLanguage();
 				loadContent('home');
 			} 

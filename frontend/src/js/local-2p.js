@@ -2,7 +2,7 @@ import * as THREE from 'three'
 import gsap from 'gsap'
 
 import * as t from './game.defs.js'
-import { switchToIdle } from './game.js'
+import { switchToIdle, sendResults } from './game.js'
 
 const plate = new THREE.Mesh(
     new THREE.BoxGeometry(4, 0.01, 4),
@@ -89,7 +89,7 @@ const v = {
     down2_pressed: false,
     game_started: false,
     game_running: false,
-    score_to_win: 3,
+    score_to_win: 1,
     score_left: 0,
     score_right: 0,
     ballX: 0,
@@ -112,10 +112,11 @@ randomizeBallDir()
 
 function gametick() {
     if (!v.game_running && v.game_started) {
-        if (v.score_left > v.score_to_win || v.score_right > v.score_to_win) 
+        if (v.score_left > v.score_to_win || v.score_right > v.score_to_win) {
             if (v.gameover_timer++ > 360)
                 switchToIdle()
-        return
+            return
+        }
     }
     if (v.up_pressed) v.left_pos -= c.player_speed
     if (v.down_pressed) v.left_pos += c.player_speed
@@ -125,7 +126,7 @@ function gametick() {
     if (v.down2_pressed) v.right_pos += c.player_speed
     if (v.right_pos > c.paddle_max) v.right_pos = c.paddle_max
     else if (v.right_pos < -c.paddle_max) v.right_pos = -c.paddle_max
-    if (!v.game_started) return
+    if (!v.game_started || !v.game_running) return
     v.ballX -= v.ball_speed * Math.sin(v.ball_direction)
     v.ballY -= v.ball_speed * Math.cos(v.ball_direction)
     if (!v.ball_passed && (v.ballX > c.ball_max || v.ballX < -c.ball_max) && checkPaddleHit()) {
@@ -145,7 +146,7 @@ function gametick() {
     } else if (!v.ball_passed && v.ballY < -c.ball_max) {
         v.ball_direction = Math.PI - v.ball_direction
     }
-    if (v.ball_passed && v.ball_passed_timer++ > 180) endRound()
+    if (v.ball_passed && v.ball_passed_timer++ > 200) endRound()
 }
 function checkPaddleHit() {
     if (v.ballX > 0 && Math.abs(v.bounce_distance = v.left_pos - v.ballY) < c.paddle_halfwidth)
@@ -163,16 +164,15 @@ function endRound() {
     if (v.score_right > v.score_to_win || v.score_left > v.score_to_win)
         return
     randomizeBallDir()
-    v.ballX = 0
-    v.ballY = 0
-    v.game_running = false
-    v.ball_passed = false
-    v.ball_passed_timer = 0
+    resetRound()
+    ball_drop.restart()
+}
+
+function resetRound() {
+    v.ball_passed = v.game_running = false
+    v.ballX = v.ballY = v.ball_passed_timer = 0
     v.ball_speed = c.ball_speed
     ball.position.y = 5
-    gsap.to(ball.position, { y: 0.1, duration: 1, onComplete: () => {
-        v.game_running = true
-    }})
 }
 
 function addScore(player) {
@@ -211,6 +211,7 @@ function showVictory() {
     t.win_text.lookAt(t.gcamera.position)
     t.scene.add(t.win_text)
     v.score_left++
+    sendResults(v.score_left, v.score_right, true)
 }
 
 function showLoss() {
@@ -218,6 +219,7 @@ function showLoss() {
     t.lose_text.lookAt(t.gcamera.position)
     t.scene.add(t.lose_text)
     v.score_right++
+    sendResults(v.score_left, v.score_right, true)
 }
 
 function resetScore() {
@@ -244,6 +246,8 @@ export function startGame() {
 
 export function cleanUp() {
     resetScore()
+    resetRound()
+    v.game_started = false
     document.removeEventListener("keydown", onDocumentKeyDown, true)
     document.removeEventListener("keyup", onDocumentKeyUp, true)
     t.scene.remove(plate, left, right, top, bot, ball)
@@ -267,5 +271,6 @@ function onDocumentKeyUp(event) {
 }
 function startSolo() {
     v.game_started = true
-    ball_drop.play()
+    console.log(v)
+    ball_drop.restart()
 }

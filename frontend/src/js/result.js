@@ -23,28 +23,28 @@ export async function loadResult(scoreLeft, scoreRight, oppIsHuman) {
     if (scoreLeft > scoreRight)
     {
         return `
-        <h1>Home</h1>
+        <div style="color: #ffffff;"><h1>Home</h1>
             <p>Player ${userData.display_name} wins!</p>
             <p>Final score is ${scoreLeft} - ${scoreRight}!</p>
-        `;
+        </div>`;
     }
     else
     {
         if (oppIsHuman)
         {
             return `
-            <h1>Home</h1>
+            <div style="color: #ffffff;"><h1>Home</h1>
                 <p>Player red wins!<p>
                 <p>Final score is ${scoreLeft} - ${scoreRight}!</p>
-            `;
+            </div>`;
         }
         else
         {
         return `
-        <h1>Home</h1>
+        <div style="color: #ffffff;"><h1>Home</h1>
         <p>AI wins!<p>
         <p>Final score is ${scoreLeft} - ${scoreRight}!</p>
-        `;
+        </div>`;
         }
     }
 }

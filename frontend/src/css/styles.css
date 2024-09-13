@@ -21,7 +21,7 @@ canvas {
 	position: absolute;
 	top: 0;
 	left: 0;
-	z-index: -9999;
+	z-index: -900;
   }
 
 .profile-card {
@@ -48,4 +48,24 @@ canvas {
     opacity: 1;
 }
 
-
+#playerSelectForm {
+	position: absolute;
+	top: 10%; /* Adjust vertical positioning */
+	right: 10%; /* Adjust horizontal positioning */
+	z-index: -999;
+	background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent background */
+	padding: 20px;
+	border-radius: 10px;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  }
+  #playerSelectForm label {
+	display: block;
+	margin-bottom: 10px;
+  }
+  #playerSelectForm input[type="text"],
+  #playerSelectForm input[type="submit"] {
+	width: 100%;
+	margin-bottom: 15px;
+	padding: 10px;
+	font-size: 16px;
+  }

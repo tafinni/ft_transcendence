@@ -48,7 +48,7 @@ export function cleanUp() {
 
 const radius = 5; // Distance from origin
 
-export const camera = t.camera
+export const camera = t.gcamera
 export const tick = () =>
 {
     const elapsedTime = t.clock.getElapsedTime()
