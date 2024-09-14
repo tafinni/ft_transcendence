@@ -11,7 +11,12 @@ export async function editInfo() {
 		method: 'GET',
 		credentials: 'include'
 	});
-	if (!response.ok) { console.error('Failed loading profile:', response.statusText); return `<h1>Error loading profile</h1>`; }
+	if (!response.ok)
+	{
+		console.error('Failed editing profile:', response.statusText);
+		showAlert('Error editing profile. Try again.', 'danger');
+		return ;
+	}
 
 	const userData = await response.json();
 
