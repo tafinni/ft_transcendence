@@ -69,3 +69,15 @@ canvas {
 	padding: 10px;
 	font-size: 16px;
   }
+
+  .player-entry {
+    margin-bottom: 10px;
+}
+
+.player-entry .username {
+    font-weight: bold;
+}
+
+.player-entry .status {
+    color: #666;
+}
