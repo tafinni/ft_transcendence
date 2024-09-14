@@ -60,6 +60,52 @@ class Friendship(models.Model):
     def __str__(self):
         return f'{self.user.username} -> {self.friend.username} (Accepted: {self.accepted})'
 
+# class Participants(models.Model):
+#     tournament_id = models.ForeignKey(Tournament on_delete=models.CASCADE, primary_key = True)
+#     user_id = models.ForeignKey(User, on_delete=models.CASCADE, primary_key = True)
+#     group_number = models.IntegerField(default=0) # int   
+#     accepted = models.BooleanField(server_default=None) #? True, False
+
+
+
+# class Tournament(models.Model):
+#     tournament_id = models.ForeignKey(Tournament on_delete=models.CASCADE, primary_key = True)
+#     initiator = models.ForeignKey(User, related_name='initiated_tournaments', on_delete=models.CASCADE)
+#     player_count = models.IntegerField(default=0)
+    
+
+
+# class ResultTournament(models.Model):
+#     tournament_id = models.ForeignKey(Tournament on_delete=models.CASCADE, primary_key = True)
+#     user_id = models.ForeignKey(User, on_delete=models.CASCADE, primary_key = True)
+#     opponent_id = models.ForeignKey(User, on_delete=models.CASCADE, primary_key = True)
+
+#     is_request = models.BooleanField(default=True)
+#     result = models.CharField(max_length=10, blank=True, null=True)  # Можно использовать win/loss/draw
+#     created_at = models.DateTimeField(auto_now_add=True)
+
+#     class Meta:
+#         constraints = [
+#             models.UniqueConstraint(fields=['initiator', 'opponent'], name='unique_tournament_initiator_opponent')
+#         ]
+
+#     def clean(self):
+#         if self.accepted and self.is_request:
+#             raise ValidationError('Tournament cannot be both accepted and still a request.')
+#         if not self.accepted and not self.is_request:
+#             raise ValidationError('Tournament must be either accepted or a request.')
+
+#     def save(self, *args, **kwargs):
+#         self.clean()
+#         super(Tournament, self).save(*args, **kwargs)
+
+#     def __str__(self):
+#         initiator_display = self.initiator.userprofile.display_name or self.initiator.username
+#         opponent_display = self.opponent.userprofile.display_name or self.opponent.username
+#         return f'Tournament: {initiator_display} vs {opponent_display} (Accepted: {self.accepted})'
+# #        return f'Tournament: {self.initiator.username} vs {self.opponent.username} (Accepted: {self.accepted})'
+
+
 
 class Tournament(models.Model):
     initiator = models.ForeignKey(User, related_name='initiated_tournaments', on_delete=models.CASCADE)
@@ -89,7 +135,6 @@ class Tournament(models.Model):
         opponent_display = self.opponent.userprofile.display_name or self.opponent.username
         return f'Tournament: {initiator_display} vs {opponent_display} (Accepted: {self.accepted})'
 #        return f'Tournament: {self.initiator.username} vs {self.opponent.username} (Accepted: {self.accepted})'
-
 
 
 

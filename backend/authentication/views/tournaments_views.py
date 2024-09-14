@@ -10,7 +10,6 @@ import json
 @csrf_protect
 def invite_to_tournament(request):
     if request.method == "POST":
-        body = json.loads(request.body)
         player_count = request.POST.get('player_count')
         usernames = request.POST.getlist('players')
 
