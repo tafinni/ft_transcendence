@@ -1,14 +1,16 @@
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
-from django.views.decorators.csrf import csrf_protect
+from django.views.decorators.csrf import csrf_protect, csrf_exempt
 from django.contrib.auth.models import User
 from authentication.models import Tournament, Participants, ResultTournament
 import json
+import random
 
 
 
 @login_required
-@csrf_protect
+#@csrf_protect
+@csrf_exempt
 def accept_tournament_invitation(request):
     if request.method == "POST":
         try:
@@ -50,7 +52,8 @@ def accept_tournament_invitation(request):
 
 
 @login_required
-@csrf_protect
+#@csrf_protect
+@csrf_exempt
 def decline_tournament_invitation(request):
     if request.method == "POST":
         try:
@@ -91,7 +94,8 @@ def decline_tournament_invitation(request):
 
 # invite_to_tournament
 @login_required
-@csrf_protect
+#@csrf_protect
+@csrf_exempt
 def invite_to_tournament(request):
     if request.method == "POST":
         try:
@@ -143,7 +147,8 @@ def invite_to_tournament(request):
     return JsonResponse({'error': 'Invalid request method'}, status=405)
 
 @login_required
-@csrf_protect
+#@csrf_protect
+@csrf_exempt
 def create_tournament(request):
     if request.method == "POST":
         try:
@@ -177,7 +182,8 @@ def create_tournament(request):
 
 
 @login_required
-@csrf_protect
+#@csrf_protect
+@csrf_exempt
 def start_tournament(request):
     if request.method == "POST":
         try:
@@ -199,13 +205,25 @@ def start_tournament(request):
         if accepted_count != tournament.player_count:
             return JsonResponse({'error': 'Not enough participants have accepted the invitation'}, status=400)
 
-        # Update the tournament status to 'Active'
-        tournament.status = 1  # Status=1 means 'Active'
-        tournament.save()
+
 
         ##ADD ROOM for play!!!!
 
+        participants_list = list(accepted_participants)
+        random.shuffle(participants_list)
+        # create group
+        group_number = 1
+        for i in range(0, len(participants_list), 2):
+            participants_list[i].group_number = group_number
+            participants_list[i+1].group_number = group_number
+            participants_list[i].save()
+            participants_list[i+1].save()
 
+            group_number += 1
+
+        # Update the tournament status to 'Active'
+        tournament.status = 1  # Status=1 means 'Active'
+        tournament.save()
 
         # Prepare response message
         initiator_display = request.user.userprofile.display_name or request.user.username
