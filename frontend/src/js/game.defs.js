@@ -64,7 +64,7 @@ fontLoader.load(
 // Window sizes and a function to set them, run it once
 export const sizes = { width: 0, height: 0 }
 export function setWinSizes() {
-    sizes.width = window.innerWidth * 0.9
+    sizes.width = window.innerWidth * 0.95
     sizes.height = window.innerHeight * 0.9
 }
 setWinSizes()
@@ -73,7 +73,7 @@ export function getAspect() { return sizes.width / sizes.height }
 // Export camera, controls, renderer, clock
 export const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
 
-const d = 2.75
+const d = 3
 export const gcamera = new THREE.OrthographicCamera(-d * getAspect(), d * getAspect(), d, -d, 1, 1000)
 export const controls = new OrbitControls(gcamera, canvas)
 controls.enableDamping = true

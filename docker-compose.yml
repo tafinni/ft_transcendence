@@ -47,6 +47,8 @@ services:
       context: ./frontend 
       dockerfile: Dockerfile
  #   pull_policy: build
+    depends_on:
+      - backend
     networks:
       - t_extra
     volumes:

@@ -6,6 +6,7 @@ import * as t from './game.defs.js'
 import * as i from './idle.js'
 import * as s from './solo.js'
 import * as l2 from './local-2p.js'
+import * as l4 from './local-4p.js'
 
 // Variable to track current mode
 let m = i
@@ -54,6 +55,7 @@ export function loadGame(nbr) {
 export function startGame() {
     if (gametype === 0) startQuickGame()
     else if (gametype === 1) startTwoLocal()
+    else if (gametype === 2) startFourLocal()
     gametype = -1
 }
 
@@ -83,5 +85,11 @@ export function startQuickGame() {
 export function startTwoLocal() {
     m.cleanUp()
     m = l2
+    m.startGame()
+}
+
+function startFourLocal() {
+    m.cleanUp()
+    m = l4
     m.startGame()
 }

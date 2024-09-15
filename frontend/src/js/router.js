@@ -81,6 +81,10 @@ export async function loadContent(content, scoreLeft, scoreRight, oppIsHuman, ad
 			startGame();
 			navLinkVisibility(2);
 			break;
+		case 'localMulti4':
+			contentElement.innerHTML = await loadGame(2);
+			startGame();
+			navLinkVisibility(2);
 		case 'result':
 			contentElement.innerHTML = await loadResult(scoreLeft, scoreRight, oppIsHuman);
 			navLinkVisibility(1);

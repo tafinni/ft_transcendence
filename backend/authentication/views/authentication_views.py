@@ -32,8 +32,8 @@ def home(request):
     return JsonResponse({'message': 'Welcome to the home page!!'})
 
 # Define a view function for the login page
-#@csrf_exempt
-@csrf_protect
+@csrf_exempt
+#@csrf_protect
 def login_page(request):
     if request.method == "POST":
         body = json.loads(request.body)
@@ -60,8 +60,8 @@ def login_page(request):
 
 # Define a view function for the registration page
 
-#@csrf_exempt
-@csrf_protect
+@csrf_exempt
+#@csrf_protect
 def register_page(request):
     if request.method == 'POST':
         body = json.loads(request.body)

@@ -81,3 +81,12 @@ canvas {
 .player-entry .status {
     color: #666;
 }
+
+.error-message {
+	z-index: 100
+}
+
+.min-height-four-lines {
+	min-height: calc(4 * var(--bs-body-font-size) * var(--bs-body-line-height));
+	padding: 1rem;
+}

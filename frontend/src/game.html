@@ -51,6 +51,7 @@
   <body class="bg-black">
     <button type="submit" id="sologame" class="btn btn-info" translate="sologame">Solo Game</button>
     <button type="submit" id="local2p" class="btn btn-info" translate="local2p">Local 2P</button>
+    <button type="submit" id="local4p" class="btn btn-info" translate="local4p">Local 4P</button>
     <form id="playerSelectForm">
       <label for="username">Player Name:</label><br>
       <input type="text" id="username" name="username" list="players">
@@ -65,8 +66,7 @@
     <div><canvas id="webgl" class="webgl"></canvas></div>
     <script type="module" src="./js/game.js"></script>
     <script type="module">
-      import { startQuickGame } from "./js/game.js"
-      import { startTwoLocal } from "./js/game.js"
+      import { startQuickGame, startTwoLocal, loadGame, startGame } from "./js/game.js"
       const sologameButton = document.getElementById("sologame");
       sologameButton.addEventListener('click', () => {
         startQuickGame();
@@ -74,6 +74,11 @@
       const twopButton = document.getElementById("local2p");
       twopButton.addEventListener('click', () => {
         startTwoLocal();
+	    })
+      const fourpButton = document.getElementById("local4p");
+      fourpButton.addEventListener('click', () => {
+        loadGame(2);
+        startGame();
 	    })
     </script>
   </body>

@@ -8,6 +8,7 @@ export async function loadHome() {
                 <div class="card-body d-flex flex-column align-items-center">
                     <button class="btn btn-primary btn-lg mb-3" id="single-player-btn" translate="single player">Single Player</button>
                     <button class="btn btn-success btn-lg mb-3" id="local-multiplayer-btn" translate="local multiplayer">Local Multiplayer</button>
+                    <button class="btn btn-success btn-lg mb-3" id="local-multiplayer4-btn" translate="local 4p multiplayer">Local 4 Player Multiplayer</button>
                     <button class="btn btn-warning btn-lg mb-3" id="tournament-btn" translate="tournament">Tournament</button>
                     <div id="tournament-options" class="d-none mt-3 flex-column align-items-center">
                         <p class="w-100 text-center mb-2" style="color: white;" translate="how many players?"></p>
@@ -26,6 +27,7 @@ export async function loadHome() {
     window.requestAnimationFrame(() => {
         const singlePlayer = document.getElementById('single-player-btn');
         const twoPlayer = document.getElementById('local-multiplayer-btn');
+        const fourPlayer = document.getElementById('local-multiplayer4-btn');
         // const remote =  document.getElementById('remote-multiplayer-btn');
         const tournamentButton = document.getElementById('tournament-btn');
         const tournamentOptions = document.getElementById('tournament-options');
@@ -42,6 +44,12 @@ export async function loadHome() {
             twoPlayer.addEventListener('click', (event) => {
                 event.preventDefault();
                 loadContent('localMulti');
+            });
+        }
+        if (fourPlayer) {
+            fourPlayer.addEventListener('click', (event) => {
+                event.preventDefault();
+                loadContent('localMulti4');
             });
         }
         if (tournamentButton && tournamentOptions)
