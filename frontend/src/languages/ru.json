@@ -47,7 +47,21 @@
 	"english": "Английский",
 	"finnish": "Финский",
 	"russian": "Русский",
-	"language": "Язык"
+	"language": "Язык",
 
+	"win %": "Процент побед %",
 
+	"single player": "Одиночная игра",
+	"local multiplayer": "Локальный мультиплеер",
+	"remote multiplayer": "Удалённый мультиплеер",
+	"tournament": "Турнир",
+	"how many players?": "Сколько игроков?",
+
+	"game invites": "Приглашения на игру",
+	"invited players": "Приглашённые игроки",
+
+	"invite to tournament": "Пригласить на турнир",
+	"enter player username": "Введите имя пользователя",
+	"invite player": "Пригласить игрока",
+	"start tournament": "Начать турнир"
 }
