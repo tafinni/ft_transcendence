@@ -35,7 +35,7 @@ services:
       - DATABASE_NAME=${DATABASE_NAME}
       - DATABASE_USER=${DATABASE_USER}
       - DATABASE_PASSWORD=${DATABASE_PASSWORD}
-      - SECRET_KEY=${SECRET_KEY}
+   #   - SECRET_KEY=${SECRET_KEY}
 
   frontend:
     image: frontend
