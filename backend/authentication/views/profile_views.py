@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.http import JsonResponse
 import json
-from authentication.models import UserStats, UserProfile, MatchHistory, Friendship
+from authentication.models import UserStats, UserProfile, MatchHistory, Friendship, Participants, Tournament
 from django.conf import settings
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
@@ -153,6 +153,18 @@ def profile(request):
         } for request in friend_requests
     ]
 
+     # tournament_invitations
+    tournament_invitations = Participants.objects.filter(user=user, is_accepted=None)
+    invitations = [
+        {
+            'tournament_id': invite.tournament.id,
+            'tournament_initiator': invite.tournament.initiator.username,
+            'status': 'Pending',
+           # 'date': invite.tournament.date,
+        } for invite in tournament_invitations
+    ]
+
+
     data = {
         'username': user.username,
         'first_name': user.first_name,
@@ -164,6 +176,7 @@ def profile(request):
         'preferred_language': user_profile.preferred_language,
         'friends': friends,
         'friend_requests': requests,
+         'tournament_invitations': invitations, 
     }
     return JsonResponse(data)
 
