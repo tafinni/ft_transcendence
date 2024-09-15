@@ -16,7 +16,7 @@ export async function tournamentSetUp(count) {
 		const reply = await fetch('http://localhost:8000/create_tournament/',
 		{
 			method: 'POST',
-			header: { 'Content-Type': 'application/json', 'X-CSRFToken': csrftoken },
+			headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrftoken },
 			credentials: 'include',
 			body: JSON.stringify({ player_count: count })
 		});
@@ -58,7 +58,8 @@ export async function tournamentSetUp(count) {
 				<h3 class="card-title text-center mb-4">
 					<span translate="invite to tournament"></span>
 				</h3>
-			
+
+				<p>You - accepted</p>
 				<div id="players-container">
 					<!-- Players will be dynamically added here -->
 				</div><br>
@@ -104,41 +105,47 @@ export async function tournamentSetUp(count) {
 		
 		const newPlayerInput = document.getElementById('new-player');
 		const username = newPlayerInput.value.trim();
+		const errorMessage = document.getElementById('error-message');
+		errorMessage.style.display = 'none';
+
 	
 		if (!username) return;
 	
 		try
 		{
 			const csrftoken = getCookie('csrftoken');
-			try
+			const response = await fetch('http://localhost:8000/invite_to_tournament/',
 			{
-				const response = await fetch('http://localhost:8000/invite_to_tournament/',
-				{
-					method: 'POST',
-					header: { 'Content-Type': 'application/json', 'X-CSRFToken': csrftoken },
-					credentials: 'include',
-					body: JSON.stringify({ opponent_username: username, tournament_id: tournamentID })
-				});
-		
-				if (response.ok)
-					{
-						const responseData = await response.json();
-						console.log('Sending invite to player successful', responseData);
-						tournamentID = responseData.tournament_id;
-					}
-					else
-					{
-						const errorData = await response.json();
-						console.error('Error inviting player', errorData);
-						showAlert('Error inviting player. Try again.', 'danger');
-//						loadContent('home');
-					}
-			}
-			catch (error)
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrftoken },
+				credentials: 'include',
+				body: JSON.stringify({ opponent_username: username, tournament_id: tournamentID })
+			});
+	
+			if (response.ok)
 			{
-				console.error('Error during tournament setup', error);
-				showAlert('Error during tournament setup. Try again.', 'danger');
+				const responseData = await response.json();
+				console.log('Sending invite to player successful', responseData);
+				players.push({ username, status: 'pending' });
+				updatePlayersList();
 			}
+			else
+			{
+				const errorData = await response.json();
+				console.error('Error inviting player', errorData);
+				errorMessage.textContent = errorData.error;
+				errorMessage.style.display = 'block';
+				return ;
+			}
+		}
+		catch (error)
+		{
+			console.error('Error during tournament setup', error);
+			showAlert('Error during tournament setup. Try again.', 'danger');
+		}
+
+		document.getElementById('finish-invites-btn').disabled = players.length >= count - 1;
+
 /* 			await validateUsername(username);
 			
 			// Add player to list
@@ -156,9 +163,7 @@ export async function tournamentSetUp(count) {
 				updatePlayerStatus(username, status);
 			}); */
 	
-		} catch (error) {
-			showError(error.message);
-		}
+
 	});
 }
 

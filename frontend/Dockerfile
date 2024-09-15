@@ -14,7 +14,7 @@ RUN yarn add vite-plugin-static-copy --dev
 
 
 #testing only
-RUN yarn run build
+#RUN yarn run build
 CMD ["yarn", "run", "dev"]
 
 #for actual https
