@@ -49,6 +49,7 @@ export async function loadContent(content, scoreLeft, scoreRight, oppIsHuman, ad
 		if (current !== content)
 			window.history.pushState({ content: content }, '', `/${content}#`);
 	}
+	document.getElementById('profile-name').innerHTML = sessionStorage.getItem("username")
   
 	switch (content)
 	{

@@ -12,6 +12,12 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 from pathlib import Path
 import os 
+#import environ
+
+
+
+
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -22,7 +28,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-xe3l)tqso(5e^3n2ql8(b#f=ia7*wgj)2_$ur@l!$ue9k=imzz'
-
+#env = environ.Env()
+#environ.Env.read_env()
 #SECRET_KEY = os.environ['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -32,13 +39,17 @@ ALLOWED_HOSTS = []
 
 CORS_ALLOW_ALL_ORIGINS = True # ONLY FOR TESTING
 
-# Allowed origins
-#CORS_ALLOWED_ORIGINS = [
-#	"https://localhost",
-#    "https://localhost:443",
-#]
+#CSRF_COOKIE_SECURE = True #?
+#SESSION_COOKIE_SECURE = True #?
 
-#//CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', 'http://localhost:3000, https://localhost:443, https://localhost').split(',')
+# Allowed origins
+CORS_ALLOWED_ORIGINS = [
+	"https://localhost",
+    "https://localhost:443",
+    "http://localhost:3000",
+]
+
+#CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', 'http://localhost:3000, https://localhost:443, https://localhost').split(',')
 
 CORS_ALLOW_CREDENTIALS = True
 

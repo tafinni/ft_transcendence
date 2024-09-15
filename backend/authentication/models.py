@@ -61,37 +61,56 @@ class Friendship(models.Model):
         return f'{self.user.username} -> {self.friend.username} (Accepted: {self.accepted})'
 
 
+
+# Tournament
+
 class Tournament(models.Model):
+    STATUS_CHOICES = [
+        (0, 'Pending'),
+        (1, 'Active'),
+        (2, 'Completed'), 
+    ]
+
     initiator = models.ForeignKey(User, related_name='initiated_tournaments', on_delete=models.CASCADE)
-    opponent = models.ForeignKey(User, related_name='invited_tournaments', on_delete=models.CASCADE)
-    accepted = models.BooleanField(default=False)
-    is_request = models.BooleanField(default=True)
-    result = models.CharField(max_length=10, blank=True, null=True)  # Можно использовать win/loss/draw
-    created_at = models.DateTimeField(auto_now_add=True)
+    player_count = models.IntegerField(default=0)
+    date = models.DateTimeField(auto_now_add=True)
+    status = models.IntegerField(choices=STATUS_CHOICES, default=0)
+
+    def __str__(self):
+        return f"Tournament by {self.initiator.username} on {self.date.strftime('%Y-%m-%d')}"
+
+class Participants(models.Model):
+    tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    group_number = models.IntegerField(default=0) # int 
+    is_accepted = models.BooleanField(null=True, default=None)  # None, True, False
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['user', 'tournament'], name='unique_tournament_user')
+        ]
+
+    def __str__(self):
+        return f"{self.user.username} in {self.tournament.initiator.username}'s tournament"
+#        return f"{self.user.username} in {self.tournament}"
+
+class ResultTournament(models.Model):
+    RESULT_CHOICES = [
+        ('win', 'Win'),
+        ('loss', 'Loss'),
+        ('draw', 'Draw'),
+    ]
+    tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, related_name='result_tournaments_as_user', on_delete=models.CASCADE)
+    opponent = models.ForeignKey(User, related_name='result_tournaments_as_opponent', on_delete=models.CASCADE)
+    result = models.CharField(max_length=10, choices=RESULT_CHOICES, blank=True, null=True)  # ?
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=['initiator', 'opponent'], name='unique_tournament_initiator_opponent')
+            models.UniqueConstraint(fields=['tournament', 'user', 'opponent'], name='unique_result_tournament')
         ]
 
-    def clean(self):
-        if self.accepted and self.is_request:
-            raise ValidationError('Tournament cannot be both accepted and still a request.')
-        if not self.accepted and not self.is_request:
-            raise ValidationError('Tournament must be either accepted or a request.')
-
-    def save(self, *args, **kwargs):
-        self.clean()
-        super(Tournament, self).save(*args, **kwargs)
-
     def __str__(self):
-        initiator_display = self.initiator.userprofile.display_name or self.initiator.username
-        opponent_display = self.opponent.userprofile.display_name or self.opponent.username
-        return f'Tournament: {initiator_display} vs {opponent_display} (Accepted: {self.accepted})'
-#        return f'Tournament: {self.initiator.username} vs {self.opponent.username} (Accepted: {self.accepted})'
-
-
-
+        return f"{self.user.username} vs {self.opponent.username} - Result: {self.result}"
 
 
 # Signal to create or update user profile
@@ -106,4 +125,4 @@ def create_or_update_user_profile(sender, instance, created, **kwargs):
     else:
         UserProfile.objects.get_or_create(user=instance)
         UserStats.objects.get_or_create(user=instance)
-    instance.userprofile.save()
+    instance.userprofile.save() #? check

@@ -56,5 +56,14 @@
 	"local multiplayer": "Local Multiplayer",
 	"remote multiplayer": "Remote Multiplayer",
 	"tournament": "Tournament",
-	"how many players?": "How many players?"
+	"how many players?": "How many players?",
+
+	"game invites": "Game Invites",
+	"invited players": "Invited players",
+
+	"invite to tournament": "Invite to tournament",
+	"enter player username": "Enter player username",
+	"invite player": "Invite player",
+	"start tournament": "Start tournament"
+
 }

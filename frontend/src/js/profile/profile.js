@@ -96,6 +96,22 @@ export async function loadProfile() {
 					</div>
 				</div>
 
+				<div class="col-md-4">
+					<div class="card profile-card">
+						<div class="card-body">
+							<div class="d-flex justify-content-between align-items-center mb-4">
+								<h5 class="card-title mb-0">
+									<span translate="game invites"></span>
+								</h5>
+							</div>
+							<ul id="game-invite-list" class="list-group">
+								<!-- Game invites here dinamically -->
+							</ul>
+							<hr></hr>
+						</div>
+					</div>
+				</div>
+				
 				<div class="col-md-8">
 					<div class="card profile-card">
 						<div class="card-body">

@@ -3,308 +3,226 @@ import { updateContent } from "./i18n";
 import { loadContent } from "./router";
 import { showAlert } from "./index.js";
 
-export async function tournamentSetUp(value) {
-	console.log("Called tournamentSetUp", value);
+let players = [];
 
-	const response = await fetch('http://localhost:8000/profile/', {
-		method: 'GET',
-		credentials: 'include'
-	});
-	if (!response.ok)
+export async function tournamentSetUp(count) {
+	console.log("Called tournamentSetUp", count);
+
+	let tournamentID = -1;
+
+	const csrftoken = getCookie('csrftoken');
+	try
 	{
-		console.error('Failed at tournament set up:', response.statusText);
-		showAlert('Error loading tournament set up. Try again.', 'danger');
-		return ;
-	}
+		const reply = await fetch('http://localhost:8000/create_tournament/',
+		{
+			method: 'POST',
+			header: { 'Content-Type': 'application/json', 'X-CSRFToken': csrftoken },
+			credentials: 'include',
+			body: JSON.stringify({ player_count: count })
+		});
 
-	const userData = await response.json();
-	if (value === 4)
-	{
-		console.log('value is four 4'); //testing
-		const setUpHTML = `
-			<div class="container-fluid d-flex justify-content-center align-items-center">
-				<div class="card p-4" style="width: 20rem;">
-				    <div class="card-body d-flex flex-column align-items-center">
-
-						<button type="button" id="cancel-button" class="btn btn-link" translate="back"></button>
-						<h3 class="card-title text-center mb-4">Invite to tournament</h3>
-						
-						<form id="tournament-form" method="POST">
-							<div id="error-message" class="text-danger mb-3" style="display: none;"></div>
-							
-							<div class="form-group mb-3">
-								<label for="player-1" class="form-label">Player 1 (You)</label>
-								<input type="text" class="form-control" id="player-1" value="${userData.username}" readonly>
-							</div>
-
-							<div class="form-group mb-3">
-								<label for="player-2" class="form-label">Player 2</label>
-								<input type="text" class="form-control" id="player-2" required>
-							</div>
-
-							<div class="form-group mb-3">
-								<label for="player-3" class="form-label">Player 3</label>
-								<input type="text" class="form-control" id="player-3" required>
-							</div>
-
-							<div class="form-group mb-3">
-								<label for="player-4" class="form-label">Player 4</label>
-								<input type="text" class="form-control" id="player-4" required>
-							</div>
-
-							<input type="hidden" name="player_count" value="4">
-
-							<button type="submit" class="btn btn-primary w-100">Invite</button>
-						</form>
-					
-					</div>
-				</div>
-			</div>
-		`;
-
-		const contentElement = document.getElementById('content');
-		if (contentElement)
-			contentElement.innerHTML = setUpHTML;
+		if (reply.ok)
+		{
+			const replyData = await reply.json();
+			console.log('Sending tournament data successful', replyData);
+			tournamentID = replyData.tournament_id;
+		}
 		else
-			console.error('Content element not found');
+		{
+			const errorData = await reply.json();
+			console.error('Tournament setup failed', errorData);
+			showAlert('Error during tournament setup. Try again.', 'danger');
+			loadContent('home');
+		}
 	}
-	else if (value === 8)
+	catch (error)
 	{
-		const setUpHTML = `
-			<div class="container-fluid d-flex justify-content-center align-items-center">
-				<div class="card p-4" style="width: 20rem;">
-				    <div class="card-body d-flex flex-column align-items-center">
+		console.error('Error during tournament setup', error);
+		showAlert('Error during tournament setup. Try again.', 'danger');
+		loadContent('home');
+	}
+	console.log("the tournament id: ", tournamentID);
 
-						<button type="button" id="cancel-button" class="btn btn-link" translate="back"></button>
-						<h3 class="card-title text-center mb-4">Invite to tournament</h3>
-						
-						<form id="tournament-form" method="POST">
-							<div id="error-message" class="text-danger mb-3" style="display: none;"></div>
-							
-							<div class="form-group mb-3">
-								<label for="player-1" class="form-label">Player 1 (You)</label>
-								<input type="text" class="form-control" id="player-1" value="${userData.username}" readonly>
-							</div>
-
-							<div class="form-group mb-3">
-								<label for="player-2" class="form-label">Player 2</label>
-								<input type="text" class="form-control" id="player-2" required>
-							</div>
-
-							<div class="form-group mb-3">
-								<label for="player-3" class="form-label">Player 3</label>
-								<input type="text" class="form-control" id="player-3" required>
-							</div>
-
-							<div class="form-group mb-3">
-								<label for="player-4" class="form-label">Player 4</label>
-								<input type="text" class="form-control" id="player-4" required>
-							</div>
-
-							<div class="form-group mb-3">
-								<label for="player-5" class="form-label">Player 5</label>
-								<input type="text" class="form-control" id="player-5" required>
-							</div>
-
-							<div class="form-group mb-3">
-								<label for="player-6" class="form-label">Player 6</label>
-								<input type="text" class="form-control" id="player-6" required>
-							</div>							
-							<div class="form-group mb-3">
-								<label for="player-7" class="form-label">Player 7</label>
-								<input type="text" class="form-control" id="player-7" required>
-							</div>
-
-							<div class="form-group mb-3">
-								<label for="player-8" class="form-label">Player 8</label>
-								<input type="text" class="form-control" id="player-8" required>
-							</div>
-
-						    <input type="hidden" name="player_count" value="8">
-
-							<button type="submit" class="btn btn-primary w-100">Invite</button>
-						</form>
-					
-					</div>
+	let setUpHTML = `
+		<div class="card-body d-flex flex-column align-items-center">
+			<div class="card p-4" style="width: 20rem;">
+				<div class="float-right">
+					<button type="button" id="cancel-button" class="btn btn-link" translate="back"></button>
+					<button type="button" id="refresh-button" class="btn-sm btn-primary float-right">
+							<i class="bi bi-arrow-clockwise" style="font-size: 100%;"></i>
+					</button>
 				</div>
+
+				<hr style="visibility:hidden;"></hr>
+				
+				<h3 class="card-title text-center mb-4">
+					<span translate="invite to tournament"></span>
+				</h3>
+			
+				<div id="players-container">
+					<!-- Players will be dynamically added here -->
+				</div><br>
+
+				<hr style="visibility:hidden;"></hr>
+				<hr></hr>
+
+				<form id="add-player-form">
+					<div id="error-message" class="text-danger mb-3" style="display: none;"></div>
+					<div class="form-group mb-3">
+						<label for="new-player" class="form-label" translate="enter player username"></label>
+						<input type="text" class="form-control" id="new-player" required>
+					</div>
+					<button type="submit" class="btn btn-primary w-100" translate="invite player"></button>
+				</form>
+
+				<button type="button" id="finish-invites-btn" class="btn btn-success w-100 mt-3" disabled translate="start tournament"></button>
 			</div>
-		`;
+		</div>`;
 
-
-		const contentElement = document.getElementById('content');
-		if (contentElement)
-			contentElement.innerHTML = setUpHTML;
-		else
-			console.error('Content element not found');
+	const contentElement = document.getElementById('content');
+	if (contentElement)
+	{
+		contentElement.innerHTML = setUpHTML;
+		updateContent();
 	}
 	else
-	{
-		const setUpHTML = `
-			<div class="container-fluid d-flex justify-content-center align-items-center">
-				<div class="card p-4" style="width: 20rem;">
-				    <div class="card-body d-flex flex-column align-items-center">
-
-						<button type="button" id="cancel-button" class="btn btn-link" translate="back"></button>
-						<h3 class="card-title text-center mb-4">Invite to tournament</h3>
-						
-						<form id="tournament-form" method="POST">
-							<div id="error-message" class="text-danger mb-3" style="display: none;"></div>
-							
-							<div class="form-group mb-3">
-								<label for="player-1" class="form-label">Player 1 (You)</label>
-								<input type="text" class="form-control" id="player-1" name="player1" value="${userData.username}" readonly>
-							</div>
-
-							<div class="form-group mb-3">
-								<label for="player-2" class="form-label">Player 2</label>
-								<input type="text" class="form-control" id="player-2" name="player2" required>
-							</div>
-
-							<div class="form-group mb-3">
-								<label for="player-3" class="form-label">Player 3</label>
-								<input type="text" class="form-control" id="player-3" name="player3" required>
-							</div>
-
-							<div class="form-group mb-3">
-								<label for="player-4" class="form-label">Player 4</label>
-								<input type="text" class="form-control" id="player-4" name="player4" required>
-							</div>
-
-							<div class="form-group mb-3">
-								<label for="player-5" class="form-label">Player 5</label>
-								<input type="text" class="form-control" id="player-5" name="player5" required>
-							</div>
-
-							<div class="form-group mb-3">
-								<label for="player-6" class="form-label">Player 6</label>
-								<input type="text" class="form-control" id="player-6" name="player6" required>
-							</div>							
-							<div class="form-group mb-3">
-								<label for="player-7" class="form-label">Player 7</label>
-								<input type="text" class="form-control" id="player-7" name="player7" required>
-							</div>
-
-							<div class="form-group mb-3">
-								<label for="player-8" class="form-label">Player 8</label>
-								<input type="text" class="form-control" id="player-8" name="player8" required>
-							</div>
-
-
-							<div class="form-group mb-3">
-								<label for="player-9" class="form-label">Player 9</label>
-								<input type="text" class="form-control" id="player-9" name="player9" required>
-							</div>
-
-							<div class="form-group mb-3">
-								<label for="player-10" class="form-label">Player 10</label>
-								<input type="text" class="form-control" id="player-10" name="player10" required>
-							</div>
-
-							<div class="form-group mb-3">
-								<label for="player-11" class="form-label">Player 11</label>
-								<input type="text" class="form-control" id="player-11" name="player11" required>
-							</div>
-
-							<div class="form-group mb-3">
-								<label for="player-12" class="form-label">Player 12</label>
-								<input type="text" class="form-control" id="player-12" name="player12" required>
-							</div>
-
-							<div class="form-group mb-3">
-								<label for="player-13" class="form-label">Player 13</label>
-								<input type="text" class="form-control" id="player-13" name="player13" required>
-							</div>							
-							<div class="form-group mb-3">
-								<label for="player-14" class="form-label">Player 14</label>
-								<input type="text" class="form-control" id="player-14" name="player14" required>
-							</div>
-
-							<div class="form-group mb-3">
-								<label for="player-15" class="form-label">Player 15</label>
-								<input type="text" class="form-control" id="player-15" name="player15" required>
-							</div>
-
-							<div class="form-group mb-3">
-								<label for="player-16" class="form-label">Player 16</label>
-								<input type="text" class="form-control" id="player-16" required>
-							</div>							
-
-							<input type="hidden" name="player_count" value="16">
-
-							<button type="submit" class="btn btn-primary w-100">Invite</button>
-						</form>
-					
-					</div>
-				</div>
-			</div>
-		`;
-
-
-		const contentElement = document.getElementById('content');
-		if (contentElement)
-			contentElement.innerHTML = setUpHTML;
-		else
-			console.error('Content element not found');
-	}
-
-	updateContent();
-	sendInvites();
-}
-
-async function sendInvites() {
-
-    const tournamentForm = document.getElementById('tournament-form');
-    if (!tournamentForm)
-	{
-		console.error('Tournament form not found');
-		showAlert('Error occured. Try again', 'danger');
-		return ;
-	}
+		console.error('Content element not found');
 
 	const cancelButton = document.getElementById('cancel-button');
-	const errorMessage = document.getElementById('error-message');
-
-    tournamentForm.addEventListener('submit', async (event) => {
-		event.preventDefault();
-
-		const formData = new FormData(tournamentForm);
-
-		const csrftoken = getCookie('csrftoken');
-		try
-		{
-			const response = await fetch('http://localhost:8000/invite_to_tournament/',
-			{
-				method: 'POST',
-				headers: { 'X-CSRFToken': csrftoken },
-				credentials: 'include',
-				body: formData
-			});
-
-			if (response.ok)
-			{
-				const data = await response.json();
-				console.log('Invite successful');
-				showAlert('Invites sent', 'success');
-				loadContent('home'); // for testing
-				//tournamentLobby();
-			}
-			else
-			{
-				const errorData = await response.json();
-				console.error('Sending invites failed', errorData);
-				errorMessage.textContent = errorData.error;
-				errorMessage.style.display = 'block';
-			}
-		}
-		catch (error)
-		{
-			console.error('Error during tournament set up');
-			showAlert('Error at tournament set up. Try again.', 'danger');
-		}
-	});
-
 	cancelButton.addEventListener('click', () => {
-		console.log('Cancelled tournament invites');
 		loadContent('home');
 	});
+
+	const refreshButton = document.getElementById('refresh-button');
+	refreshButton.addEventListener('click', () => {
+		//tournamentSetUp(count);
+	});
+
+
+	document.getElementById('add-player-form').addEventListener('submit', async (e) => {
+		e.preventDefault();
+		
+		const newPlayerInput = document.getElementById('new-player');
+		const username = newPlayerInput.value.trim();
+	
+		if (!username) return;
+	
+		try
+		{
+			const csrftoken = getCookie('csrftoken');
+			try
+			{
+				const response = await fetch('http://localhost:8000/invite_to_tournament/',
+				{
+					method: 'POST',
+					header: { 'Content-Type': 'application/json', 'X-CSRFToken': csrftoken },
+					credentials: 'include',
+					body: JSON.stringify({ opponent_username: username, tournament_id: tournamentID })
+				});
+		
+				if (response.ok)
+					{
+						const responseData = await response.json();
+						console.log('Sending invite to player successful', responseData);
+						tournamentID = responseData.tournament_id;
+					}
+					else
+					{
+						const errorData = await response.json();
+						console.error('Error inviting player', errorData);
+						showAlert('Error inviting player. Try again.', 'danger');
+//						loadContent('home');
+					}
+			}
+			catch (error)
+			{
+				console.error('Error during tournament setup', error);
+				showAlert('Error during tournament setup. Try again.', 'danger');
+			}
+/* 			await validateUsername(username);
+			
+			// Add player to list
+			players.push({ username, status: 'pending' });
+			updatePlayersList();
+			
+			// Clear input field
+			newPlayerInput.value = '';
+			
+			// Disable finish button if max players reached
+			document.getElementById('finish-invites-btn').disabled = players.length >= maxPlayers;
+			
+			// Send invitation (simulated)
+			sendInvitation(username).then(status => {
+				updatePlayerStatus(username, status);
+			}); */
+	
+		} catch (error) {
+			showError(error.message);
+		}
+	});
+}
+
+function validateUsername(username) {
+    // Simulate API call to validate username
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            // Replace this with actual API call
+            if (username.length > 3 && username.length < 20) {
+                resolve();
+            } else {
+                reject('Username must be between 4 and 19 characters');
+            }
+        }, 1000);
+    });
+}
+
+function sendInvitation(username) {
+    // Simulate sending invitation
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            // Replace this with actual API call
+            const status = Math.random() < 0.7 ? 'accepted' : 'declined';
+            resolve(status);
+        }, 2000);
+    });
+}
+
+function updatePlayersList() {
+    const playersContainer = document.getElementById('players-container');
+    playersContainer.innerHTML = '';
+
+    players.forEach(player => {
+        const playerEntry = document.createElement('div');
+        playerEntry.className = 'player-entry';
+
+        const usernameSpan = document.createElement('span');
+        usernameSpan.className = 'username';
+        usernameSpan.textContent = player.username;
+
+        const statusSpan = document.createElement('span');
+        statusSpan.className = 'status';
+        statusSpan.textContent = ` - ${player.status}`;
+
+        playerEntry.appendChild(usernameSpan);
+        playerEntry.appendChild(statusSpan);
+
+        playersContainer.appendChild(playerEntry);
+    });
+}
+
+function updatePlayerStatus(username, status) {
+    const index = players.findIndex(p => p.username === username);
+    if (index !== -1) {
+        players[index].status = status;
+        updatePlayersList();
+    }
+}
+
+function showError(message) {
+    const errorMessageDiv = document.getElementById('error-message');
+    errorMessageDiv.textContent = message;
+    errorMessageDiv.style.display = 'block';
+    setTimeout(() => {
+        errorMessageDiv.style.display = 'none';
+    }, 3000);
 }
