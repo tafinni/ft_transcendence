@@ -200,14 +200,11 @@ def start_tournament(request):
         except Tournament.DoesNotExist:
             return JsonResponse({'error': 'Tournament does not exist or is not pending'}, status=404)
 
+        accepted_participants = Participants.objects.filter(tournament=tournament, is_accepted=True)
+
         # Check if the number of participants who have accepted matches the required player count
-        accepted_count = Participants.objects.filter(tournament=tournament, is_accepted=True).count()
-        if accepted_count != tournament.player_count:
+        if accepted_participants.count() != tournament.player_count:
             return JsonResponse({'error': 'Not enough participants have accepted the invitation'}, status=400)
-
-
-
-        ##ADD ROOM for play!!!!
 
         participants_list = list(accepted_participants)
         random.shuffle(participants_list)
