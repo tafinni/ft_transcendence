@@ -1,0 +1,117 @@
+{%  extends "layouts/blank.html" %}
+
+{% block content %}
+
+{% if other_user %}
+
+    <wrapper class="block max-w-2xl mx-auto my-10 px-6">
+        <div id="chat_window" class="h-[45rem] flex flex-col bg-gray-300 rounded-2xl shadow-2xl relative p-1">
+            <div class="flex justify-center text-emerald-400 bg-gray-300 p-2 sticky top-0 z-10">
+                <a class="btn-close absolute top-0 right-0 m-2" type="button" href="{% url 'home' %}"style="background-color: #d2d5da; box-shadow: none;"></a>
+                <a href="{% url 'profile' other_user.username %}">
+                    <div class="flex items-center gap-2 p-4 sticky top-0 z-10">
+                        <img class="w-10 h-10 rounded-full object-cover" src="{{ other_user.profile.avatar }}">
+                        <div>
+                            <span class="font-bold text-white">{{ other_user.profile.name }}</span>
+                            <span class="text-sm font-light text-gray-400">@{{ other_user.username }}</span>
+                        </a>
+                        </div>
+                    </div>
+            </div>
+            <div id='chat_container' class="overflow-y-auto grow">
+                <ul id='chat_messages' class="flex flex-col justify-end gap-2 p-4">
+                    {% for message in chat_messages reversed %}
+                    {% include 'a_chat/chat_message.html' %}
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="sticky bottom-0 z-10 p-2 bg-gray-300">
+                <div class="flex items-center rounded-xl px-2 py-2">
+                    <form id="chat_message_form" class="w-full"
+                        hx-ext="ws"
+                        ws-connect="/ws/chatroom/{{ chatroom_name }}"
+                        ws-send
+                        _="on htmx:wsAfterSend reset() me">
+                        {% csrf_token %}
+                        {{ form }}
+                    </form>
+                </div>
+            </div>
+        </div>
+    </wrapper>
+
+{% else %}
+
+    <button class="btn bg-gray-300 btn-primary position-fixed bottom-0 end-0 m-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight" style="background-color: #d2d5da; border-color: #d2d5da;">Chat</button>
+
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel" style="width: 600px;">
+    <div class="offcanvas-header">
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close" style="background-color: #ffffff; box-shadow: none;"></button>
+    </div>
+    <div class="offcanvas-body">
+        
+        <wrapper class="block max-w-2xl mx-auto my-10 px-6">
+            <div id="chat_window" class="h-[45rem] flex flex-col bg-gray-300 rounded-2xl shadow-2xl relative p-1" style="height: 1100px;">
+                <div class="flex justify-center text-emerald-400 bg-gray-300 p-2 sticky top-0 z-10">
+                    {% if user.chat_groups.all|length == 0 %}
+                    <div class="font-bold text-white">Public Chat</div>
+                    {% else %}
+                    <div class="dropdown">
+                        <div class="dropdown-toggle font-bold text-white" data-bs-toggle="dropdown" aria-expanded="false">Public Chat</div>
+                        <ul class="dropdown-menu">
+                            {% for chatroom in user.chat_groups.all %}
+                                {% if chatroom.is_private %}
+                                    {% for member in chatroom.members.all %}
+                                        {% if member != user %}
+                                            <li><a class="dropdown-item" href="{% url 'chatroom' chatroom.group_name %}">{{ member.profile.name }}</a></li>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+                </div>
+                <div id='chat_container' class="overflow-y-auto grow">
+                    <ul id='chat_messages' class="flex flex-col justify-end gap-2 p-4">
+                        {% for message in chat_messages reversed %}
+                        {% include 'a_chat/chat_message.html' %}
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="sticky bottom-0 z-10 p-2 bg-gray-300">
+                    <div class="flex items-center rounded-xl px-2 py-2">
+                        <form id="chat_message_form" class="w-full"
+                            hx-ext="ws"
+                            ws-connect="/ws/chatroom/{{ chatroom_name }}"
+                            ws-send
+                            _="on htmx:wsAfterSend reset() me">
+                            {% csrf_token %}
+                            {{ form }}
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </wrapper>
+
+    </div>
+    </div>
+
+{% endif %}
+
+
+{% endblock %}
+
+{% block javascript %}
+
+<script>
+
+    function scrollToBottom(){
+        const container = document.getElementById('chat_container');
+        container.scrollTop = container.scrollHeight;
+    }
+    scrollToBottom()
+
+</script>
+
+{% endblock %}
