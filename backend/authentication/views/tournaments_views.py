@@ -30,6 +30,10 @@ def accept_tournament_invitation(request):
         tournament = Tournament.objects.filter(initiator=initiator, status=0).first()  # Status=0 means 'Pending'
         if not tournament:
             return JsonResponse({'error': 'Tournament does not exist or already processed'}, status=404)
+        
+        accepted = Participants.objects.filter(tournament=tournament, is_accepted=True)
+        if tournament.player_count == accepted.count():
+            return JsonResponse({'error': 'Tournament full'}, status=404)
 
         # Find the participant record for the current user with a pending invitation
         participant = Participants.objects.filter(tournament=tournament, user=request.user, is_accepted=None).first()
@@ -168,11 +172,19 @@ def create_tournament(request):
             return JsonResponse({'error': 'Invalid player count. Must be 4, 8, or 16'}, status=400)
 
         #Checking for the existence of an unfinished tournament (Pending 0 or Active 1)
-        #existing_tournament = Tournament.objects.filter(initiator=request.user, status__in=[0, 1]).first()
-        #if existing_tournament:
-        #    return JsonResponse({
-        #        'error': 'You already have an ongoing or pending tournament. Complete it before creating a new one.'
-        #    }, status=400)
+     #   existing_tournament = Tournament.objects.filter(initiator=request.user, status__in=[0, 1]).first()
+     #   if existing_tournament:
+     #       return JsonResponse({
+     #           'error': 'You already have an ongoing or pending tournament. Complete it before creating a new one.'
+      #      }, status=400)
+
+        existing_tournament = Tournament.objects.filter(initiator=request.user, status__in=[0]).first()
+        if existing_tournament:
+            existing_tournament.player_count = player_count
+            return JsonResponse({
+                'message': 'You already have a pending tournament.',
+                'tournament_id': existing_tournament.id
+            })
 
         tournament = Tournament.objects.create(
             initiator=request.user,
@@ -241,3 +253,37 @@ def start_tournament(request):
         return JsonResponse({'message': f'Tournament {tournament_id} started by {initiator_display}'})
 
     return JsonResponse({'error': 'Invalid request method'}, status=405)
+
+
+def list_invited_participants(request):
+    if request.method == "GET":
+        tournament_id = request.GET.get('tournament_id')
+    try:
+        tournament = Tournament.objects.get(id=tournament_id)
+    except Tournament.DoesNotExist:
+        return JsonResponse({'error': 'Tournament not found'}, status=404)
+
+    if request.user != tournament.initiator and not Participants.objects.filter(tournament=tournament, user=request.user).exists():
+        return JsonResponse({'error': 'You do not have permission to view participants for this tournament'}, status=403)
+
+    participants = Participants.objects.filter(tournament=tournament).select_related('user')
+
+    participant_list = []
+    for participant in participants:
+        user_profile = participant.user.userprofile
+        display_name = user_profile.display_name if user_profile.display_name else participant.user.username
+
+        # Check status: None = Pending, True = Accepted, False = Declined
+        if participant.is_accepted is None:
+            status = "Pending"
+        elif participant.is_accepted:
+            status = "Accepted"
+        else:
+            status = "Declined"
+
+        participant_list.append({
+            'display_name': display_name,
+            'status': status
+        })
+
+    return JsonResponse({'participants': participant_list})
