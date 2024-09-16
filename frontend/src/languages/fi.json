@@ -56,7 +56,16 @@
 	"local multiplayer": "Paikallinen Moninpeli",
 	"remote multiplayer": "Etämoninpeli",
 	"tournament": "Turnaus",
-	"how many players?": "Montako pelaajaa?"
+	"how many players?": "Montako pelaajaa?",
+
+	"game invites": "Pelikutsut",
+	"invited players": "Kutsutut pelaajat",
+
+	"invite to tournament": "Kutsu turnaukseen",
+	"enter player username": "Kirjoita käyttäjänimi",
+	"invite player": "Kutsu pelaaja",
+	"start tournament": "Aloita turnaus"
+
 
 
 

@@ -1,5 +1,7 @@
 FROM node:20-alpine
+FROM node:20-alpine
 
+RUN mkdir -p ./src/dist/languages
 RUN mkdir -p ./src/dist/languages
 
 WORKDIR /app
@@ -12,7 +14,7 @@ RUN yarn add vite-plugin-static-copy --dev
 
 
 #testing only
-RUN yarn run build
+#RUN yarn run build
 CMD ["yarn", "run", "dev"]
 
 #for actual https

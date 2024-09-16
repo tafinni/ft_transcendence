@@ -95,5 +95,5 @@ export function initializeRegister() {
 	cancelButton.addEventListener('click', () => {
 		console.log('Cancelled registration'); // Debugging
 		loadContent('login');
-	})
+	});
 }

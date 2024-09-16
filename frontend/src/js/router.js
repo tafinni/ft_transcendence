@@ -49,6 +49,7 @@ export async function loadContent(content, scoreLeft, scoreRight, oppIsHuman, ad
 		if (current !== content)
 			window.history.pushState({ content: content }, '', `/${content}#`);
 	}
+	document.getElementById('profile-name').innerHTML = sessionStorage.getItem("username")
   
 	switch (content)
 	{
@@ -129,8 +130,7 @@ async function completeLogOut() {
 		if (response.ok)
 		{
 			const data = await response.json();
-			console.log('Logged out succesfully');
-			showAlert(data.message, 'success');
+			console.log('Logged out succesfully: ', data.message);
 		}
 		else
 		{
