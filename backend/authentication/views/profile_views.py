@@ -11,9 +11,7 @@ from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 import re
 
-# Create your views here.  
-#curl -v -X POST -F username=jon
- #-F password=jon http://localhost:8000/login/
+# Create your views here.
 
 def is_valid_string(value, min_length, max_length):
     if not value:
@@ -28,7 +26,6 @@ def is_valid_string(value, min_length, max_length):
 
 
 @login_required
-#@csrf_exempt
 @csrf_protect
 def update_profile(request):
     if request.method == "POST":
@@ -75,9 +72,7 @@ def update_profile(request):
     return JsonResponse({'error': 'Invalid request method'}, status=405)
 
 
-
 @login_required
-#@csrf_exempt
 @csrf_protect
 def change_password(request):
     if request.method == "POST":
@@ -106,8 +101,7 @@ def change_password(request):
 
 
 
-#@login_required
-#@csrf_exempt
+@login_required
 @csrf_protect
 def upload_avatar(request):
     if request.method == "POST":
@@ -125,6 +119,7 @@ def upload_avatar(request):
 
 
 @login_required
+@csrf_protect
 def profile(request):
     user = request.user
     user_stats = UserStats.objects.get(user=user)
@@ -133,7 +128,6 @@ def profile(request):
     try:
         avatar_url = user_profile.avatar.url
     except:
-    #    avatar_url = 'http://localhost:8000/media/avatars/default.jpg'
         avatar_url = settings.MEDIA_URL + 'avatars/default.jpg'
 
     # friends
@@ -195,7 +189,6 @@ def match_history(request):
 
 
 @login_required
-#@csrf_exempt #?
 @csrf_protect
 def public_profile(request):
     if request.method == "POST":
