@@ -168,11 +168,11 @@ def create_tournament(request):
             return JsonResponse({'error': 'Invalid player count. Must be 4, 8, or 16'}, status=400)
 
         #Checking for the existence of an unfinished tournament (Pending 0 or Active 1)
-        existing_tournament = Tournament.objects.filter(initiator=request.user, status__in=[0, 1]).first()
-        if existing_tournament:
-            return JsonResponse({
-                'error': 'You already have an ongoing or pending tournament. Complete it before creating a new one.'
-            }, status=400)
+     #   existing_tournament = Tournament.objects.filter(initiator=request.user, status__in=[0, 1]).first()
+     #   if existing_tournament:
+     #       return JsonResponse({
+     #           'error': 'You already have an ongoing or pending tournament. Complete it before creating a new one.'
+      #      }, status=400)
 
         tournament = Tournament.objects.create(
             initiator=request.user,
@@ -241,3 +241,35 @@ def start_tournament(request):
         return JsonResponse({'message': f'Tournament {tournament_id} started by {initiator_display}'})
 
     return JsonResponse({'error': 'Invalid request method'}, status=405)
+
+
+def list_invited_participants(request, tournament_id):
+    try:
+        tournament = Tournament.objects.get(id=tournament_id)
+    except Tournament.DoesNotExist:
+        return JsonResponse({'error': 'Tournament not found'}, status=404)
+
+    if request.user != tournament.initiator and not Participants.objects.filter(tournament=tournament, user=request.user).exists():
+        return JsonResponse({'error': 'You do not have permission to view participants for this tournament'}, status=403)
+
+    participants = Participants.objects.filter(tournament=tournament).select_related('user')
+
+    participant_list = []
+    for participant in participants:
+        user_profile = participant.user.userprofile
+        display_name = user_profile.display_name if user_profile.display_name else participant.user.username
+
+        # Check status: None = Pending, True = Accepted, False = Declined
+        if participant.is_accepted is None:
+            status = "Pending"
+        elif participant.is_accepted:
+            status = "Accepted"
+        else:
+            status = "Declined"
+
+        participant_list.append({
+            'display_name': display_name,
+            'status': status
+        })
+
+    return JsonResponse({'participants': participant_list})
