@@ -1,0 +1,60 @@
+{
+	"languageDropdown": "EN",
+	"home": "Game",
+	"profile": "Profile",
+	"stats": "Stats",
+	"login": "Log Out",
+
+	"log in": "Log In",
+	"username": "Username",
+	"password": "Password",
+	"don't have an account?": "Don't have an account?",
+	"register": "Register",
+
+	"back": "Back",
+	"first name": "First Name",
+	"last name": "Last Name",
+
+	"match history": "Match history",
+	"friends": "Friends",
+	"add": "Add",
+	"remove": "Remove",
+	"user info": "User info",
+	"display name": "Display name",
+	"change password": "Change password",
+
+	"change avatar": "Change avatar",
+	"save changes": "Save changes",
+	"cancel": "Cancel",
+	"edit user information": "Edit user information",
+	"current password": "Current password",
+	"new password": "New password",
+	"type new password again": "Type new password again",
+	"save new password": "Save new password",
+
+	"friend's name": "Friend's name",
+	"send request": "Send request",
+	"remove friend": "Remove friend",
+
+	"wins": "Wins",
+	"losses": "Losses",
+
+	"requests": "Requests",
+	"date": "Date",
+	"opponent": "Opponent",
+	"result": "Result",
+
+	"preferred language": "Preferred language",
+	"english": "English",
+	"finnish": "Finnish",
+	"russian": "Russian",
+	"language": "Language",
+
+	"win %": "Win %",
+
+	"single player": "Single Player",
+	"local multiplayer": "Local Multiplayer",
+	"remote multiplayer": "Remote Multiplayer",
+	"tournament": "Tournament",
+	"how many players?": "How many players?"
+}

@@ -1,0 +1,80 @@
+version: '3.5'
+
+services:
+  db:
+    image: postgres:latest
+    container_name: postgres
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data_new:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+       - t_intra
+
+
+  backend:
+    image: backend
+    container_name: backend
+    build: ./backend
+    depends_on:
+      - db
+    networks:
+      - t_intra
+      - t_extra
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/backend
+      - ./media:/app/media 
+    environment:
+      - DATABASE_HOST=${DATABASE_HOST}
+      - DATABASE_NAME=${DATABASE_NAME}
+      - DATABASE_USER=${DATABASE_USER}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+
+  frontend:
+    image: frontend
+    container_name: frontend
+    build:
+      context: ./frontend 
+      dockerfile: Dockerfile
+ #   pull_policy: build
+    networks:
+      - t_extra
+    volumes:
+     - ./frontend/src:/app/src
+    ports:
+      - "3000:3000"
+    environment:
+      VITE_BACKEND_URL: ${VITE_BACKEND_URL}
+
+  nginx:
+    image: nginx_image
+    container_name: nginx
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    depends_on:
+      - frontend
+    networks:
+      - t_extra
+    volumes:
+      - ./frontend/src/dist:/usr/share/nginx/html
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+    ports:
+      - "80:80"
+      - "443:443"
+
+networks:
+  t_intra:
+#    name: t_intra
+  t_extra:
+#    name: t_extra
+
+volumes:
+#  postgres_data:
+  postgres_data_new:
