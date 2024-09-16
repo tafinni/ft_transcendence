@@ -6,14 +6,9 @@ import * as d from './local-4p.defs.js'
 import { vars as v }  from './local-4p.defs.js'
 import { switchToIdle, sendResults } from './game.js'
 
-const plate = d.plate
-const left = d.left
-const right = d.right
-const top = d.top
-const bot = d.bot
-const ball = d.ball
-const score = d.score
-let ball_drop = gsap.to(ball.position, { y: 0.1, duration: 0.8, paused: true, onComplete: () => {
+const plate = d.plate; const left = d.left; const right = d.right; const top = d.top; 
+const bot = d.bot; const ball = d.ball; const score = d.score;
+let ball_drop = gsap.to(ball.position, { y: 0.1, duration: 0.3, paused: true, onComplete: () => {
     v.game_running = true
 }})
 
@@ -27,30 +22,22 @@ export const tick = () => {
     ball.position.x = v.ballY * d.avmax_pmx
 }
 
-const c = {
-    area_vmax: 2,
-    paddle_vmax: 1.65,
-    pos_max: 1000000,
-    ball_radius: 12500,
-    paddle_halfwidth : 0,
-    ball_max: 0,
-    paddle_max: 0,
-    player_speed: 12000,
-    ball_speed: 8000
-}
-c.paddle_halfwidth = (c.area_vmax - c.paddle_vmax) * c.pos_max / c.area_vmax + (c.ball_radius * 1.5)
-c.ball_max = c.pos_max - c.ball_radius
-c.paddle_max = c.pos_max - c.paddle_halfwidth
-Object.freeze(c)
-
 function randomizeBallDir() {
-    v.ball_direction = (Math.random() < 0.5) ? Math.random() * 90 + 225 : Math.random() * 90 + 45
+    if (v.players_remaining === 4) v.ball_direction = Math.random() * 360
+    else {
+        const ranges = []
+        if (v.lives_right !== 0) ranges.push(45)
+        if (v.lives_bot !== 0) ranges.push(135)
+        if (v.lives_left !== 0) ranges.push(225)
+        if (v.lives_top !== 0) ranges.push(315)
+        v.ball_direction = ranges[Math.floor(Math.random() * v.players_remaining)] + Math.random() * 90
+        if (v.ball_direction >= 360) v.ball_direction -= 360
+    }
     // set always the same direction for testing purposes
-    //v.ball_direction = Math.random() * 90 + 225
-    v.ball_direction = 240
+    //v.ball_direction = 255
     v.ball_direction *= Math.PI / 180
 }
-randomizeBallDir()
+//randomizeBallDir()
 
 function gametick() {
     if (!v.game_running && v.game_started) {
@@ -67,27 +54,38 @@ function gametick() {
     if (!v.game_started || !v.game_running) return
     v.ballX -= v.ball_speed * Math.sin(v.ball_direction)
     v.ballY -= v.ball_speed * Math.cos(v.ball_direction)
-    if (!v.ball_passed && (v.ballX > c.ball_max || v.ballX < -c.ball_max) && checkPaddleHit()) {
-        if (v.ballX > 0) {
-            v.ball_direction = (Math.PI - v.ball_direction) - Math.PI
-            v.ballX = c.ball_max - (v.ballX - c.ball_max)
+    if (!v.ball_passed && v.ballX > d.ball_max && (v.lives_left === 0 || checkPaddleHit2('left', v.ballY, v.left_pos))) {
+        v.ball_direction = (Math.PI - v.ball_direction) - Math.PI
+        v.ballX = d.ball_max - (v.ballX - d.ball_max)
+        if (v.lives_left !== 0) {
+            v.ball_direction -= v.bounce_distance / d.paddle_halfwidth * Math.PI / 4
+            v.ball_speed += d.ball_increase_speed / 2
         }
-        else {
-            v.ball_direction = 2 * Math.PI - v.ball_direction
-            v.ballX = -c.ball_max - (v.ballX + c.ball_max)
-        }
-        v.ball_direction -= v.bounce_distance / c.paddle_halfwidth * Math.PI / 4
-        v.ball_speed += d.ball_increase_speed / 2
     }
-    if (!v.ball_passed && (v.ballY > c.ball_max || v.ballY < -c.ball_max) && checkPaddleHitV()) {
-        if (v.ballY > 0) {
-            v.ball_direction = Math.PI - v.ball_direction
+    else if (!v.ball_passed && v.ballX < -d.ball_max && (v.lives_right === 0 || checkPaddleHit2('right', v.ballY, v.right_pos))) {
+        v.ball_direction = 2 * Math.PI - v.ball_direction
+        v.ballX = -d.ball_max - (v.ballX + d.ball_max)
+        if (v.lives_right !== 0) {
+            v.ball_direction -= v.bounce_distance / d.paddle_halfwidth * Math.PI / 4
+            v.ball_speed += d.ball_increase_speed / 2
         }
-        else {
-            v.ball_direction = Math.PI - v.ball_direction
+    }
+    if (!v.ball_passed && v.ballY > d.ball_max && (v.lives_bot === 0 || checkPaddleHit2('bot', v.ballX, v.bot_pos))) {
+        v.ball_direction = Math.PI - v.ball_direction
+        v.ballY = d.ball_max - (v.ballY - d.ball_max)
+        if (v.lives_bot !== 0) {
+            console.log(v.bounce_distance)
+            v.ball_direction += v.bounce_distance / d.paddle_halfwidth * Math.PI / 4
+            v.ball_speed += d.ball_increase_speed / 2
         }
-        v.ball_direction -= v.bounce_distance / c.paddle_halfwidth * Math.PI / 4
-        v.ball_speed += d.ball_increase_speed / 2
+    }
+    else if (!v.ball_passed && v.ballY < -d.ball_max && (v.lives_top === 0 || checkPaddleHit2('top', v.ballX, v.top_pos))) {
+        v.ball_direction = Math.PI - v.ball_direction
+        v.ballY = -d.ball_max - (v.ballY + d.ball_max)
+        if (v.lives_top !== 0) {
+            v.ball_direction -= v.bounce_distance / d.paddle_halfwidth * Math.PI / 4
+            v.ball_speed += d.ball_increase_speed / 2
+        }
     }
     if (v.ball_passed && v.ball_passed_timer++ > 200) endRound()
 }
@@ -107,29 +105,16 @@ function movePlayer(pos, up, down) {
     return pos
 }
 
-function checkPaddleHit() {
-    if (v.ballX > 0 && Math.abs(v.bounce_distance = v.left_pos - v.ballY) < c.paddle_halfwidth)
+function checkPaddleHit2(player, ball_pos, plr_pos) {
+    if (Math.abs(v.bounce_distance = plr_pos - ball_pos) < d.paddle_halfwidth)
         return true
-    else if (v.ballX < 0 && Math.abs(v.bounce_distance = v.right_pos - v.ballY) < c.paddle_halfwidth)
-        return true
-    if (v.ballX > 0) addScore('right')
-    else addScore('left')
-    return (v.ball_passed = true, false)
-}
-
-function checkPaddleHitV() {
-    if (v.ballY > 0 && Math.abs(v.bounce_distance = v.bot_pos - v.ballX) < c.paddle_halfwidth)
-        return true
-    else if (v.ballY < 0 && Math.abs(v.bounce_distance = v.top_pos - v.ballX) < c.paddle_halfwidth)
-        return true
-    if (v.ballY > 0) addScore('top')
-    else addScore('bot')
+    removeLife(player)
     return (v.ball_passed = true, false)
 }
 
 function endRound() {
     v.game_running = false
-    if (v.score_right > v.score_to_win || v.score_left > v.score_to_win)
+    if (v.players_remaining === 1)
         return
     randomizeBallDir()
     resetRound()
@@ -139,54 +124,116 @@ function endRound() {
 function resetRound() {
     v.ball_passed = v.game_running = false
     v.ballX = v.ballY = v.ball_passed_timer = 0
-    v.ball_speed = c.ball_speed
+    v.ball_speed = d.ball_base_speed
     ball.position.y = 5
 }
 
-function addScore(player) {
-    if (player === 'left') {
-        if (v.score_left === v.score_to_win) {
-            console.log('victory')
-            showVictory()
-            return
-        }
-        const score_clone = score.clone()
-        score_clone.name = "score"
-        score_clone.material = score.material.clone()
-        score_clone.material.color = left.material.color.clone()
-        score_clone.position.set(-1.8 + 0.25 * v.score_left, 0, 2.25)
-        t.scene.add(score_clone)
-        v.score_left++
+function createScore(player, color, vec1, vec2) {
+    const score1 = score.clone()
+    score1.name = player + '_score1'
+    score1.material = score.material.clone()
+    score1.material.color = color
+    console.log(score1)
+    const score2 = score1.clone()
+    score2.name = player + '_score2'
+    score1.position.set(vec1.x, vec1.y, vec1.z)
+    score2.position.set(vec2.x, vec2.y, vec2.z)
+    t.scene.add(score1, score2)
+}
+
+function addLives() {
+    const horiz = 2.3
+    const vert = 1.7
+    const spc = 0.3
+    createScore('l', left.material.color.clone(), { x: -vert, y: 0, z: horiz }, { x: -vert + spc, y: 0, z: horiz })
+    createScore('r', right.material.color.clone(), { x: vert, y: 0, z: -horiz }, { x: vert - spc, y: 0, z: -horiz })
+    createScore('t', top.material.color.clone(), { x: -horiz, y: 0, z: -vert }, { x: -horiz, y: 0, z: -vert + spc })
+    createScore('b', bot.material.color.clone(), { x: horiz, y: 0, z: vert }, { x: horiz, y: 0, z: vert - spc })
+}
+
+function removeLife(player) {
+    console.log(v.player_status.filter(i => i.obj === right)[0].lives)
+    switch (player) {
+        case 'left':
+            console.log('rm left', v.lives_left)
+            //if ((v.lives_left = --v.player_status_map.get('left').lives) === 0)
+            if ((v.lives_left = --v.player_status.filter(i => i.obj === left)[0].lives) === 0) 
+                removePlayer('left')
+            else {
+                t.scene.remove(t.scene.getObjectByName('l_score' + String.fromCharCode(48 + d.score_to_win - v.lives_left)))
+                console.log('char val', String.fromCharCode(48 + d.score_to_win - v.lives_left))
+                console.log('nbr val:', 48 + d.score_to_win - v.lives_left)
+            }
+            break
+        case 'right':
+            console.log('rm right', v.lives_right)
+            //if ((v.lives_right = --v.player_status_map.get('right').lives) === 0)
+            if ((v.lives_right = --(v.player_status.filter(i => i.obj === right)[0].lives)) === 0) 
+                removePlayer('right')
+            else
+                t.scene.remove(t.scene.getObjectByName('r_score' + String.fromCharCode(48 + d.score_to_win - v.lives_right)))
+            break
+        case 'top':
+            console.log('rm top', v.lives_top)
+            //if ((v.lives_top = --v.player_status_map.get('top').lives) === 0)
+            if ((v.lives_top = --v.player_status.filter(i => i.obj === top)[0].lives) === 0) 
+                removePlayer('top')
+            else
+                t.scene.remove(t.scene.getObjectByName('t_score' + String.fromCharCode(48 + d.score_to_win - v.lives_top)))
+            break
+        case 'bot':
+            console.log('rm bot', v.lives_bot)
+            //if ((v.lives_bot = --v.player_status_map.get('bot').lives) === 0)
+            if ((v.lives_bot = --v.player_status.filter(i => i.obj === bot)[0].lives) === 0) 
+                removePlayer('bot')
+            else
+                t.scene.remove(t.scene.getObjectByName('b_score' + String.fromCharCode(48 + d.score_to_win - v.lives_bot)))
+            break
     }
-    else if (player === 'right') {
-        if (v.score_right === v.score_to_win) {
-            console.log('loss')
-            showLoss()
-            return
+    console.log(v.player_status)
+}
+
+function removePlayer(player) {
+    console.log('removePlayer:', player)
+    if (--v.players_remaining === 1) {
+        showVictory()
+    } else {
+        const wall = (player === 'left' || player === 'right') ? d.h_wall : d.v_wall
+        const new_wall = wall.clone()
+        new_wall.material = wall.material
+        new_wall.material.color = wall.material.color
+        if (player === 'left') {
+            new_wall.position.set(0, 5, 2.1)
+            t.scene.remove(left)
         }
-        const score_clone = score.clone()
-        score_clone.name = "score"
-        score_clone.material = score.material.clone()
-        score_clone.material.color = right.material.color.clone()
-        score_clone.position.set(1.8 - 0.25 * v.score_right, 0, -2.25)
-        t.scene.add(score_clone)
-        v.score_right++
+        else if (player === 'right') {
+            new_wall.position.set(0, 5, -2.1)
+            t.scene.remove(right)
+        }
+        else if (player === 'top') {
+            new_wall.position.set(-2.1, 5, 0)
+            t.scene.remove(top)
+        }
+        else if (player === 'bot') {
+            new_wall.position.set(2.1, 5, 0)
+            //t.scene.remove(bot)
+            gsap.to(bot.position, { x: 5, duration: 0.5, onComplete: () => {
+                console.log('gsap bot anim finished')
+                t.scene.remove(bot)
+            } })
+            //t.scene.add(bot)
+        }
+        console.log('newwallz:', new_wall.position.z)
+        gsap.to(new_wall.position, { y: 0.0625, duration: 0.5 })
+        t.scene.add(new_wall)
     }
 }
 
 function showVictory() {
-    t.win_text.material.color = left.material.color.clone()
+    t.win_text.material.color = v.player_status.filter(i => i.lives !== 0)[0].obj.material.color.clone()
     t.win_text.lookAt(t.gcamera.position)
     t.scene.add(t.win_text)
     v.score_left++
-    sendResults(v.score_left, v.score_right, true)
-}
-
-function showLoss() {
-    t.lose_text.material.color = right.material.color.clone()
-    t.lose_text.lookAt(t.gcamera.position)
-    t.scene.add(t.lose_text)
-    v.score_right++
     sendResults(v.score_left, v.score_right, true)
 }
 
@@ -221,6 +268,8 @@ export function cleanUp() {
     document.removeEventListener("keyup", onDocumentKeyUp, true)
     t.scene.remove(plate, left, right, top, bot, ball)
     t.scene.remove(d.corner, d.corner2, d.corner3, d.corner4)
+    while (t.scene.getObjectByName('wall'))
+        t.scene.remove(t.scene.getObjectByName('wall'))
 }
 
 // Key listeners
@@ -250,7 +299,10 @@ function onDocumentKeyUp(event) {
     else if (key_code === 107) { v.r_right_pressed = false }
 }
 function startSolo() {
+    v.reset()
+    addLives()
+    randomizeBallDir()
     v.game_started = true
-    console.log(v)
+    //console.log(v)
     ball_drop.restart()
 }

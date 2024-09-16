@@ -58,8 +58,8 @@ export const score = new THREE.Mesh(
     new THREE.SphereGeometry(0.1, 16, 16),
     new THREE.MeshBasicMaterial()
 )
-score.name = "score_original"
-score.position.set(20, 0, 0)
+score.name = "score"
+//score.position.set(20, 0, 0)
 export const corner = new THREE.Mesh(
     new THREE.BoxGeometry(0.2, 0.125, 0.2),
     new THREE.MeshBasicMaterial()
@@ -73,6 +73,18 @@ export const corner3 = corner.clone()
 corner3.position.set(-2.1, 0.0625, 2.1)
 export const corner4 = corner.clone()
 corner4.position.set(2.1, 0.0625, -2.1)
+export const h_wall = new THREE.Mesh(
+    new THREE.BoxGeometry(4, 0.125, 0.2),
+    new THREE.MeshBasicMaterial()
+)
+h_wall.name = 'wall'
+h_wall.material.color = new THREE.Color('darkblue')
+export const v_wall = new THREE.Mesh(
+    new THREE.BoxGeometry(0.2, 0.125, 4),
+    new THREE.MeshBasicMaterial()
+)
+v_wall.name = 'wall'
+v_wall.material.color = new THREE.Color('darkblue')
 
 // consts
 export const area_vmax = 2
@@ -83,8 +95,10 @@ export const paddle_halfwidth  = (area_vmax - paddle_vmax) * pos_max / area_vmax
 export const ball_max = pos_max - ball_radius
 export const paddle_max = pos_max - paddle_halfwidth
 export const player_speed = 12000
-export const ball_base_speed = 8000
-export const ball_increase_speed = 1000
+// base 8000 increase 1000
+export const ball_base_speed = 15000 // 8000
+export const ball_increase_speed = 1500 // 1000
+export const score_to_win = 3
 
 // pre-calculated values
 export const pvmax_pmx = paddle_vmax / paddle_max
@@ -95,10 +109,6 @@ export const vars = {
     right_pos: 0,
     top_pos: 0,
     bot_pos: 0,
-    up_pressed: false,
-    down_pressed: false,
-    up2_pressed: false,
-    down2_pressed: false,
     l_left_pressed: false,
     l_right_pressed: false,
     r_left_pressed: false,
@@ -109,7 +119,16 @@ export const vars = {
     b_right_pressed: false,
     game_started: false,
     game_running: false,
-    score_to_win: 1,
+    score_to_win: score_to_win,
+    player_status: [
+        { lives: score_to_win, obj: left }, { lives: score_to_win, obj: right },
+        { lives: score_to_win, obj: top }, { lives: score_to_win, obj: bot }
+    ],
+    lives_left: score_to_win,
+    lives_right: score_to_win,
+    lives_top: score_to_win,
+    lives_bot: score_to_win,
+    players_remaining: 4,
     score_left: 0,
     score_right: 0,
     ballX: 0,
@@ -119,5 +138,18 @@ export const vars = {
     bounce_distance: 0,
     ball_passed: false,
     ball_passed_timer: 0,
-    gameover_timer: 0
+    gameover_timer: 0,
+    reset: function() {
+        //this.left_pos = this.right_pos = this.top_pos = this.bot_pos = this.score_left = this.score_right = 0
+        this.lives_left = this.lives_bot = this.lives_top = this.lives_top = score_to_win
+        this.ballX = this.ballY = this.ball_direction = this.bounce_distance = this.ball_passed_timer = 0
+        this.gameover_timer = 0
+        this.l_left_pressed = this.l_right_pressed = this.r_left_pressed = this.r_right_pressed = false
+        this.b_left_pressed = this.b_right_pressed = this.t_left_pressed = this.top_pos_right_pressed = false
+        this.game_running = this.game_started = this.ball_passed = false
+        this.score_to_win = score_to_win
+        this.ball_speed = ball_base_speed
+        this.players_remaining = 4
+        this.player_status.forEach((i) => { i.lives = score_to_win })
+    }
 }
