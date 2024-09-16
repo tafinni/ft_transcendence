@@ -26,6 +26,30 @@ def match_history(request):
     return JsonResponse({'matches': match_list})
 
 @login_required
+@csrf_protect
+def public_match_history(request):
+    if request.method == "GET":
+        user_username = request.GET.get('user_username')
+
+        if not user_username:
+            return JsonResponse({'error': 'Username not provided'}, status=400)
+
+        try:
+            user = User.objects.get(username=user_username)
+            matches = MatchHistory.objects.filter(user=user).order_by('-date')
+            match_list = [
+                {
+                    'opponent': match.opponent, 
+                    'date': match.date, 
+                    'result': match.result
+                } for match in matches
+            ]
+            return JsonResponse({'matches': match_list})
+        except User.DoesNotExist:
+            return JsonResponse({'error': 'User not found'}, status=404)
+
+
+@login_required
 @csrf_exempt
 def add_result(request):
     data = json.loads(request.body)

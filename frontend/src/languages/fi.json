@@ -36,5 +36,37 @@
 	"remove friend": "Poista ystävä",
 
 	"wins": "Voitot",
-	"losses": "Häviöt"
+	"losses": "Häviöt",
+
+	"requests": "Pyynnöt",
+	"date": "Päivä",
+	"opponent": "Vastustaja",
+	"result": "Tulos",
+
+
+	"preferred language": "Valittu kieli",
+	"english": "Englanti",
+	"finnish": "Suomi",
+	"russian": "Venäjä",
+	"language": "Kieli",
+
+	"win %": "Voitto %",
+
+	"single player": "Yksinpeli",
+	"local multiplayer": "Paikallinen Moninpeli",
+	"remote multiplayer": "Etämoninpeli",
+	"tournament": "Turnaus",
+	"how many players?": "Montako pelaajaa?",
+
+	"game invites": "Pelikutsut",
+	"invited players": "Kutsutut pelaajat",
+
+	"invite to tournament": "Kutsu turnaukseen",
+	"enter player username": "Kirjoita käyttäjänimi",
+	"invite player": "Kutsu pelaaja",
+	"start tournament": "Aloita turnaus"
+
+
+
+
 }

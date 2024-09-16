@@ -4,6 +4,7 @@ import { changePassword } from "./password.js";
 import { displayFriends, displayFriendRequests, addFriend } from "./friends.js";
 import { updateContent } from "../i18n.js";
 import { showAlert } from "../index.js";
+import { getCookie } from "../csrf.js";
 
 export async function loadProfile() {
 
@@ -14,11 +15,13 @@ export async function loadProfile() {
 	if (!response.ok)
 	{
 		console.error('Failed loading profile:', response.statusText);
-		showAlert('Error occured loading profile. Try Again.');
+		showAlert('Error occured loading profile. Try Again.', 'danger');
 		return ;
 	}
 
 	const userData = await response.json();
+
+	const winPercentage = userData.wins + userData.losses > 0 ? ((userData.wins / (userData.wins + userData.losses)) * 100).toFixed(0) : 0;
 
 	const profileHTML = `
 		<div class="container mt-5">
@@ -56,6 +59,10 @@ export async function loadProfile() {
 										<th scope="row" translate="losses"></th>
 										<td>${userData.losses}</td>
 									</tr>
+									<tr>
+										<th scope="row" translate="win %"></th>
+										<td>${winPercentage}%</td>
+									</tr>
 								</tbody>
 							</table>
 							<button type="submit" id="match-history-button" class="btn btn-info" translate="match history"></button>
@@ -90,6 +97,22 @@ export async function loadProfile() {
 					</div>
 				</div>
 
+				<div class="col-md-4">
+					<div class="card profile-card">
+						<div class="card-body">
+							<div class="d-flex justify-content-between align-items-center mb-4">
+								<h5 class="card-title mb-0">
+									<span translate="game invites"></span>
+								</h5>
+							</div>
+							<ul id="game-invite-list" class="list-group">
+								<!-- Game invites here dinamically -->
+							</ul>
+							<hr></hr>
+						</div>
+					</div>
+				</div>
+				
 				<div class="col-md-8">
 					<div class="card profile-card">
 						<div class="card-body">
@@ -140,6 +163,7 @@ export async function loadProfile() {
 		updateContent();
 		await displayFriends();
 		await displayFriendRequests();
+		await displayGameInvites();
 		buttonListener();
 	}
 	else
@@ -148,6 +172,135 @@ export async function loadProfile() {
 	}
 }
 
+async function displayGameInvites() {
+	const response = await fetch('http://localhost:8000/profile/',
+	{
+		method: 'GET',
+		credentials: 'include'
+	});
+
+	if (!response.ok)
+	{
+		console.error('Failed loading profile:', response.statusText);
+		showAlert('Error occured displaying friend requests. Try again.', 'danger');
+		return ;
+	}
+
+	const data = await response.json();
+	console.log('display game invites called', data); // Debugging
+
+	const invites = data.tournament_invitations;
+
+	const gameInviteContainer = document.getElementById('game-invite-list');
+	gameInviteContainer.innerHTML = '';
+
+	invites.forEach((invite, index) => {
+		const colors = ['#f0f0f0', '#fffff'];
+
+		const inviteItem = document.createElement('div');
+		inviteItem.className = 'friend-item';
+		inviteItem.style.display = 'flex';
+        inviteItem.style.alignItems = 'center';
+        inviteItem.style.marginBottom = '10px';
+
+		inviteItem.style.backgroundColor = colors[index % colors.length];
+		inviteItem.style.padding = '10px';
+
+		const invitorName = document.createElement('span');
+		invitorName.className = 'friend-name';
+		invitorName.textContent = invite.tournament_initiator;
+        invitorName.style.flexGrow = '1';
+
+		// Create Accept button
+        const acceptButton = document.createElement('button');
+        acceptButton.className = 'btn btn-success btn-sm';
+		acceptButton.innerHTML = '<i class="bi bi-check-lg"></i>';
+	    acceptButton.style.marginRight = '10px';
+        acceptButton.onclick = () => acceptInvite(invite.tournament_initiator);
+
+        // Create Deny button
+        const denyButton = document.createElement('button');
+        denyButton.className = 'btn btn-danger btn-sm';
+		denyButton.innerHTML = '<i class="bi bi-x-lg"></i>';
+        denyButton.onclick = () => declineInvitation(invite.tournament_initiator);
+
+		inviteItem.appendChild(invitorName);
+        inviteItem.appendChild(acceptButton);
+        inviteItem.appendChild(denyButton);		
+
+		gameInviteContainer.appendChild(inviteItem);
+	});
+}
+
+async function acceptInvite(initiator_username) {
+	try
+	{
+		console.log('initiator username: ', initiator_username);
+		const csrftoken = getCookie('csrftoken');
+		const response = await fetch('http://localhost:8000/accept_tournament_invitation/',
+		{
+			method: 'POST',
+			credentials: 'include',
+			headers: { 'Content-Type' : 'application/json', 'X-CSRFToken': csrftoken },
+			body: JSON.stringify({ initiator_username })
+		});
+
+		if (response.ok)
+		{
+			const data = await response.json();
+			console.log('Invitation accepted succesfully');
+			showAlert(data.message, 'success');
+			loadContent('profile');
+		}
+		else
+		{
+			const errorData = await response.json();
+			console.error('Accepting invitation failed', errorData);
+			showAlert(errorData.error, 'danger');
+			loadContent('profile');
+		}
+	}
+	catch (error)
+	{
+		console.error('Error during accepting game invite', error);
+		showAlert('Error occured when accepting invite. Try again.', 'danger');
+	}
+}
+
+async function declineInvitation(initiator_username) {
+	
+	try
+	{
+		const csrftoken = getCookie('csrftoken');
+		const response = await fetch('http://localhost:8000/decline_tournament_invitation/',
+		{
+			method: 'POST',
+			credentials: 'include',
+			headers: { 'Content-Type' : 'application/json', 'X-CSRFToken': csrftoken  },
+			body: JSON.stringify({ initiator_username })
+		});
+
+		if (response.ok)
+		{
+			const data = await response.json();
+			console.log('Game invite declined succesfully');
+			showAlert(data.message, 'success');
+			loadContent('profile');
+		}
+		else
+		{
+			const errorData = await response.json();
+			console.error('Declining game invite failed');
+			showAlert(errorData.error, 'danger');
+			loadContent('profile');
+		}
+	}
+	catch (error)
+	{
+		console.error('Error during declining game invite', error);
+		showAlert('Error occured when declining game invite. Try again.', 'danger');
+	}
+}
 
 async function matchHistory () {
 	try
@@ -186,13 +339,16 @@ async function matchHistory () {
 										</tr>
 									</thead>
 									<tbody>
-										${matches.map(matchData => `
-											<tr>
-												<td>${matchData.date}</td>
-												<td>${matchData.opponent}</td>
-												<td>${matchData.result}</td>
-											</tr>
-										`).join('')}
+                            			${matches.map(matchData => {
+                                        	const localDate = new Date(matchData.date).toLocaleString(); 
+                                        	return `
+                                            	<tr>
+                                            	    <td>${localDate}</td>
+                                            	    <td>${matchData.opponent}</td>
+                                            	    <td>${matchData.result}</td>
+                                            	</tr>
+                                            	`;
+                                        }).join('')}
 									</tbody>
 								</table>
 								<button type="button" id="back-button" class="btn btn-primary" translate="back"></button>
@@ -221,8 +377,6 @@ async function matchHistory () {
 		showAlert('Error fetching match history. Try Again.', 'danger');
 		loadContent('profile');
 	}
-
-
 }
 
 export async function backButtonListener() {
@@ -273,6 +427,7 @@ export async function buttonListener () {
 	});
 	}
 	sessionStorage.setItem('timeoutTimer', Date.now());
-
 }
+
+
 

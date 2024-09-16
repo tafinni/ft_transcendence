@@ -9,15 +9,22 @@ from authentication.models import UserStats, UserProfile, MatchHistory, Friendsh
 from django.conf import settings
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
-
+import re
 
 # Create your views here.  
 #curl -v -X POST -F username=jon
  #-F password=jon http://localhost:8000/login/
 
 def is_valid_string(value, min_length, max_length):
-    return value and not value.isspace() and min_length <= len(value) <= max_length
-
+    if not value:
+        return False
+    if value.isspace():
+        return False
+    if not min_length <= len(value) <= max_length:
+        return False
+    if not re.match(r'^[a-zA-Zа-яА-ЯйЙёЁäÄöÖåÅ0-9\s]*$', value):
+        return False
+    return True
 
 @login_required
 def home(request):
@@ -72,8 +79,9 @@ def register_page(request):
             return JsonResponse({'error': 'Invalid username. It should be between 1 and 10 characters long.'}, status=400)
 
         user = User.objects.filter(username=username)
+        display = UserProfile.objects.filter(display_name=username)
          
-        if user.exists():
+        if user.exists() or display.exists():
             return JsonResponse({'error': 'Username already taken!'}, status=400)
 
         try:

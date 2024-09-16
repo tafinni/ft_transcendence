@@ -1,4 +1,6 @@
+import { showAlert } from './index.js';
 import { loadContent } from './router.js';
+import { getCookie } from './csrf.js';
 
 export function loadRegister() {
     return `
@@ -36,7 +38,12 @@ export function initializeRegister() {
 	console.log('initializeRegister called'); // Debugging
 
 	const registerForm = document.getElementById('register-form');
-	if (!registerForm) { console.error('Register form not found'); return; }
+	if (!registerForm)
+	{
+		console.error('Register form not found');
+		showAlert('Error getting registeration form. Try Again.', 'danger');
+		return ;
+	}
 
 	const errorMessage = document.getElementById('error-message');
 	const cancelButton = document.getElementById('cancel-button');
@@ -51,12 +58,15 @@ export function initializeRegister() {
 
 		console.log('Form submitted'); // Debuggin, testing
 
+		const csrftoken = getCookie('csrftoken');
+
 		try
 		{
 			const response = await fetch('http://localhost:8000/register/',
 			{
 				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
+				headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrftoken  },
+				credentials: 'include',
 				body: JSON.stringify({ first_name, last_name, username, password })
 			});
 
@@ -64,7 +74,7 @@ export function initializeRegister() {
 			{
 				const data = await response.json();
 				console.log('Registration successful:', data); // debugging, testing
-				alert(data.message);
+				showAlert(data.message, 'success');
 				loadContent('login');
 			}
 			else
@@ -85,5 +95,5 @@ export function initializeRegister() {
 	cancelButton.addEventListener('click', () => {
 		console.log('Cancelled registration'); // Debugging
 		loadContent('login');
-	})
+	});
 }

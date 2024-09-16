@@ -5,22 +5,28 @@ from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.http import JsonResponse
 import json
-from authentication.models import UserStats, UserProfile, MatchHistory, Friendship
+from authentication.models import UserStats, UserProfile, MatchHistory, Friendship, Participants, Tournament
 from django.conf import settings
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
+import re
 
-
-# Create your views here.  
-#curl -v -X POST -F username=jon
- #-F password=jon http://localhost:8000/login/
+# Create your views here. 
 
 def is_valid_string(value, min_length, max_length):
-    return value and not value.isspace() and min_length <= len(value) <= max_length
+    if not value:
+        return False
+    if value.isspace():
+        return False
+    if not min_length <= len(value) <= max_length:
+        return False
+    if not re.match(r'^[a-zA-Zа-яА-ЯйЙёЁäÄöÖåÅ0-9\s]*$', value):
+        return False
+    return True
 
 @login_required
-@csrf_exempt
-#@csrf_protect
+# @csrf_exempt
+@csrf_protect
 def update_profile(request):
     if request.method == "POST":
         user = request.user
@@ -68,8 +74,8 @@ def update_profile(request):
 
 
 @login_required
-@csrf_exempt
-#@csrf_protect
+# @csrf_exempt
+@csrf_protect
 def change_password(request):
     if request.method == "POST":
         user = request.user
@@ -97,9 +103,9 @@ def change_password(request):
 
 
 
-#@login_required
-@csrf_exempt
-#@csrf_protect
+@login_required
+# @csrf_exempt
+@csrf_protect
 def upload_avatar(request):
     if request.method == "POST":
         user = request.user
@@ -116,6 +122,7 @@ def upload_avatar(request):
 
 
 @login_required
+@csrf_protect
 def profile(request):
     user = request.user
     user_stats = UserStats.objects.get(user=user)
@@ -124,7 +131,6 @@ def profile(request):
     try:
         avatar_url = user_profile.avatar.url
     except:
-    #    avatar_url = 'http://localhost:8000/media/avatars/default.jpg'
         avatar_url = settings.MEDIA_URL + 'avatars/default.jpg'
 
     # friends
@@ -144,6 +150,18 @@ def profile(request):
         } for request in friend_requests
     ]
 
+     # tournament_invitations
+    tournament_invitations = Participants.objects.filter(user=user, is_accepted=None)
+    invitations = [
+        {
+            'tournament_id': invite.tournament.id,
+            'tournament_initiator': invite.tournament.initiator.username,
+            'status': 'Pending',
+           # 'date': invite.tournament.date,
+        } for invite in tournament_invitations
+    ]
+
+
     data = {
         'username': user.username,
         'first_name': user.first_name,
@@ -155,6 +173,7 @@ def profile(request):
         'preferred_language': user_profile.preferred_language,
         'friends': friends,
         'friend_requests': requests,
+         'tournament_invitations': invitations, 
     }
     return JsonResponse(data)
 
@@ -174,7 +193,8 @@ def match_history(request):
 
 
 @login_required
-@csrf_exempt #?
+# @csrf_exempt #?
+@csrf_protect
 def public_profile(request):
     if request.method == "POST":
         body = json.loads(request.body)

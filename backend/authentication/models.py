@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError  # ?
 
 class UserProfile(models.Model):
     LANGUAGE_CHOICES = [
@@ -41,8 +42,6 @@ class Friendship(models.Model):
     accepted = models.BooleanField(default=False)
     is_request = models.BooleanField(default=True)
 
-  #  class Meta:
-   #     unique_together = ('user', 'friend',)
     class Meta:
         constraints = [
             models.UniqueConstraint(fields=['user', 'friend'], name='user_friend_unique')
@@ -61,6 +60,59 @@ class Friendship(models.Model):
     def __str__(self):
         return f'{self.user.username} -> {self.friend.username} (Accepted: {self.accepted})'
 
+
+
+# Tournament
+
+class Tournament(models.Model):
+    STATUS_CHOICES = [
+        (0, 'Pending'),
+        (1, 'Active'),
+        (2, 'Completed'), 
+    ]
+
+    initiator = models.ForeignKey(User, related_name='initiated_tournaments', on_delete=models.CASCADE)
+    player_count = models.IntegerField(default=0)
+    date = models.DateTimeField(auto_now_add=True)
+    status = models.IntegerField(choices=STATUS_CHOICES, default=0)
+
+    def __str__(self):
+        return f"Tournament by {self.initiator.username} on {self.date.strftime('%Y-%m-%d')}"
+
+class Participants(models.Model):
+    tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    group_number = models.IntegerField(default=0) # int 
+    is_accepted = models.BooleanField(null=True, default=None)  # None, True, False
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['user', 'tournament'], name='unique_tournament_user')
+        ]
+
+    def __str__(self):
+        return f"{self.user.username} in {self.tournament.initiator.username}'s tournament"
+#        return f"{self.user.username} in {self.tournament}"
+
+class ResultTournament(models.Model):
+    RESULT_CHOICES = [
+        ('win', 'Win'),
+        ('loss', 'Loss'),
+        ('draw', 'Draw'),
+    ]
+    tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, related_name='result_tournaments_as_user', on_delete=models.CASCADE)
+    opponent = models.ForeignKey(User, related_name='result_tournaments_as_opponent', on_delete=models.CASCADE)
+    result = models.CharField(max_length=10, choices=RESULT_CHOICES, blank=True, null=True)  # ?
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['tournament', 'user', 'opponent'], name='unique_result_tournament')
+        ]
+
+    def __str__(self):
+        return f"{self.user.username} vs {self.opponent.username} - Result: {self.result}"
+
+
 # Signal to create or update user profile
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -73,4 +125,4 @@ def create_or_update_user_profile(sender, instance, created, **kwargs):
     else:
         UserProfile.objects.get_or_create(user=instance)
         UserStats.objects.get_or_create(user=instance)
-    instance.userprofile.save()
+    instance.userprofile.save() #? check

@@ -37,13 +37,33 @@
 	"remove friend": "Remove friend",
 
 	"wins": "Wins",
-	"losses": "Losses"
+	"losses": "Losses",
 
+	"requests": "Requests",
+	"date": "Date",
+	"opponent": "Opponent",
+	"result": "Result",
 
+	"preferred language": "Preferred language",
+	"english": "English",
+	"finnish": "Finnish",
+	"russian": "Russian",
+	"language": "Language",
 
+	"win %": "Win %",
 
+	"single player": "Single Player",
+	"local multiplayer": "Local Multiplayer",
+	"remote multiplayer": "Remote Multiplayer",
+	"tournament": "Tournament",
+	"how many players?": "How many players?",
 
+	"game invites": "Game Invites",
+	"invited players": "Invited players",
 
-
+	"invite to tournament": "Invite to tournament",
+	"enter player username": "Enter player username",
+	"invite player": "Invite player",
+	"start tournament": "Start tournament"
 
 }

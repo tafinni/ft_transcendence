@@ -6,6 +6,7 @@ import { updateContent, initI18next } from './i18n.js';
 import { loadGame, endGame, startGame } from './game.js';
 import { loadResult } from './result.js';
 import { showAlert } from './index.js';
+import { getCookie } from './csrf.js';
 
 /* Set navigation bar visibility */
 function navLinkVisibility(state) {
@@ -67,7 +68,8 @@ export async function loadContent(content, scoreLeft, scoreRight, oppIsHuman, op
 		if (current !== content)
 			window.history.pushState({ content: content }, '', `/${content}#`);
 	}
-
+	document.getElementById('profile-name').innerHTML = sessionStorage.getItem("username")
+  
 	switch (content) {
 		case 'home':
 			await endGame();

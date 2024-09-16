@@ -12,6 +12,12 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 from pathlib import Path
 import os 
+#import environ
+
+
+
+
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -22,20 +28,39 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-xe3l)tqso(5e^3n2ql8(b#f=ia7*wgj)2_$ur@l!$ue9k=imzz'
+#env = environ.Env()
+#environ.Env.read_env()
+#SECRET_KEY = os.environ['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = True #? eval with False
 
 ALLOWED_HOSTS = []
 
-# Allow all origins #testing
+CORS_ALLOW_ALL_ORIGINS = True # ONLY FOR TESTING
+
+#CSRF_COOKIE_SECURE = True #?
+#SESSION_COOKIE_SECURE = True #?
+
+# Allowed origins
 CORS_ALLOWED_ORIGINS = [
-    'http://localhost:3000',  # testing
+	"https://localhost",
+    "https://localhost:443",
+    "http://localhost:3000",
 ]
 
-CORS_ALLOW_CREDENTIALS = True # testing
+#CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', 'http://localhost:3000, https://localhost:443, https://localhost').split(',')
 
+CORS_ALLOW_CREDENTIALS = True
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://localhost",
+    "https://localhost:443",
+	"http://localhost",
+	"http://localhost:3000",
+]
+
+#CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', 'http://localhost:3000, https://localhost:443, https://localhost').split(',') #?
 
 
 # Application definition
@@ -48,11 +73,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'authentication',
-	'corsheaders' #testing
+	'corsheaders'
 ]
 
 MIDDLEWARE = [
-	'corsheaders.middleware.CorsMiddleware', #testing
+	'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -89,10 +114,10 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'pong_project',
-        'USER': 'your_user',
-        'PASSWORD': 'your_password',
-        'HOST': 'db',  # name from docker-compose.yml
+        'NAME': os.getenv('DATABASE_NAME'),
+        'USER': os.getenv('DATABASE_USER'),
+        'PASSWORD': os.getenv('DATABASE_PASSWORD'),
+        'HOST': os.getenv('DATABASE_HOST'),
         'PORT': '5432',
     }
 }

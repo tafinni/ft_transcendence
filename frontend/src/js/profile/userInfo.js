@@ -3,6 +3,7 @@ import { updateContent } from "../i18n.js";
 import { loadContent } from "../router.js";
 import { checkUserLanguage } from "../i18n.js";
 import { showAlert } from "../index.js";
+import { getCookie } from '../csrf.js';
 
 export async function editInfo() {
 
@@ -10,7 +11,12 @@ export async function editInfo() {
 		method: 'GET',
 		credentials: 'include'
 	});
-	if (!response.ok) { console.error('Failed loading profile:', response.statusText); return `<h1>Error loading profile</h1>`; }
+	if (!response.ok)
+	{
+		console.error('Failed editing profile:', response.statusText);
+		showAlert('Error editing profile. Try again.', 'danger');
+		return ;
+	}
 
 	const userData = await response.json();
 
@@ -87,11 +93,13 @@ export async function saveInfo() {
 
 		const formData = new FormData(editInfoForm);
 
+		const csrftoken = getCookie('csrftoken');
         try 
         {
             const response = await fetch('http://localhost:8000/update_profile/',
             {
                 method: 'POST',
+				headers: { 'X-CSRFToken': csrftoken },
                 credentials: 'include',
                 body: formData
             });
@@ -178,11 +186,13 @@ async function saveAvatar() {
 
 		const formData = new FormData(editAvatarForm);
 
+		const csrftoken = getCookie('csrftoken');
         try 
         {
             const response = await fetch('http://localhost:8000/update_profile/',
             {
                 method: 'POST',
+				headers: { 'X-CSRFToken': csrftoken },
                 credentials: 'include',
                 body: formData
             });
@@ -205,7 +215,7 @@ async function saveAvatar() {
         catch (error)
         {
             console.error('Error during edit avatar', error);
-			showAlert('Error during edit avatar. Try Again');
+			showAlert('Error during edit avatar. Try Again', 'danger');
         }
     });
 

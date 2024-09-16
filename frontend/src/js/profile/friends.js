@@ -2,16 +2,24 @@ import { updateContent } from "../i18n";
 import { loadContent } from "../router";
 import { showAlert } from "../index.js";
 import { loadPublicProfile } from "./publicProfile.js";
-
+import { getCookie } from '../csrf.js';
 
 export async function displayFriends() {
-	const response = await fetch('http://localhost:8000/profile/', {
+
+	const response = await fetch('http://localhost:8000/profile/',
+	{
 		method: 'GET',
 		credentials: 'include'
 	});
-	if (!response.ok) { console.error('Failed loading profile:', response.statusText); return `<h1>Error loading profile</h1>`; }
 
-	const data = await response.json(); // Parse the JSON response
+	if (!response.ok)
+	{
+		console.error('Failed loading profile:', response.statusText);
+		showAlert('Error occured displaying friends. Try again.', 'danger');
+		return ;
+	}
+
+	const data = await response.json();
 
 	console.log('display friends called', data); // Debugging
 	const friends = data.friends;
@@ -20,7 +28,7 @@ export async function displayFriends() {
 	friendsListContainer.innerHTML = ''; // Clear existing content
 
 	friends.forEach((friend, index) => {
-		const colors = ['#f0f0f0', '#ffffff'];
+		const colors = ['#f0f0f0', '#fffff'];
 
 
 		const friendItem = document.createElement('div');
@@ -70,11 +78,19 @@ export async function displayFriends() {
 }
 
 export async function displayFriendRequests() {
-	const response = await fetch('http://localhost:8000/profile/', {
+	
+	const response = await fetch('http://localhost:8000/profile/',
+	{
 		method: 'GET',
 		credentials: 'include'
 	});
-	if (!response.ok) { console.error('Failed loading profile:', response.statusText); return `<h1>Error loading profile</h1>`; }
+
+	if (!response.ok)
+	{
+		console.error('Failed loading profile:', response.statusText);
+		showAlert('Error occured displaying friend requests. Try again.', 'danger');
+		return ;
+	}
 
 	const data = await response.json(); // Parse the JSON response
 
@@ -123,13 +139,15 @@ export async function displayFriendRequests() {
 }
 
 async function acceptFriend(request_user_username) {
+
 	try
 	{
+		const csrftoken = getCookie('csrftoken');
 		const response = await fetch('http://localhost:8000/accept_friend_request/',
 		{
 			method: 'POST',
 			credentials: 'include',
-			headers: { 'Content-Type' : 'application/json' },
+			headers: { 'Content-Type' : 'application/json', 'X-CSRFToken': csrftoken },
 			body: JSON.stringify({ request_user_username })
 		});
 
@@ -143,8 +161,8 @@ async function acceptFriend(request_user_username) {
 		else
 		{
 			const errorData = await response.json();
-			console.error('Adding friend failed');
-			showAlert('errorData', 'danger');
+			console.error('Adding friend failed', errorData);
+			showAlert(errorData.error, 'danger');
 			loadContent('profile');
 		}
 	}
@@ -153,17 +171,18 @@ async function acceptFriend(request_user_username) {
 		console.error('Error during adding friend', error);
 		showAlert('Error occured when adding friend. Try again.', 'danger');
 	}
-	sessionStorage.setItem('timeoutTimer', Date.now());
 }
 
 async function declineFriend(request_user_username) {
+	
 	try
 	{
+		const csrftoken = getCookie('csrftoken');
 		const response = await fetch('http://localhost:8000/decline_friend_request/',
 		{
 			method: 'POST',
 			credentials: 'include',
-			headers: { 'Content-Type' : 'application/json' },
+			headers: { 'Content-Type' : 'application/json', 'X-CSRFToken': csrftoken  },
 			body: JSON.stringify({ request_user_username })
 		});
 
@@ -178,7 +197,7 @@ async function declineFriend(request_user_username) {
 		{
 			const errorData = await response.json();
 			console.error('Declining friend failed');
-			showAlert(errorData, 'danger');
+			showAlert(errorData.error, 'danger');
 			loadContent('profile');
 		}
 	}
@@ -187,7 +206,6 @@ async function declineFriend(request_user_username) {
 		console.error('Error during adding friend', error);
 		showAlert('Error occured when adding friend. Try again.', 'danger');
 	}
-	sessionStorage.setItem('timeoutTimer', Date.now());
 }
 
 
@@ -225,17 +243,11 @@ export async function addFriend() {
 	{
 		console.error('Content element not found');
 	}
-	sessionStorage.setItem('timeoutTimer', Date.now());
 }
 
 
 
 async function saveFriend() {
-	const response = await fetch('http://localhost:8000/profile/', {
-		method: 'GET',
-		credentials: 'include'
-	});
-	if (!response.ok) { console.error('Failed loading profile:', response.statusText); return `<h1>Error loading profile</h1>`; }
 
     console.log('saveFriend called'); // Debugging
 
@@ -253,13 +265,14 @@ async function saveFriend() {
 
 		try
 		{
+			const csrftoken = getCookie('csrftoken');
 			const response = await fetch('http://localhost:8000/add_friend/',
-				{
-					method: 'POST',
-					credentials: 'include',
-					headers: { 'Content-Type' : 'application/json' },
-					body: JSON.stringify({ friend_username })
-				});
+			{
+				method: 'POST',
+				credentials: 'include',
+				headers: { 'Content-Type' : 'application/json', 'X-CSRFToken': csrftoken  },
+				body: JSON.stringify({ friend_username })
+			});
 
 			if (response.ok)
 			{
@@ -272,7 +285,7 @@ async function saveFriend() {
 			{
 				const errorData = await response.json();
 				console.error('Adding friend failed', errorData);
-				showAlert('test', 'danger');
+				showAlert(errorData.error, 'danger');
 				loadContent('profile');
 			}
 		}
@@ -287,17 +300,17 @@ async function saveFriend() {
 		console.log('Cancelled add friend'); // Debugging
 		loadContent('profile');
 	});
-	sessionStorage.setItem('timeoutTimer', Date.now());
 }
 
 async function removeFriend(friend_username) {
 	try
 	{
+		const csrftoken = getCookie('csrftoken');
 		const response = await fetch('http://localhost:8000/remove_friend/',
 		{
 			method: 'POST',
 			credentials: 'include',
-			headers: { 'Content-Type' : 'application/json' },
+			headers: { 'Content-Type' : 'application/json', 'X-CSRFToken': csrftoken  },
 			body: JSON.stringify({ friend_username })
 		});
 
@@ -312,15 +325,14 @@ async function removeFriend(friend_username) {
 		{
 			const errorData = await response.json();
 			console.error('Removing friend failed');
-			alert(errorData);
+			showAlert(errorData.error, 'danger');
 			loadContent('profile');
 		}
 	}
 	catch (error)
 	{
 		console.error('Error during removing friend', error);
-		alert('Error occured when removing friend. Try again.');
+		showAlert('Error occured when removing friend. Try again.', 'danger');
 	}
-	sessionStorage.setItem('timeoutTimer', Date.now());
 }
 
