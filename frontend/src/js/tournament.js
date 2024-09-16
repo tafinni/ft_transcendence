@@ -143,7 +143,8 @@ export async function tournamentSetUp(count) {
 			console.error('Error during tournament setup', error);
 			showAlert('Error during tournament setup. Try again.', 'danger');
 		}
-
+		
+		newPlayerInput.value = '';
 		document.getElementById('finish-invites-btn').disabled = players.length >= count - 1;
 
 /* 			await validateUsername(username);

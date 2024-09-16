@@ -4,6 +4,7 @@ import { changePassword } from "./password.js";
 import { displayFriends, displayFriendRequests, addFriend } from "./friends.js";
 import { updateContent } from "../i18n.js";
 import { showAlert } from "../index.js";
+import { getCookie } from "../csrf.js";
 
 export async function loadProfile() {
 
@@ -162,6 +163,7 @@ export async function loadProfile() {
 		updateContent();
 		await displayFriends();
 		await displayFriendRequests();
+		await displayGameInvites();
 		buttonListener();
 	}
 	else
@@ -170,6 +172,135 @@ export async function loadProfile() {
 	}
 }
 
+async function displayGameInvites() {
+	const response = await fetch('http://localhost:8000/profile/',
+	{
+		method: 'GET',
+		credentials: 'include'
+	});
+
+	if (!response.ok)
+	{
+		console.error('Failed loading profile:', response.statusText);
+		showAlert('Error occured displaying friend requests. Try again.', 'danger');
+		return ;
+	}
+
+	const data = await response.json();
+	console.log('display game invites called', data); // Debugging
+
+	const invites = data.tournament_invitations;
+
+	const gameInviteContainer = document.getElementById('game-invite-list');
+	gameInviteContainer.innerHTML = '';
+
+	invites.forEach((invite, index) => {
+		const colors = ['#f0f0f0', '#fffff'];
+
+		const inviteItem = document.createElement('div');
+		inviteItem.className = 'friend-item';
+		inviteItem.style.display = 'flex';
+        inviteItem.style.alignItems = 'center';
+        inviteItem.style.marginBottom = '10px';
+
+		inviteItem.style.backgroundColor = colors[index % colors.length];
+		inviteItem.style.padding = '10px';
+
+		const invitorName = document.createElement('span');
+		invitorName.className = 'friend-name';
+		invitorName.textContent = invite.tournament_initiator;
+        invitorName.style.flexGrow = '1';
+
+		// Create Accept button
+        const acceptButton = document.createElement('button');
+        acceptButton.className = 'btn btn-success btn-sm';
+		acceptButton.innerHTML = '<i class="bi bi-check-lg"></i>';
+	    acceptButton.style.marginRight = '10px';
+        acceptButton.onclick = () => acceptInvite(invite.tournament_initiator);
+
+        // Create Deny button
+        const denyButton = document.createElement('button');
+        denyButton.className = 'btn btn-danger btn-sm';
+		denyButton.innerHTML = '<i class="bi bi-x-lg"></i>';
+        denyButton.onclick = () => declineInvitation(invite.tournament_initiator);
+
+		inviteItem.appendChild(invitorName);
+        inviteItem.appendChild(acceptButton);
+        inviteItem.appendChild(denyButton);		
+
+		gameInviteContainer.appendChild(inviteItem);
+	});
+}
+
+async function acceptInvite(initiator_username) {
+	try
+	{
+		console.log('initiator username: ', initiator_username);
+		const csrftoken = getCookie('csrftoken');
+		const response = await fetch('http://localhost:8000/accept_tournament_invitation/',
+		{
+			method: 'POST',
+			credentials: 'include',
+			headers: { 'Content-Type' : 'application/json', 'X-CSRFToken': csrftoken },
+			body: JSON.stringify({ initiator_username })
+		});
+
+		if (response.ok)
+		{
+			const data = await response.json();
+			console.log('Invitation accepted succesfully');
+			showAlert(data.message, 'success');
+			loadContent('profile');
+		}
+		else
+		{
+			const errorData = await response.json();
+			console.error('Accepting invitation failed', errorData);
+			showAlert(errorData.error, 'danger');
+			loadContent('profile');
+		}
+	}
+	catch (error)
+	{
+		console.error('Error during accepting game invite', error);
+		showAlert('Error occured when accepting invite. Try again.', 'danger');
+	}
+}
+
+async function declineInvitation(initiator_username) {
+	
+	try
+	{
+		const csrftoken = getCookie('csrftoken');
+		const response = await fetch('http://localhost:8000/decline_tournament_invitation/',
+		{
+			method: 'POST',
+			credentials: 'include',
+			headers: { 'Content-Type' : 'application/json', 'X-CSRFToken': csrftoken  },
+			body: JSON.stringify({ initiator_username })
+		});
+
+		if (response.ok)
+		{
+			const data = await response.json();
+			console.log('Game invite declined succesfully');
+			showAlert(data.message, 'success');
+			loadContent('profile');
+		}
+		else
+		{
+			const errorData = await response.json();
+			console.error('Declining game invite failed');
+			showAlert(errorData.error, 'danger');
+			loadContent('profile');
+		}
+	}
+	catch (error)
+	{
+		console.error('Error during declining game invite', error);
+		showAlert('Error occured when declining game invite. Try again.', 'danger');
+	}
+}
 
 async function matchHistory () {
 	try

@@ -130,8 +130,7 @@ async function completeLogOut() {
 		if (response.ok)
 		{
 			const data = await response.json();
-			console.log('Logged out succesfully');
-			showAlert(data.message, 'success');
+			console.log('Logged out succesfully: ', data.message);
 		}
 		else
 		{

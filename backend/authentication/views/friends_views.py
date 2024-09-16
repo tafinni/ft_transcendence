@@ -13,7 +13,6 @@ from django.db.models import Q
 
 # Add friend view
 @login_required
-#@csrf_exempt
 @csrf_protect
 def add_friend(request):
     if request.method == "POST":
@@ -49,9 +48,7 @@ def add_friend(request):
 
 # Remove friend view
 @login_required
-#@csrf_exempt
 @csrf_protect
-#@csrf_protect
 def remove_friend(request):
     if request.method == "POST":
         body = json.loads(request.body)

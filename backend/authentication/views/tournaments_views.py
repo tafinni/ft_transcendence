@@ -7,10 +7,9 @@ import json
 import random
 
 
-
 @login_required
-#@csrf_protect
-@csrf_exempt
+@csrf_protect
+#@csrf_exempt
 def accept_tournament_invitation(request):
     if request.method == "POST":
         try:
@@ -52,8 +51,8 @@ def accept_tournament_invitation(request):
 
 
 @login_required
-#@csrf_protect
-@csrf_exempt
+@csrf_protect
+#@csrf_exempt
 def decline_tournament_invitation(request):
     if request.method == "POST":
         try:
@@ -94,8 +93,8 @@ def decline_tournament_invitation(request):
 
 # invite_to_tournament
 @login_required
-#@csrf_protect
-@csrf_exempt
+@csrf_protect
+#@csrf_exempt
 def invite_to_tournament(request):
     if request.method == "POST":
         try:
@@ -147,8 +146,8 @@ def invite_to_tournament(request):
     return JsonResponse({'error': 'Invalid request method'}, status=405)
 
 @login_required
-#@csrf_protect
-@csrf_exempt
+@csrf_protect
+#@csrf_exempt
 def create_tournament(request):
     if request.method == "POST":
         try:
@@ -168,10 +167,24 @@ def create_tournament(request):
         if player_count not in {4, 8, 16}:
             return JsonResponse({'error': 'Invalid player count. Must be 4, 8, or 16'}, status=400)
 
+        #Checking for the existence of an unfinished tournament (Pending 0 or Active 1)
+        #existing_tournament = Tournament.objects.filter(initiator=request.user, status__in=[0, 1]).first()
+        #if existing_tournament:
+        #    return JsonResponse({
+        #        'error': 'You already have an ongoing or pending tournament. Complete it before creating a new one.'
+        #    }, status=400)
+
         tournament = Tournament.objects.create(
             initiator=request.user,
             player_count=player_count,
             status=0  # Pending
+        )
+
+        # Add the initiator to the participants of the tournament
+        Participants.objects.create(
+            tournament=tournament,
+            user=request.user,
+            is_accepted=True
         )
 
         # Prepare response message
@@ -182,8 +195,8 @@ def create_tournament(request):
 
 
 @login_required
-#@csrf_protect
-@csrf_exempt
+@csrf_protect
+#@csrf_exempt
 def start_tournament(request):
     if request.method == "POST":
         try:
@@ -219,7 +232,7 @@ def start_tournament(request):
             group_number += 1
 
         # Update the tournament status to 'Active'
-        tournament.status = 1  # Status=1 means 'Active'
+        tournament.status = 1  # 1 means 'Active'
         tournament.save()
 
         # Prepare response message

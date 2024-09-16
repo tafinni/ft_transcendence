@@ -11,9 +11,6 @@ from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 import re
 
-# Create your views here.  
-#curl -v -X POST -F username=jon
- #-F password=jon http://localhost:8000/login/
 
 def is_valid_string(value, min_length, max_length):
     if not value:
@@ -32,8 +29,7 @@ def home(request):
     return JsonResponse({'message': 'Welcome to the home page!!'})
 
 # Define a view function for the login page
-#@csrf_exempt
-#@csrf_protect
+@csrf_exempt
 def login_page(request):
     if request.method == "POST":
         body = json.loads(request.body)
@@ -54,14 +50,10 @@ def login_page(request):
             return JsonResponse({'message': 'Login successful', 'redirect': '/home/'})
 #return JsonResponse({"status": "ok"})
 #return JsonResponse({})
-    # Render the login page template (GET request)
-  #  return render(request, 'login.html')
     return JsonResponse({'error': 'Invalid request method'}, status=405)
 
 # Define a view function for the registration page
-
-#@csrf_exempt
-#@csrf_protect
+@csrf_exempt
 def register_page(request):
     if request.method == 'POST':
         body = json.loads(request.body)
@@ -103,7 +95,6 @@ def register_page(request):
 
 # Define a view function for the logout page
 @login_required
-#@csrf_exempt
 @csrf_protect
 def logout_page(request):
     if request.method == "POST":

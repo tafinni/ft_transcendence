@@ -12,6 +12,7 @@ from django.core.exceptions import ValidationError
 import datetime
 
 @login_required
+@csrf_protect
 def match_history(request):
     user = request.user
     matches = MatchHistory.objects.filter(user=user).order_by('-date')
@@ -25,6 +26,7 @@ def match_history(request):
     return JsonResponse({'matches': match_list})
 
 @login_required
+@csrf_protect
 def public_match_history(request):
     if request.method == "GET":
         user_username = request.GET.get('user_username')
@@ -48,6 +50,7 @@ def public_match_history(request):
 
 
 @login_required
+@csrf_protect
 @csrf_exempt
 def add_result(request):
     data = json.loads(request.body)
