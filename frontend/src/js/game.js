@@ -19,7 +19,7 @@ window.addEventListener('resize', () => {
 })
 
 // Camera setups
-t.camera.position.z = 4
+t.camera.position.z = 5
 t.scene.add(t.camera)
 t.gcamera.position.set(4, 4, 4)
 t.gcamera.rotation.y = Math.PI / 2
@@ -29,7 +29,7 @@ t.scene.add(t.gcamera)
 // Frame tick
 const tick = () => {
     m.tick()
-    t.controls.update()
+    m.controls.update()
     t.renderer.render(t.scene, m.camera)
     window.requestAnimationFrame(tick)
 }
@@ -66,13 +66,15 @@ export function endGame() {
 export function sendResults(scoreLeft, scoreRight, oppIsHuman) {
     try {
         loadContent('result', scoreLeft, scoreRight, oppIsHuman)
-    } catch (error) {}
+    } catch (error) {
+        console.log('failed to sendResults:', error)
+    }
 }
 
 export function switchToIdle() {
     m.cleanUp()
     m = i
-    i.addIdleObjs()
+    m.addIdleObjs()
 }
 
 // external functions

@@ -72,11 +72,12 @@ export function getAspect() { return sizes.width / sizes.height }
 
 // Export camera, controls, renderer, clock
 export const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
-
+export const controls = new OrbitControls(camera, canvas)
+controls.enableDamping = true
 const d = 3
 export const gcamera = new THREE.OrthographicCamera(-d * getAspect(), d * getAspect(), d, -d, 1, 1000)
-export const controls = new OrbitControls(gcamera, canvas)
-controls.enableDamping = true
+export const gcontrols = new OrbitControls(gcamera, canvas)
+gcontrols.enableDamping = true
 
 export const renderer = new THREE.WebGLRenderer({
     canvas: canvas

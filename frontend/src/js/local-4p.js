@@ -1,4 +1,3 @@
-//import * as THREE from 'three'
 import gsap from 'gsap'
 
 import * as t from './game.defs.js'
@@ -6,13 +5,14 @@ import * as d from './local-4p.defs.js'
 import { vars as v }  from './local-4p.defs.js'
 import { switchToIdle, sendResults } from './game.js'
 
-const plate = d.plate; const left = d.left; const right = d.right; const top = d.top; 
+const plate = d.plate; const left = d.left; const right = d.right; const top = d.top;
 const bot = d.bot; const ball = d.ball; const score = d.score;
 let ball_drop = gsap.to(ball.position, { y: 0.1, duration: 0.3, paused: true, onComplete: () => {
     v.game_running = true
 }})
 
 export const camera = t.gcamera
+export const controls = t.gcontrols
 export const tick = () => {
     left.position.x = v.left_pos * d.pvmax_pmx
     right.position.x = v.right_pos * d.pvmax_pmx
@@ -37,11 +37,10 @@ function randomizeBallDir() {
     //v.ball_direction = 255
     v.ball_direction *= Math.PI / 180
 }
-//randomizeBallDir()
 
 function gametick() {
     if (!v.game_running && v.game_started) {
-        if (v.score_left > v.score_to_win || v.score_right > v.score_to_win) {
+        if (v.players_remaining === 1) {
             if (v.gameover_timer++ > 360)
                 switchToIdle()
             return
@@ -136,6 +135,7 @@ function createScore(player, color, vec1, vec2) {
     score2.name = player + '_score2'
     score1.position.set(vec1.x, vec1.y, vec1.z)
     score2.position.set(vec2.x, vec2.y, vec2.z)
+    d.obj_stack.push(score1, score2)
     t.scene.add(score1, score2)
 }
 
@@ -147,48 +147,36 @@ function addLives() {
     createScore('r', right.material.color.clone(), { x: vert, y: 0, z: -horiz }, { x: vert - spc, y: 0, z: -horiz })
     createScore('t', top.material.color.clone(), { x: -horiz, y: 0, z: -vert }, { x: -horiz, y: 0, z: -vert + spc })
     createScore('b', bot.material.color.clone(), { x: horiz, y: 0, z: vert }, { x: horiz, y: 0, z: vert - spc })
+    console.log(d.obj_stack)
 }
 
 function removeLife(player) {
-    //console.log(v.player_status.filter(i => i.obj === right)[0].lives)
     switch (player) {
         case 'left':
-            //console.log('rm left', v.lives_left)
-            //if ((v.lives_left = --v.player_status_map.get('left').lives) === 0)
             if ((v.lives_left = --v.player_status.filter(i => i.obj === left)[0].lives) === 0) 
                 removePlayer('left')
-            else {
+            else
                 t.scene.remove(t.scene.getObjectByName('l_score' + String.fromCharCode(48 + d.score_to_win - v.lives_left)))
-                //console.log('char val', String.fromCharCode(48 + d.score_to_win - v.lives_left))
-                //console.log('nbr val:', 48 + d.score_to_win - v.lives_left)
-            }
             break
         case 'right':
-            //console.log('rm right', v.lives_right)
-            //if ((v.lives_right = --v.player_status_map.get('right').lives) === 0)
             if ((v.lives_right = --(v.player_status.filter(i => i.obj === right)[0].lives)) === 0) 
                 removePlayer('right')
             else
                 t.scene.remove(t.scene.getObjectByName('r_score' + String.fromCharCode(48 + d.score_to_win - v.lives_right)))
             break
         case 'top':
-            //console.log('rm top', v.lives_top)
-            //if ((v.lives_top = --v.player_status_map.get('top').lives) === 0)
             if ((v.lives_top = --v.player_status.filter(i => i.obj === top)[0].lives) === 0) 
                 removePlayer('top')
             else
                 t.scene.remove(t.scene.getObjectByName('t_score' + String.fromCharCode(48 + d.score_to_win - v.lives_top)))
             break
         case 'bot':
-            //console.log('rm bot', v.lives_bot)
-            //if ((v.lives_bot = --v.player_status_map.get('bot').lives) === 0)
             if ((v.lives_bot = --v.player_status.filter(i => i.obj === bot)[0].lives) === 0) 
                 removePlayer('bot')
             else
                 t.scene.remove(t.scene.getObjectByName('b_score' + String.fromCharCode(48 + d.score_to_win - v.lives_bot)))
             break
     }
-    //console.log(v.player_status)
 }
 
 function removePlayer(player) {
@@ -238,16 +226,15 @@ function showVictory() {
     t.win_text.material.color = v.player_status.filter(i => i.lives !== 0)[0].obj.material.color.clone()
     t.win_text.lookAt(t.gcamera.position)
     t.scene.add(t.win_text)
-    v.score_left++
     sendResults(v.score_left, v.score_right, true)
 }
 
 function resetScore() {
-    v.score_left = v.score_right = 0
     t.scene.remove(t.win_text)
     t.scene.remove(t.lose_text)
-    while (t.scene.getObjectByName("score"))
-        t.scene.remove(t.scene.getObjectByName("score"))
+    while (d.obj_stack.length > 0)
+        t.scene.remove(d.obj_stack.pop())
+    console.log('SCORE RESET')
 }
 
 export function startGame() {
@@ -260,7 +247,7 @@ export function startGame() {
     playerselect.style.zIndex = 100
     playerselect.addEventListener("submit", (e) => {
         e.preventDefault()
-        startSolo()
+        reallyStart()
         playerselect.style.zIndex = -999
     })
 }
@@ -280,8 +267,6 @@ export function cleanUp() {
 // Key listeners
 function onDocumentKeyDown(event) {
     var key_code = event.which
-    //console.log(key_code)
-    //A65 Z90 -109 +107 n78 m77
     if (key_code === 65) { v.l_left_pressed = true }
     else if (key_code === 90) { v.l_right_pressed = true }
     else if (key_code === 78) { v.t_right_pressed = true }
@@ -290,7 +275,10 @@ function onDocumentKeyDown(event) {
     else if (key_code === 39) { v.b_left_pressed = true }
     else if (key_code === 109) { v.r_left_pressed = true }
     else if (key_code === 107) { v.r_right_pressed = true }
-    else if (key_code === 80) { v.game_running = !v.game_running }
+    else if (key_code === 80) { 
+        if (!v.game_started) reallyStart()
+        v.game_running = !v.game_running
+    }
 }
 function onDocumentKeyUp(event) {
     var key_code = event.which
@@ -303,11 +291,10 @@ function onDocumentKeyUp(event) {
     else if (key_code === 109) { v.r_left_pressed = false }
     else if (key_code === 107) { v.r_right_pressed = false }
 }
-function startSolo() {
+function reallyStart() {
     v.reset()
     addLives()
     randomizeBallDir()
     v.game_started = true
-    //console.log(v)
     ball_drop.restart()
 }

@@ -58,6 +58,7 @@ score.name = "score_original"
 score.position.set(20, 0, 0)
 
 export const camera = t.gcamera
+export const controls = t.gcontrols
 export const tick = () => {
     left.position.x = v.left_pos * c.paddle_vmax / c.paddle_max
     right.position.x = v.right_pos * c.paddle_vmax / c.paddle_max

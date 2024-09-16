@@ -34,13 +34,6 @@ top.name = "top"
 top.material.color = new THREE.Color('blue')
 top.position.set(-2.1, 0.1, 0)
 
-// export const top = new THREE.Mesh(
-//     new THREE.BoxGeometry(0.2, 0.125, 4),
-//     new THREE.MeshBasicMaterial()
-// )
-// top.name = "top"
-// top.material.color = new THREE.Color('darkblue')
-// top.position.set(-2.1, 0.0625, 0)
 export const bot = new THREE.Mesh(
     new THREE.BoxGeometry(0.2, 0.2, 0.7),
     new THREE.MeshBasicMaterial()
@@ -59,7 +52,6 @@ export const score = new THREE.Mesh(
     new THREE.MeshBasicMaterial()
 )
 score.name = "score"
-//score.position.set(20, 0, 0)
 export const corner = new THREE.Mesh(
     new THREE.BoxGeometry(0.2, 0.125, 0.2),
     new THREE.MeshBasicMaterial()
@@ -99,6 +91,7 @@ export const player_speed = 12000
 export const ball_base_speed = 8000 // 8000
 export const ball_increase_speed = 1000 // 1000
 export const score_to_win = 3
+export const obj_stack = []
 
 // pre-calculated values
 export const pvmax_pmx = paddle_vmax / paddle_max

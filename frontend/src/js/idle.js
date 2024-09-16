@@ -1,10 +1,10 @@
 //import './style.css'
 import * as THREE from 'three'
 //import * as THREE from "../node_modules/three/build/three.module.js"
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
+//import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 //import GUI from 'lil-gui'
 import * as t from './game.defs.js'
-import gsap from 'gsap'
+//import gsap from 'gsap'
 
 const cube = new THREE.Mesh(
     new THREE.BoxGeometry(0.25, 1, 0.25),
@@ -43,12 +43,12 @@ export function rmvIdleObjs() {
 
 export function cleanUp() {
     rmvIdleObjs()
-    t.scene.remove(t.camera)
 }
 
 const radius = 5; // Distance from origin
 
 export const camera = t.gcamera
+export const controls = t.gcontrols
 export const tick = () =>
 {
     const elapsedTime = t.clock.getElapsedTime()
