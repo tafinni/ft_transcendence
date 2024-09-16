@@ -1,9 +1,13 @@
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_protect, csrf_exempt
+from django.views.decorators.csrf import csrf_protect, csrf_exempt
 from django.contrib.auth.models import User
 from authentication.models import Tournament, Participants, ResultTournament
+from authentication.models import Tournament, Participants, ResultTournament
 import json
+import random
+
 import random
 
 
@@ -12,6 +16,11 @@ import random
 #@csrf_exempt
 def accept_tournament_invitation(request):
     if request.method == "POST":
+        try:
+            body = json.loads(request.body)
+            initiator_username = body.get('initiator_username')
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid JSON'}, status=400)
         try:
             body = json.loads(request.body)
             initiator_username = body.get('initiator_username')
@@ -52,13 +61,16 @@ def accept_tournament_invitation(request):
     return JsonResponse({'message': f'Tournament invitation accepted: {initiator_display} vs {user_display}'})
 
 
-
-
 @login_required
 @csrf_protect
 #@csrf_exempt
 def decline_tournament_invitation(request):
     if request.method == "POST":
+        try:
+            body = json.loads(request.body)
+            initiator_username = body.get('initiator_username')
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid JSON'}, status=400)
         try:
             body = json.loads(request.body)
             initiator_username = body.get('initiator_username')
@@ -91,7 +103,7 @@ def decline_tournament_invitation(request):
         user_display = request.user.userprofile.display_name or request.user.username
 
         return JsonResponse({'message': f'Tournament invitation declined: {initiator_display} vs {user_display}'})
-
+    
     return JsonResponse({'error': 'Invalid request method'}, status=405)
 
 
@@ -107,11 +119,20 @@ def invite_to_tournament(request):
             tournament_id = body.get('tournament_id')
         except json.JSONDecodeError:
             return JsonResponse({'error': 'Invalid JSON'}, status=400)
+        try:
+            body = json.loads(request.body)
+            opponent_username = body.get('opponent_username')
+            tournament_id = body.get('tournament_id')
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid JSON'}, status=400)
 
+        if not opponent_username or not tournament_id:
+            return JsonResponse({'error': 'Opponent username and tournament ID are required'}, status=400)
         if not opponent_username or not tournament_id:
             return JsonResponse({'error': 'Opponent username and tournament ID are required'}, status=400)
 
         try:
+            opponent = User.objects.get(username=opponent_username)
             opponent = User.objects.get(username=opponent_username)
         except User.DoesNotExist:
             return JsonResponse({'error': 'User does not exist'}, status=404)

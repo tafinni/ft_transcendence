@@ -57,8 +57,6 @@ export async function tournamentSetUp(count) {
 				<h3 class="card-title text-center mb-4">
 					<span translate="invite to tournament"></span>
 				</h3>
-
-				<p>You - accepted</p>
 				<div id="players-container">
 					<!-- Players will be dynamically added here -->
 				</div><br>
