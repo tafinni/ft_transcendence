@@ -96,8 +96,8 @@ export const ball_max = pos_max - ball_radius
 export const paddle_max = pos_max - paddle_halfwidth
 export const player_speed = 12000
 // base 8000 increase 1000
-export const ball_base_speed = 15000 // 8000
-export const ball_increase_speed = 1500 // 1000
+export const ball_base_speed = 8000 // 8000
+export const ball_increase_speed = 1000 // 1000
 export const score_to_win = 3
 
 // pre-calculated values

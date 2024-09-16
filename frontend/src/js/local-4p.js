@@ -74,7 +74,6 @@ function gametick() {
         v.ball_direction = Math.PI - v.ball_direction
         v.ballY = d.ball_max - (v.ballY - d.ball_max)
         if (v.lives_bot !== 0) {
-            console.log(v.bounce_distance)
             v.ball_direction += v.bounce_distance / d.paddle_halfwidth * Math.PI / 4
             v.ball_speed += d.ball_increase_speed / 2
         }
@@ -133,7 +132,6 @@ function createScore(player, color, vec1, vec2) {
     score1.name = player + '_score1'
     score1.material = score.material.clone()
     score1.material.color = color
-    console.log(score1)
     const score2 = score1.clone()
     score2.name = player + '_score2'
     score1.position.set(vec1.x, vec1.y, vec1.z)
@@ -152,21 +150,21 @@ function addLives() {
 }
 
 function removeLife(player) {
-    console.log(v.player_status.filter(i => i.obj === right)[0].lives)
+    //console.log(v.player_status.filter(i => i.obj === right)[0].lives)
     switch (player) {
         case 'left':
-            console.log('rm left', v.lives_left)
+            //console.log('rm left', v.lives_left)
             //if ((v.lives_left = --v.player_status_map.get('left').lives) === 0)
             if ((v.lives_left = --v.player_status.filter(i => i.obj === left)[0].lives) === 0) 
                 removePlayer('left')
             else {
                 t.scene.remove(t.scene.getObjectByName('l_score' + String.fromCharCode(48 + d.score_to_win - v.lives_left)))
-                console.log('char val', String.fromCharCode(48 + d.score_to_win - v.lives_left))
-                console.log('nbr val:', 48 + d.score_to_win - v.lives_left)
+                //console.log('char val', String.fromCharCode(48 + d.score_to_win - v.lives_left))
+                //console.log('nbr val:', 48 + d.score_to_win - v.lives_left)
             }
             break
         case 'right':
-            console.log('rm right', v.lives_right)
+            //console.log('rm right', v.lives_right)
             //if ((v.lives_right = --v.player_status_map.get('right').lives) === 0)
             if ((v.lives_right = --(v.player_status.filter(i => i.obj === right)[0].lives)) === 0) 
                 removePlayer('right')
@@ -174,7 +172,7 @@ function removeLife(player) {
                 t.scene.remove(t.scene.getObjectByName('r_score' + String.fromCharCode(48 + d.score_to_win - v.lives_right)))
             break
         case 'top':
-            console.log('rm top', v.lives_top)
+            //console.log('rm top', v.lives_top)
             //if ((v.lives_top = --v.player_status_map.get('top').lives) === 0)
             if ((v.lives_top = --v.player_status.filter(i => i.obj === top)[0].lives) === 0) 
                 removePlayer('top')
@@ -182,7 +180,7 @@ function removeLife(player) {
                 t.scene.remove(t.scene.getObjectByName('t_score' + String.fromCharCode(48 + d.score_to_win - v.lives_top)))
             break
         case 'bot':
-            console.log('rm bot', v.lives_bot)
+            //console.log('rm bot', v.lives_bot)
             //if ((v.lives_bot = --v.player_status_map.get('bot').lives) === 0)
             if ((v.lives_bot = --v.player_status.filter(i => i.obj === bot)[0].lives) === 0) 
                 removePlayer('bot')
@@ -190,7 +188,7 @@ function removeLife(player) {
                 t.scene.remove(t.scene.getObjectByName('b_score' + String.fromCharCode(48 + d.score_to_win - v.lives_bot)))
             break
     }
-    console.log(v.player_status)
+    //console.log(v.player_status)
 }
 
 function removePlayer(player) {
@@ -204,26 +202,33 @@ function removePlayer(player) {
         new_wall.material.color = wall.material.color
         if (player === 'left') {
             new_wall.position.set(0, 5, 2.1)
-            t.scene.remove(left)
+            gsap.to(left.position, { z: 5, duration: 0.5, onComplete: () => {
+                t.scene.remove(left)
+                left.position.z = 2.1
+            }})
         }
         else if (player === 'right') {
             new_wall.position.set(0, 5, -2.1)
-            t.scene.remove(right)
+            gsap.to(right.position, { z: -5, duration: 0.5, onComplete: () => {
+                t.scene.remove(right)
+                right.position.z = -2.1
+            }})
         }
         else if (player === 'top') {
             new_wall.position.set(-2.1, 5, 0)
             t.scene.remove(top)
+            gsap.to(top.position, { x: -5, duration: 0.5, onComplete: () => {
+                t.scene.remove(top)
+                top.position.x = -2.1
+            }})
         }
         else if (player === 'bot') {
             new_wall.position.set(2.1, 5, 0)
-            //t.scene.remove(bot)
             gsap.to(bot.position, { x: 5, duration: 0.5, onComplete: () => {
-                console.log('gsap bot anim finished')
                 t.scene.remove(bot)
-            } })
-            //t.scene.add(bot)
+                bot.position.x = 2.1
+            }})
         }
-        console.log('newwallz:', new_wall.position.z)
         gsap.to(new_wall.position, { y: 0.0625, duration: 0.5 })
         t.scene.add(new_wall)
     }
