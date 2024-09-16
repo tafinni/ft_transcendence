@@ -3,7 +3,6 @@ import { updateContent } from "./i18n";
 import { loadContent } from "./router";
 import { showAlert } from "./index.js";
 
-let players = [];
 
 export async function tournamentSetUp(count) {
 	console.log("Called tournamentSetUp", count);
@@ -58,8 +57,6 @@ export async function tournamentSetUp(count) {
 				<h3 class="card-title text-center mb-4">
 					<span translate="invite to tournament"></span>
 				</h3>
-
-				<p>You - accepted</p>
 				<div id="players-container">
 					<!-- Players will be dynamically added here -->
 				</div><br>
@@ -76,7 +73,7 @@ export async function tournamentSetUp(count) {
 					<button type="submit" class="btn btn-primary w-100" translate="invite player"></button>
 				</form>
 
-				<button type="button" id="finish-invites-btn" class="btn btn-success w-100 mt-3" disabled translate="start tournament"></button>
+				<button type="button" id="start-tournament-btn" class="btn btn-success w-100 mt-3" translate="start tournament"></button>
 			</div>
 		</div>`;
 
@@ -85,19 +82,56 @@ export async function tournamentSetUp(count) {
 	{
 		contentElement.innerHTML = setUpHTML;
 		updateContent();
-	}
-	else
-		console.error('Content element not found');
+		updatePlayersList(tournamentID);
 
-	const cancelButton = document.getElementById('cancel-button');
-	cancelButton.addEventListener('click', () => {
-		loadContent('home');
+		const cancelButton = document.getElementById('cancel-button');
+		cancelButton.addEventListener('click', () => {
+			loadContent('home');
+		});
+
+		const refreshButton = document.getElementById('refresh-button');
+		refreshButton.addEventListener('click', () => {
+			updatePlayersList(tournamentID);
+		});
+
+		const startTournamentButton = document.getElementById('start-tournament-btn');
+		startTournamentButton.addEventListener('click', async (e) => {
+			e.preventDefault();
+		try
+		{
+			const csrftoken = getCookie('csrftoken');
+			const response = await fetch('http://localhost:8000/start_tournament/',
+			{
+				method: 'POST',
+				headers: { 'X-CSRFToken': csrftoken },
+				credentials: 'include',
+				body: JSON.stringify({ tournament_id: tournamentID })
+			});
+	
+			if (response.ok)
+			{
+				const data = await response.json();
+				console.log('Starting tournament successful');
+				showAlert(data.message, 'success');
+				loadContent('home');
+			}
+			else
+			{
+				const errorData = await response.json();
+				console.error('Starting tournament failed: ', errorData);
+				errorMessage.textContent = errorData.error;
+				errorMessage.style.display = 'block';
+			}
+		}
+		catch (error)
+		{
+			console.error('Error during start tournament', error);
+			showAlert('Error during starting tournament. Try Again', 'danger');
+		}
+	
 	});
 
-	const refreshButton = document.getElementById('refresh-button');
-	refreshButton.addEventListener('click', () => {
-		//tournamentSetUp(count);
-	});
+
 
 
 	document.getElementById('add-player-form').addEventListener('submit', async (e) => {
@@ -126,8 +160,7 @@ export async function tournamentSetUp(count) {
 			{
 				const responseData = await response.json();
 				console.log('Sending invite to player successful', responseData);
-				players.push({ username, status: 'pending' });
-				updatePlayersList();
+				updatePlayersList(tournamentID);
 			}
 			else
 			{
@@ -143,92 +176,77 @@ export async function tournamentSetUp(count) {
 			console.error('Error during tournament setup', error);
 			showAlert('Error during tournament setup. Try again.', 'danger');
 		}
-		
+
 		newPlayerInput.value = '';
-		document.getElementById('finish-invites-btn').disabled = players.length >= count - 1;
-
-/* 			await validateUsername(username);
-			
-			// Add player to list
-			players.push({ username, status: 'pending' });
-			updatePlayersList();
-			
-			// Clear input field
-			newPlayerInput.value = '';
-			
-			// Disable finish button if max players reached
-			document.getElementById('finish-invites-btn').disabled = players.length >= maxPlayers;
-			
-			// Send invitation (simulated)
-			sendInvitation(username).then(status => {
-				updatePlayerStatus(username, status);
-			}); */
-	
-
 	});
 }
+else
+	console.error('Content element not found');
 
-function validateUsername(username) {
-    // Simulate API call to validate username
-    return new Promise((resolve, reject) => {
-        setTimeout(() => {
-            // Replace this with actual API call
-            if (username.length > 3 && username.length < 20) {
-                resolve();
-            } else {
-                reject('Username must be between 4 and 19 characters');
-            }
-        }, 1000);
-    });
+
 }
 
-function sendInvitation(username) {
-    // Simulate sending invitation
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            // Replace this with actual API call
-            const status = Math.random() < 0.7 ? 'accepted' : 'declined';
-            resolve(status);
-        }, 2000);
-    });
-}
 
-function updatePlayersList() {
-    const playersContainer = document.getElementById('players-container');
-    playersContainer.innerHTML = '';
+async function updatePlayersList(tournamentID) {
+	try
+	{
+		const csrftoken = getCookie('csrftoken');
+		const response = await fetch(`http://localhost:8000/list_invited_participants/?tournament_id=${tournamentID}`, {
+			method: 'GET',
+			credentials: 'include',
+		});
+		if (!response.ok) {
+			console.error('Failed:', response.statusText);
+			showAlert('Error occurred. Try again.', 'danger');
+			return;
+		}
 
-    players.forEach(player => {
-        const playerEntry = document.createElement('div');
-        playerEntry.className = 'player-entry';
+		if (response.ok)
+		{
+			const data = await response.json();
+			console.log('Getting player list successful');
 
-        const usernameSpan = document.createElement('span');
-        usernameSpan.className = 'username';
-        usernameSpan.textContent = player.username;
+			const playersContainer = document.getElementById('players-container');
+			playersContainer.innerHTML = '';
 
-        const statusSpan = document.createElement('span');
-        statusSpan.className = 'status';
-        statusSpan.textContent = ` - ${player.status}`;
+			const players = data.participants;
+			
+			players.forEach((participant) => {
+				const playerItem = document.createElement('div');
+				playerItem.className = 'player-item';
+				playerItem.style.display = 'flex';
+				playerItem.style.alignItems = 'center';
+				playerItem.style.marginBottom = '10px';
 
-        playerEntry.appendChild(usernameSpan);
-        playerEntry.appendChild(statusSpan);
+				const playerName = document.createElement('span');
+				playerName.className = 'player-name';
+				playerName.textContent = participant.display_name;
+				playerName.style.flexGrow = '1';
 
-        playersContainer.appendChild(playerEntry);
-    });
-}
+				const playerStatus = document.createElement('span');
+				playerStatus.className = 'player-status';
+				playerStatus.textContent = participant.status;
+				playerStatus.style.flexGrow = '1';
 
-function updatePlayerStatus(username, status) {
-    const index = players.findIndex(p => p.username === username);
-    if (index !== -1) {
-        players[index].status = status;
-        updatePlayersList();
-    }
-}
 
-function showError(message) {
-    const errorMessageDiv = document.getElementById('error-message');
-    errorMessageDiv.textContent = message;
-    errorMessageDiv.style.display = 'block';
-    setTimeout(() => {
-        errorMessageDiv.style.display = 'none';
-    }, 3000);
+				playerItem.appendChild(playerName);
+				playerItem.appendChild(playerStatus);
+
+				playersContainer.appendChild(playerItem);
+
+			});
+		}
+		else
+		{
+			const errorData = await response.json();
+			console.error('Starting tournament failed: ', errorData);
+			errorMessage.textContent = errorData.error;
+			errorMessage.style.display = 'block';
+		}
+	}
+	catch (error)
+	{
+		console.error('Error during start tournament', error);
+		showAlert('Error during starting tournament. Try Again', 'danger');
+	}
 }
