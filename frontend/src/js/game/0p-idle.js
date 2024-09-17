@@ -3,7 +3,7 @@ import * as THREE from 'three'
 //import * as THREE from "../node_modules/three/build/three.module.js"
 //import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 //import GUI from 'lil-gui'
-import * as t from './game.defs.js'
+import * as t from './include.js'
 //import gsap from 'gsap'
 
 const cube = new THREE.Mesh(

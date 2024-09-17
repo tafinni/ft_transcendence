@@ -1,8 +1,8 @@
 import * as THREE from 'three'
 import gsap from 'gsap'
 
-import * as t from './game.defs.js'
-import { switchToIdle, sendResults } from './game.js'
+import * as t from './include.js'
+import { switchToIdle, sendResults } from './main.js'
 
 const plate = new THREE.Mesh(
     new THREE.BoxGeometry(4, 0.01, 4),

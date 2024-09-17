@@ -2,11 +2,11 @@ import * as THREE from 'three'
 import gsap from 'gsap'
 
 //import { loadContent } from './router.js'
-import * as t from './game.defs.js'
-import * as i from './idle.js'
-import * as s from './solo.js'
-import * as l2 from './local-2p.js'
-import * as l4 from './local-4p.js'
+import * as t from './include.js'
+import * as i from './0p-idle.js'
+import * as s2 from './2p-pong-single.js'
+import * as l2 from './2p-pong-local.js'
+import * as l4 from './4p-pong-local.js'
 
 // Variable to track current mode
 let m = i
@@ -29,7 +29,7 @@ t.scene.add(t.gcamera)
 // Frame tick
 const tick = () => {
     m.tick()
-    m.controls.update()
+    //m.controls.update()
     t.renderer.render(t.scene, m.camera)
     window.requestAnimationFrame(tick)
 }
@@ -80,7 +80,7 @@ export function switchToIdle() {
 // external functions
 export function startQuickGame() {
     m.cleanUp()
-    m = s
+    m = s2
     m.startQuickGame()
 }
 

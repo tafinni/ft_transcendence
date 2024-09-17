@@ -64,9 +64,9 @@
       <input type="submit" value="Invite">
     </form>
     <div><canvas id="webgl" class="webgl"></canvas></div>
-    <script type="module" src="./js/game.js"></script>
+    <script type="module" src="./js/game/main.js"></script>
     <script type="module">
-      import { startQuickGame, startTwoLocal, loadGame, startGame } from "./js/game.js"
+      import { startQuickGame, startTwoLocal, loadGame, startGame } from "./js/game/main.js"
       const sologameButton = document.getElementById("sologame");
       sologameButton.addEventListener('click', () => {
         startQuickGame();

@@ -1,9 +1,9 @@
 import gsap from 'gsap'
 
-import * as t from './game.defs.js'
-import * as d from './local-4p.defs.js'
-import { vars as v }  from './local-4p.defs.js'
-import { switchToIdle, sendResults } from './game.js'
+import * as t from './include.js'
+import * as d from './4p-pong-include.js'
+import { vars as v }  from './4p-pong-include.js'
+import { switchToIdle, sendResults } from './main.js'
 
 const plate = d.plate; const left = d.left; const right = d.right; const top = d.top;
 const bot = d.bot; const ball = d.ball; const score = d.score;

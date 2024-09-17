@@ -1,10 +1,7 @@
 import * as THREE from 'three'
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js'
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js'
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
-
-//import GUI from 'lil-gui'
-//const gui = new GUI()
+//import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 
 // Export canvas, scene, textureLoader
 export const canvas = document.querySelector('canvas.webgl')
@@ -72,12 +69,12 @@ export function getAspect() { return sizes.width / sizes.height }
 
 // Export camera, controls, renderer, clock
 export const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
-export const controls = new OrbitControls(camera, canvas)
-controls.enableDamping = true
+//export const controls = new OrbitControls(camera, canvas)
+//controls.enableDamping = true
 const d = 3
 export const gcamera = new THREE.OrthographicCamera(-d * getAspect(), d * getAspect(), d, -d, 1, 1000)
-export const gcontrols = new OrbitControls(gcamera, canvas)
-gcontrols.enableDamping = true
+//export const gcontrols = new OrbitControls(gcamera, canvas)
+//gcontrols.enableDamping = true
 
 export const renderer = new THREE.WebGLRenderer({
     canvas: canvas
@@ -85,3 +82,20 @@ export const renderer = new THREE.WebGLRenderer({
 renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 export const clock = new THREE.Clock()
+
+export const area_vmax = 2
+export const paddle_vmax = 1.65
+export const pos_max = 1000000
+export const ball_radius = 12500
+export const paddle_halfwidth = (area_vmax - paddle_vmax) * pos_max / area_vmax + (ball_radius * 1.5) // ball_radius simplified
+export const ball_max = pos_max - ball_radius
+export const paddle_max = pos_max - paddle_halfwidth
+export const player_speed = 12000
+export const ball_base_speed = 8000 // 8000
+export const ball_increase_speed = 1000 // 1000
+export const score_to_win = 3
+export const obj_stack = []
+
+// pre-calculated values
+export const pvmax_pmx = paddle_vmax / paddle_max
+export const avmax_pmx = area_vmax / pos_max

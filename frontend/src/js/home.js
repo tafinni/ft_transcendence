@@ -32,6 +32,15 @@ export async function loadHome() {
                     <h2 class="text-black bg-white px-3 py-2 mb-4 text-center rounded">Tic-tac-toe</h2>
                     <button class="btn btn-primary btn-lg mb-3" id="single-player4-btn" translate="single player" disabled>Single Player</button>
                     <button class="btn btn-success btn-lg mb-3" id="local-multiplayer4-btn" translate="local multiplayer" disabled>Local Multiplayer</button>
+                    <button class="btn btn-warning btn-lg mb-3" id="tournament-btn" translate="tournament" disabled>Tournament</button>
+                    <div id="tournament-options" class="d-none mt-3 flex-column align-items-center">
+                        <p class="w-100 text-center mb-2" style="color: white;" translate="how many players?"></p>
+                        <div id="num-players" class="d-flex justify-content-center w-100">
+                            <button class="btn btn-light mx-1" id="four-players">4</button>
+                            <button class="btn btn-light mx-1" id="eight-players">8</button>
+                            <button class="btn btn-light mx-1" id="sixteen-players">16</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

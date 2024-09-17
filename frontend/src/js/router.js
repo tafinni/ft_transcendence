@@ -3,7 +3,7 @@ import { loadLogIn, initializeLogIn } from './login.js';
 import { loadRegister, initializeRegister } from './register.js';
 import { loadProfile } from './profile/profile.js';
 import { updateContent, initI18next } from './i18n.js';
-import { loadGame, endGame, startGame } from './game.js';
+import { loadGame, endGame, startGame } from './game/main.js';
 import { loadResult } from './result.js';
 import { showAlert } from './index.js';
 import { getCookie } from './csrf.js';
