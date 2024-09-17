@@ -94,7 +94,7 @@ export async function displayFriendRequests() {
 
 	const data = await response.json(); // Parse the JSON response
 
-	console.log('display friends called', data); // Debugging
+	console.log('display requests called', data); // Debugging
 	const friends = data.friend_requests;
 
 	const friendsListContainer = document.getElementById('friend-requests');

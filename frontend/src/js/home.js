@@ -14,6 +14,11 @@ export async function loadHome() {
                     <div id="tournament-waiting" class="d-none mt-3 flex-column align-items-center">
                     <p class="w-100 text-center mb-2" style="color: white;">Wait for tournament to start</p>
                     </div>
+
+                    <div id="tournament-form-exists" class="d-none mt-3 flex-column align-items-center">
+                        <button class="btn btn-link btn-md mb-3" id="back-to-invites" style="color: white">Back to invites</button>
+                    </div>
+
                     <div id="tournament-options" class="d-none mt-3 flex-column align-items-center">
                         <p class="w-100 text-center mb-2" style="color: white;" translate="how many players?"></p>
                         <div id="num-players" class="d-flex justify-content-center w-100">
@@ -100,7 +105,10 @@ async function setTournamentButtons() {
     {
         const tournamentOptions = document.getElementById('tournament-options');
         const tournamentWaiting = document.getElementById('tournament-waiting');
+        const tournamentFormExists = document.getElementById('tournament-form-exists');
 
+        const backToInvitesButton = document.getElementById('back-to-invites');
+    
         const response = await fetch(`http://localhost:8000/is_user_in_tournament/`, {
             method: 'GET',
             credentials: 'include',
@@ -123,6 +131,20 @@ async function setTournamentButtons() {
 
             tournamentOptions.classList.add('d-none');
             tournamentOptions.classList.remove('d-flex');
+
+            tournamentFormExists.classList.add('d-none');
+            tournamentFormExists.classList.remove('d-flex');
+        }
+        else if (data.in_tournament && data.tournament_initiator === data.user)
+        {
+            tournamentFormExists.classList.remove('d-none');
+            tournamentFormExists.classList.add('d-flex');
+
+            tournamentWaiting.classList.add('d-none');
+            tournamentWaiting.classList.remove('d-flex');
+
+            tournamentOptions.classList.add('d-none');
+            tournamentOptions.classList.remove('d-flex');   
         }
         else 
         {
@@ -131,6 +153,16 @@ async function setTournamentButtons() {
 
             tournamentWaiting.classList.add('d-none');
             tournamentWaiting.classList.remove('d-flex');
+
+            tournamentFormExists.classList.add('d-none');
+            tournamentFormExists.classList.remove('d-flex');
+        }
+
+        if (backToInvitesButton) {
+            backToInvitesButton.addEventListener('click', (event) => {
+                event.preventDefault();
+                tournamentSetUp(4);
+            });
         }
     }
     catch (error)

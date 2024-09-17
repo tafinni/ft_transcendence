@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import gsap from 'gsap'
 
-//import { loadContent } from './router.js'
+import { loadContent } from './router.js'
 import * as t from './game.defs.js'
 import * as i from './idle.js'
 import * as s from './solo.js'

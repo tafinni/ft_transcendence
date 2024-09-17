@@ -5,6 +5,9 @@ import { displayFriends, displayFriendRequests, addFriend } from "./friends.js";
 import { updateContent } from "../i18n.js";
 import { showAlert } from "../index.js";
 import { getCookie } from "../csrf.js";
+import { matchHistory } from "./stats.js";
+import { loadChartOne } from "./stats.js";
+import { loadChartTwo } from "./stats.js";
 
 export async function loadProfile() {
 
@@ -66,6 +69,10 @@ export async function loadProfile() {
 								</tbody>
 							</table>
 							<button type="submit" id="match-history-button" class="btn btn-info" translate="match history"></button>
+							<button type="button" id="chart-one-button" class="btn btn-warning">1</button>
+							<button type="button" id="chart-two-button" class="btn btn-warning">2</button>
+
+
 						</div>
 					</div>
 				</div>
@@ -165,6 +172,7 @@ export async function loadProfile() {
 		await displayFriendRequests();
 		await displayGameInvites();
 		buttonListener();
+
 	}
 	else
 	{
@@ -302,82 +310,6 @@ async function declineInvitation(initiator_username) {
 	}
 }
 
-async function matchHistory () {
-	try
-	{
-		const response = await fetch('http://localhost:8000/match_history/', {
-			method: 'GET',
-			credentials: 'include'
-		});
-		if (!response.ok)
-		{
-			console.error('Failed loading match history:', response.statusText);
-			showAlert('Error occurred loading match history. Try again.', 'danger');
-			return ;
-		}
-
-		const data = await response.json();
-		const matches = data.matches;
-
-		console.log('matchHistory called', data);
-
-		const matchHistoryHTML = `
-			<div class="container mt-5">
-				<div class="row">
-					<div class="col-md-12">
-						<div class="card">
-							<div class="card-body">
-								<h5 class="card-title">
-									<span translate="match history"></span>
-								</h5>
-								<table class="table table-striped">
-									<thead>
-										<tr>
-											<th translate="date"></th>
-											<th translate="opponent"></th>
-											<th translate="result"></th>
-										</tr>
-									</thead>
-									<tbody>
-                            			${matches.map(matchData => {
-                                        	const localDate = new Date(matchData.date).toLocaleString(); 
-                                        	return `
-                                            	<tr>
-                                            	    <td>${localDate}</td>
-                                            	    <td>${matchData.opponent}</td>
-                                            	    <td>${matchData.result}</td>
-                                            	</tr>
-                                            	`;
-                                        }).join('')}
-									</tbody>
-								</table>
-								<button type="button" id="back-button" class="btn btn-primary" translate="back"></button>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		`;
-
-		const contentElement = document.getElementById('content');
-		if (contentElement)
-		{
-			contentElement.innerHTML = matchHistoryHTML;
-			updateContent();
-			backButtonListener();
-		}
-		else
-		{
-			console.error('Content element not found');
-		}
-	}
-	catch (error)
-	{
-		console.error('Error fetching match history:', error);
-		showAlert('Error fetching match history. Try Again.', 'danger');
-		loadContent('profile');
-	}
-}
 
 export async function backButtonListener() {
 	const backButton = document.getElementById('back-button');
@@ -396,6 +328,23 @@ export async function buttonListener () {
 	const addFriendButton = document.getElementById('add-friend-button');
     const matchHistoryButton = document.getElementById('match-history-button');
 	const editAvatarButton = document.getElementById('edit-avatar-button');
+
+	const chartOneButton = document.getElementById('chart-one-button');
+	if (chartOneButton)
+	{
+		chartOneButton.addEventListener('click', () => {
+			console.log('Clicked chart one button');
+			loadChartOne();
+		});
+	}
+	const chartTwoButton = document.getElementById('chart-two-button');
+	if (chartTwoButton)
+	{
+		chartTwoButton.addEventListener('click', () => {
+			console.log('Clicked chart two button');
+			loadChartTwo();
+		});
+	}
 
 	if (editButton) {
    		editButton.addEventListener('click', () => {

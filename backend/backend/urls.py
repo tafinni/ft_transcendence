@@ -41,6 +41,7 @@ urlpatterns = [
     path('match_history/', match_views.match_history, name='match_history'),
     path('public_match_history/', match_views.public_match_history, name='public_match_history'),
     path('add_result/', match_views.add_result, name='add_result'),
+    path('friends_statistics/', match_views.friends_statistics, name='friends_statistics'),
 
     path('add_friend/', friends_views.add_friend, name='add_friend'),
     path('remove_friend/', friends_views.remove_friend, name='remove_friend'),

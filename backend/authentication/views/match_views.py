@@ -10,6 +10,8 @@ from django.conf import settings
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 import datetime
+from django.core.exceptions import ObjectDoesNotExist
+
 
 @login_required
 @csrf_protect
@@ -80,3 +82,30 @@ def add_result(request):
         result = result
     )
     return JsonResponse({'message': 'Result saved successfully'})
+
+
+@login_required
+def friends_statistics(request):
+    user = request.user
+    try:
+        friendships = Friendship.objects.filter(user=user, accepted=True)
+    except Friendship.DoesNotExist:
+        return JsonResponse({'error': 'No friends found'}, status=404)
+
+    friends_data = []
+
+    for friendship in friendships:
+        friend = friendship.friend
+        try:
+            stats = UserStats.objects.get(user=friend)
+        except ObjectDoesNotExist:
+            stats = UserStats(user=friend, wins=0, losses=0)
+            stats.save() # ?
+
+        friends_data.append({
+            'friend_name': friend.username,
+            'wins': stats.wins,
+            'losses': stats.losses,
+        })
+
+    return JsonResponse({'friends': friends_data})
