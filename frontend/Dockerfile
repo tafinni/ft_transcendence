@@ -7,7 +7,7 @@ RUN mkdir -p ./src/dist/languages
 WORKDIR /app
 COPY . .
 RUN yarn
-RUN yarn add i18next i18next-http-backend
+RUN yarn add i18next i18next-http-backend gsap
 RUN apk update && apk add xdg-utils
 
 RUN yarn add vite-plugin-static-copy --dev

@@ -1,15 +1,10 @@
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_protect, csrf_exempt
-from django.views.decorators.csrf import csrf_protect, csrf_exempt
 from django.contrib.auth.models import User
-from authentication.models import Tournament, Participants, ResultTournament
 from authentication.models import Tournament, Participants, ResultTournament
 import json
 import random
-
-import random
-
 
 @login_required
 @csrf_protect
@@ -21,11 +16,17 @@ def accept_tournament_invitation(request):
             initiator_username = body.get('initiator_username')
         except json.JSONDecodeError:
             return JsonResponse({'error': 'Invalid JSON'}, status=400)
-        try:
-            body = json.loads(request.body)
-            initiator_username = body.get('initiator_username')
-        except json.JSONDecodeError:
-            return JsonResponse({'error': 'Invalid JSON'}, status=400)
+
+
+        participant1 = Participants.objects.filter(
+            user=request.user, 
+            tournament__status=0, 
+            is_accepted=True  # Only check for accepted tournaments
+        ).select_related('tournament').first()
+
+        if participant1:
+            return JsonResponse({'error': 'Finish current tournament'}, status=400)
+
 
         if not initiator_username:
             return JsonResponse({'error': 'Initiator username is required'}, status=400)
@@ -66,11 +67,6 @@ def accept_tournament_invitation(request):
 #@csrf_exempt
 def decline_tournament_invitation(request):
     if request.method == "POST":
-        try:
-            body = json.loads(request.body)
-            initiator_username = body.get('initiator_username')
-        except json.JSONDecodeError:
-            return JsonResponse({'error': 'Invalid JSON'}, status=400)
         try:
             body = json.loads(request.body)
             initiator_username = body.get('initiator_username')
@@ -119,20 +115,11 @@ def invite_to_tournament(request):
             tournament_id = body.get('tournament_id')
         except json.JSONDecodeError:
             return JsonResponse({'error': 'Invalid JSON'}, status=400)
-        try:
-            body = json.loads(request.body)
-            opponent_username = body.get('opponent_username')
-            tournament_id = body.get('tournament_id')
-        except json.JSONDecodeError:
-            return JsonResponse({'error': 'Invalid JSON'}, status=400)
 
         if not opponent_username or not tournament_id:
             return JsonResponse({'error': 'Opponent username and tournament ID are required'}, status=400)
-        if not opponent_username or not tournament_id:
-            return JsonResponse({'error': 'Opponent username and tournament ID are required'}, status=400)
-
+   
         try:
-            opponent = User.objects.get(username=opponent_username)
             opponent = User.objects.get(username=opponent_username)
         except User.DoesNotExist:
             return JsonResponse({'error': 'User does not exist'}, status=404)
@@ -201,10 +188,11 @@ def create_tournament(request):
 
         existing_tournament = Tournament.objects.filter(initiator=request.user, status__in=[0]).first()
         if existing_tournament:
-            existing_tournament.player_count = player_count
+            existing_tournament.player_count #= player_count
             return JsonResponse({
                 'message': 'You already have a pending tournament.',
-                'tournament_id': existing_tournament.id
+                'tournament_id': existing_tournament.id,
+                'player_count': existing_tournament.player_count
             })
 
         tournament = Tournament.objects.create(
@@ -222,7 +210,7 @@ def create_tournament(request):
 
         # Prepare response message
         initiator_display = request.user.userprofile.display_name or request.user.username
-        return JsonResponse({'message': f'Tournament created by {initiator_display}', 'tournament_id': tournament.id})
+        return JsonResponse({'message': f'Tournament created by {initiator_display}', 'tournament_id': tournament.id, 'player_count': tournament.player_count})
 
     return JsonResponse({'error': 'Invalid request method'}, status=405)
 
@@ -308,3 +296,43 @@ def list_invited_participants(request):
         })
 
     return JsonResponse({'participants': participant_list})
+
+
+@login_required
+def is_user_in_tournament(request):
+    if request.method == "GET":
+        # Check if the user is a participant in any pending tournaments (status = 0)
+        participant = Participants.objects.filter(user=request.user, tournament__status=0).select_related('tournament').first()
+
+        if not participant:
+            return JsonResponse({
+                'in_tournament': False,
+                'message': 'User is not in any pending tournament'
+            }, status=200)
+
+        user = request.user
+        # Check if the user has accepted the invitation
+        if participant.is_accepted is True:
+            return JsonResponse({
+                'user': user.username,
+                'in_tournament': 1,
+                'status': 'Accepted',
+                'tournament_id': participant.tournament.id,
+                'tournament_initiator': participant.tournament.initiator.username
+            }, status=200)
+        elif participant.is_accepted is None:
+            return JsonResponse({
+                'in_tournament': 0,
+                'status': 'Pending',
+                'tournament_id': participant.tournament.id,
+                'tournament_initiator': participant.tournament.initiator.username
+            }, status=200)
+        elif participant.is_accepted is False:
+            return JsonResponse({
+                'in_tournament': 2,
+                'status': 'Declined',
+                'tournament_id': participant.tournament.id,
+                'tournament_initiator': participant.tournament.initiator.username
+            }, status=200)
+
+    return JsonResponse({'error': 'Invalid request method'}, status=405)

@@ -54,6 +54,7 @@ urlpatterns = [
     path('decline_tournament_invitation/', tournaments_views.decline_tournament_invitation, name='decline_tournament_invitation'),
     path('list_invited_participants/', tournaments_views.list_invited_participants, name='list_invited_participants'),
     path('start_tournament/', tournaments_views.start_tournament, name='start_tournament'),
+    path('is_user_in_tournament/', tournaments_views.is_user_in_tournament, name='is_user_in_tournament'),
 
 ]
 

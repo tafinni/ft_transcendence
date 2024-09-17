@@ -25,6 +25,7 @@ export async function tournamentSetUp(count) {
 			const replyData = await reply.json();
 			console.log('Sending tournament data successful', replyData);
 			tournamentID = replyData.tournament_id;
+			count = replyData.player_count;
 		}
 		else
 		{
@@ -54,9 +55,11 @@ export async function tournamentSetUp(count) {
 
 				<hr style="visibility:hidden;"></hr>
 				
-				<h3 class="card-title text-center mb-4">
-					<span translate="invite to tournament"></span>
-				</h3>
+				<h5 class="card-title text-center mb-4">
+					<span translate="tournament for"></span>
+					<span>${count}</span>
+					<span translate="players"></span>
+				</h5>
 				<div id="players-container">
 					<!-- Players will be dynamically added here -->
 				</div><br>
@@ -190,7 +193,6 @@ else
 async function updatePlayersList(tournamentID) {
 	try
 	{
-		const csrftoken = getCookie('csrftoken');
 		const response = await fetch(`http://localhost:8000/list_invited_participants/?tournament_id=${tournamentID}`, {
 			method: 'GET',
 			credentials: 'include',
