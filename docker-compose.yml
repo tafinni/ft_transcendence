@@ -1,9 +1,8 @@
-version: '3.5'
-
 services:
   db:
-    image: postgres:latest
+    image: database
     container_name: postgres
+    build: ./database
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
@@ -11,7 +10,7 @@ services:
     volumes:
       - postgres_data_new:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
       interval: 5s
       timeout: 5s
       retries: 5  

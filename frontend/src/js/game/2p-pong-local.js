@@ -2,6 +2,7 @@ import * as THREE from 'three'
 import gsap from 'gsap'
 
 import * as t from './include.js'
+import { vars as v } from './2p-pong-include.js'
 import { switchToIdle, sendResults } from './main.js'
 
 const plate = new THREE.Mesh(
@@ -81,27 +82,6 @@ c.paddle_halfwidth = (c.area_vmax - c.paddle_vmax) * c.pos_max / c.area_vmax + (
 c.ball_max = c.pos_max - c.ball_radius
 c.paddle_max = c.pos_max - c.paddle_halfwidth
 Object.freeze(c)
-const v = {
-    left_pos: 0,
-    right_pos: 0,
-    up_pressed: false,
-    down_pressed: false,
-    up2_pressed: false,
-    down2_pressed: false,
-    game_started: false,
-    game_running: false,
-    score_to_win: 1,
-    score_left: 0,
-    score_right: 0,
-    ballX: 0,
-    ballY: 0,
-    ball_direction: 0,
-    ball_speed: c.ball_speed,
-    bounce_distance: 0,
-    ball_passed: false,
-    ball_passed_timer: 0,
-    gameover_timer: 0
-}
 
 function randomizeBallDir() {
     v.ball_direction = (Math.random() < 0.5) ? Math.random() * 90 + 225 : Math.random() * 90 + 45
@@ -236,12 +216,12 @@ export function startGame() {
     t.scene.add(ball)
     document.addEventListener("keydown", onDocumentKeyDown, true);
     document.addEventListener("keyup", onDocumentKeyUp, true);
-    const playerselect = document.getElementById("playerSelectForm")
-    playerselect.style.zIndex = 100
+    //const playerselect = document.getElementById("playerSelectForm")
+    //playerselect.style.zIndex = 100
     playerselect.addEventListener("submit", (e) => {
         e.preventDefault()
-        startSolo()
-        playerselect.style.zIndex = -999
+        reallyStart()
+        //playerselect.style.zIndex = -999
     })
 }
 
@@ -261,7 +241,12 @@ function onDocumentKeyDown(event) {
     else if (key_code === 68) { v.down_pressed = true }
     else if (key_code === 37) { v.up2_pressed = true }
     else if (key_code === 39) { v.down2_pressed = true }
-    else if (key_code === 80) { v.game_running = !v.game_running }
+    else if (key_code === 80) { 
+        if (i.debug) {
+            if (!v.game_started) reallyStart()
+            v.game_running = !v.game_running
+        }
+    }
 }
 function onDocumentKeyUp(event) {
     var key_code = event.which
@@ -270,8 +255,7 @@ function onDocumentKeyUp(event) {
     else if (key_code === 37) { v.up2_pressed = false }
     else if (key_code === 39) { v.down2_pressed = false }
 }
-function startSolo() {
+function reallyStart() {
     v.game_started = true
-    console.log(v)
     ball_drop.restart()
 }

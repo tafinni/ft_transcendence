@@ -1,4 +1,4 @@
-import * as THREE from 'three'
+//import * as THREE from 'three'
 import gsap from 'gsap'
 
 //import { loadContent } from './router.js'
@@ -67,7 +67,7 @@ export function sendResults(scoreLeft, scoreRight, oppIsHuman) {
     try {
         loadContent('result', scoreLeft, scoreRight, oppIsHuman)
     } catch (error) {
-        console.log('failed to sendResults:', error)
+        console.log('error: failed to send results')
     }
 }
 
@@ -81,7 +81,7 @@ export function switchToIdle() {
 export function startQuickGame() {
     m.cleanUp()
     m = s2
-    m.startQuickGame()
+    m.startGame()
 }
 
 export function startTwoLocal() {
