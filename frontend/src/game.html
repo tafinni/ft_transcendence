@@ -1,13 +1,85 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3D Text</title>
-    <link rel="stylesheet" href="./style.css">
-</head>
-<body>
-    <div id="wrapper"><canvas class="webgl"></canvas></div>
+  <head>
+    <!-- <link rel="stylesheet" href="./css/styles.css"> -->
+    <title>PONG</title>
+    <style>
+      canvas {
+        display: flex;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        justify-content: center;
+        align-items: center;
+        top: 200px;
+        left: auto;
+        right: auto;
+        outline: none;
+      }
+      .player-select {
+        display: flex;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        top: 25%;
+        right: 25%;
+        outline: none;
+      }
+      #playerSelectForm {
+        position: absolute;
+        top: 10%; /* Adjust vertical positioning */
+        right: 10%; /* Adjust horizontal positioning */
+        z-index: -999;
+        background-color: rgba(255, 255, 255, 0.3); /* Semi-transparent background */
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+      }
+      #playerSelectForm label {
+        display: block;
+        margin-bottom: 10px;
+      }
+      #playerSelectForm input[type="text"],
+      #playerSelectForm input[type="submit"] {
+        width: 100%;
+        margin-bottom: 15px;
+        padding: 10px;
+        font-size: 16px;
+      }
+    </style>
+  </head>
+  <body class="bg-black">
+    <button type="submit" id="sologame" class="btn btn-info" translate="sologame">Solo Game</button>
+    <button type="submit" id="local2p" class="btn btn-info" translate="local2p">Local 2P</button>
+    <button type="submit" id="local4p" class="btn btn-info" translate="local4p">Local 4P</button>
+    <form id="playerSelectForm">
+      <label for="username">Player Name:</label><br>
+      <input type="text" id="username" name="username" list="players">
+      <datalist id="players">
+        <option value="Player1">
+        <option value="Player2">
+        <option value="Player3">
+        <!-- Add more options as needed -->
+      </datalist><br>
+      <input type="submit" value="Invite">
+    </form>
+    <div><canvas id="webgl" class="webgl"></canvas></div>
     <script type="module" src="./js/game.js"></script>
-</body>
+    <script type="module">
+      import { startQuickGame, startTwoLocal, loadGame, startGame } from "./js/game.js"
+      const sologameButton = document.getElementById("sologame");
+      sologameButton.addEventListener('click', () => {
+        startQuickGame();
+      })
+      const twopButton = document.getElementById("local2p");
+      twopButton.addEventListener('click', () => {
+        startTwoLocal();
+	    })
+      const fourpButton = document.getElementById("local4p");
+      fourpButton.addEventListener('click', () => {
+        loadGame(2);
+        startGame();
+	    })
+    </script>
+  </body>
 </html>
