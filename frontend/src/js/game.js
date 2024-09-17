@@ -48,7 +48,7 @@ export async function loadGame(oppStatus) {
     timerRed = 0;
     blueIsAi = false;
     oppIsHuman = oppStatus
-    if (oppIsHuman == 1)
+    if (oppIsHuman == true)
         redIsAi = false;
     else
         redIsAi = true;
@@ -94,7 +94,7 @@ let timerRed = 0;
 let timerBlue = 0;
 
 let areaSize = 4;
-let oppIsHuman = 0;
+let oppIsHuman = false;
 
 //import './style.css'
 //import * as THREE from "../node_modules/three/build/three.module.js"
@@ -403,9 +403,11 @@ const tick = () => {
         window.requestAnimationFrame(tick)
     else {
         if (dataSent === 0) {
-            console.log("Opp is human =", Boolean(oppIsHuman));
             if (prematureEnding == 0 && blueIsAi == 0)
+            {
+                console.log("goalsblue", goalsBlue, "goalsred", goalsRed, "oppishuman", Boolean(oppIsHuman), "oppname", oppName);
                 loadContent('result', goalsBlue, goalsRed, oppIsHuman, oppName);
+            }
         }
         dataSent = 1;
     };

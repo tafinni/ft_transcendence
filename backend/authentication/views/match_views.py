@@ -67,54 +67,53 @@ def add_result(request):
         opp_user = None
     else:
         opp = oppName
-        try:
-            opp_user = User.objects.get(username=oppName)
-            opp_stats = UserStats.objects.get(user=opp_user)
-            if (sLeft > sRight):
-                user_stats.wins += 1
-                opp_stats.losses +=1
-                result = 'WIN' + ' ' + str(sLeft) + '-' + str(sRight)
-                oppResult = 'LOST' + ' ' + str(sRight) + '-' + str(sLeft)
-            elif (sRight > sLeft):
-                user_stats.losses += 1
-                opp_stats.wins += 1
-                result = 'LOST' + ' ' + str(sLeft) + '-' + str(sRight)
-                oppResult = 'WIN' + ' ' + str(sRight) + '-' + str(sLeft)
-            else:
-                result = 'DRAW' + ' ' + str(sLeft) + '-' + str(sRight)
-                oppResult = 'DRAW' + ' ' + str(sRight) + '-' + str(sLeft)
-            user_stats.save()
-            opp_stats.save()
+    try:
+        opp_user = User.objects.get(username=oppName)
+        opp_stats = UserStats.objects.get(user=opp_user)
+        if (sLeft > sRight):
+            user_stats.wins += 1
+            opp_stats.losses +=1
+            result = 'WIN' + ' ' + str(sLeft) + '-' + str(sRight)
+            oppResult = 'LOST' + ' ' + str(sRight) + '-' + str(sLeft)
+        elif (sRight > sLeft):
+            user_stats.losses += 1
+            opp_stats.wins += 1
+            result = 'LOST' + ' ' + str(sLeft) + '-' + str(sRight)
+            oppResult = 'WIN' + ' ' + str(sRight) + '-' + str(sLeft)
+        else:
+            result = 'DRAW' + ' ' + str(sLeft) + '-' + str(sRight)
+            oppResult = 'DRAW' + ' ' + str(sRight) + '-' + str(sLeft)
+        user_stats.save()
+        opp_stats.save()
 
-            MatchHistory.objects.create(
-            user = user,
-            opponent = opp,
-            date = datetime.datetime.now(),
-            result = result
-            )
+        MatchHistory.objects.create(
+        user = user,
+        opponent = opp,
+        date = datetime.datetime.now(),
+        result = result
+        )
 
-            MatchHistory.objects.create(
-                user=opp_user,
-                opponent=user.username,
-                date=datetime.datetime.now(),
-                result = oppResult
-            )
-        except ObjectDoesNotExist:
-            # Handle the case where the opponent does not exist
-            if (sLeft > sRight):
-                user_stats.wins += 1
-                result = 'WIN' + ' ' + str(sLeft) + '-' + str(sRight)
-            elif (sRight > sLeft):
-                user_stats.losses += 1
-                result = 'LOST' + ' ' + str(sLeft) + '-' + str(sRight)
-            else:
-                result = 'DRAW' + ' ' + str(sLeft) + '-' + str(sRight)
-            user_stats.save()
-            MatchHistory.objects.create(
-            user = user,
-            opponent = opp,
-            date = datetime.datetime.now(),
-            result = result
-            )
-
+        MatchHistory.objects.create(
+            user=opp_user,
+            opponent=user.username,
+            date=datetime.datetime.now(),
+            result = oppResult
+        )
+    except ObjectDoesNotExist:
+        # Handle the case where the opponent does not exist
+        if (sLeft > sRight):
+            user_stats.wins += 1
+            result = 'WIN' + ' ' + str(sLeft) + '-' + str(sRight)
+        elif (sRight > sLeft):
+            user_stats.losses += 1
+            result = 'LOST' + ' ' + str(sLeft) + '-' + str(sRight)
+        else:
+            result = 'DRAW' + ' ' + str(sLeft) + '-' + str(sRight)
+        user_stats.save()
+        MatchHistory.objects.create(
+        user = user,
+        opponent = opp,
+        date = datetime.datetime.now(),
+        result = result
+        )
     return JsonResponse({'message': 'Result saved successfully'})
