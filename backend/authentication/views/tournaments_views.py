@@ -6,7 +6,6 @@ from authentication.models import Tournament, Participants, ResultTournament
 import json
 import random
 
-
 @login_required
 @csrf_protect
 #@csrf_exempt
@@ -17,6 +16,17 @@ def accept_tournament_invitation(request):
             initiator_username = body.get('initiator_username')
         except json.JSONDecodeError:
             return JsonResponse({'error': 'Invalid JSON'}, status=400)
+
+
+        participant1 = Participants.objects.filter(
+            user=request.user, 
+            tournament__status=0, 
+            is_accepted=True  # Only check for accepted tournaments
+        ).select_related('tournament').first()
+
+        if participant1:
+            return JsonResponse({'error': 'Finish current tournament'}, status=400)
+
 
         if not initiator_username:
             return JsonResponse({'error': 'Initiator username is required'}, status=400)
@@ -30,6 +40,10 @@ def accept_tournament_invitation(request):
         tournament = Tournament.objects.filter(initiator=initiator, status=0).first()  # Status=0 means 'Pending'
         if not tournament:
             return JsonResponse({'error': 'Tournament does not exist or already processed'}, status=404)
+        
+        accepted = Participants.objects.filter(tournament=tournament, is_accepted=True)
+        if tournament.player_count == accepted.count():
+            return JsonResponse({'error': 'Tournament full'}, status=404)
 
         # Find the participant record for the current user with a pending invitation
         participant = Participants.objects.filter(tournament=tournament, user=request.user, is_accepted=None).first()
@@ -46,8 +60,6 @@ def accept_tournament_invitation(request):
 
     # Return a success message
     return JsonResponse({'message': f'Tournament invitation accepted: {initiator_display} vs {user_display}'})
-
-
 
 
 @login_required
@@ -87,7 +99,7 @@ def decline_tournament_invitation(request):
         user_display = request.user.userprofile.display_name or request.user.username
 
         return JsonResponse({'message': f'Tournament invitation declined: {initiator_display} vs {user_display}'})
-
+    
     return JsonResponse({'error': 'Invalid request method'}, status=405)
 
 
@@ -106,7 +118,7 @@ def invite_to_tournament(request):
 
         if not opponent_username or not tournament_id:
             return JsonResponse({'error': 'Opponent username and tournament ID are required'}, status=400)
-
+   
         try:
             opponent = User.objects.get(username=opponent_username)
         except User.DoesNotExist:
@@ -174,6 +186,15 @@ def create_tournament(request):
      #           'error': 'You already have an ongoing or pending tournament. Complete it before creating a new one.'
       #      }, status=400)
 
+        existing_tournament = Tournament.objects.filter(initiator=request.user, status__in=[0]).first()
+        if existing_tournament:
+            existing_tournament.player_count #= player_count
+            return JsonResponse({
+                'message': 'You already have a pending tournament.',
+                'tournament_id': existing_tournament.id,
+                'player_count': existing_tournament.player_count
+            })
+
         tournament = Tournament.objects.create(
             initiator=request.user,
             player_count=player_count,
@@ -189,7 +210,7 @@ def create_tournament(request):
 
         # Prepare response message
         initiator_display = request.user.userprofile.display_name or request.user.username
-        return JsonResponse({'message': f'Tournament created by {initiator_display}', 'tournament_id': tournament.id})
+        return JsonResponse({'message': f'Tournament created by {initiator_display}', 'tournament_id': tournament.id, 'player_count': tournament.player_count})
 
     return JsonResponse({'error': 'Invalid request method'}, status=405)
 
@@ -243,7 +264,9 @@ def start_tournament(request):
     return JsonResponse({'error': 'Invalid request method'}, status=405)
 
 
-def list_invited_participants(request, tournament_id):
+def list_invited_participants(request):
+    if request.method == "GET":
+        tournament_id = request.GET.get('tournament_id')
     try:
         tournament = Tournament.objects.get(id=tournament_id)
     except Tournament.DoesNotExist:
@@ -273,3 +296,43 @@ def list_invited_participants(request, tournament_id):
         })
 
     return JsonResponse({'participants': participant_list})
+
+
+@login_required
+def is_user_in_tournament(request):
+    if request.method == "GET":
+        # Check if the user is a participant in any pending tournaments (status = 0)
+        participant = Participants.objects.filter(user=request.user, tournament__status=0).select_related('tournament').first()
+
+        if not participant:
+            return JsonResponse({
+                'in_tournament': False,
+                'message': 'User is not in any pending tournament'
+            }, status=200)
+
+        user = request.user
+        # Check if the user has accepted the invitation
+        if participant.is_accepted is True:
+            return JsonResponse({
+                'user': user.username,
+                'in_tournament': 1,
+                'status': 'Accepted',
+                'tournament_id': participant.tournament.id,
+                'tournament_initiator': participant.tournament.initiator.username
+            }, status=200)
+        elif participant.is_accepted is None:
+            return JsonResponse({
+                'in_tournament': 0,
+                'status': 'Pending',
+                'tournament_id': participant.tournament.id,
+                'tournament_initiator': participant.tournament.initiator.username
+            }, status=200)
+        elif participant.is_accepted is False:
+            return JsonResponse({
+                'in_tournament': 2,
+                'status': 'Declined',
+                'tournament_id': participant.tournament.id,
+                'tournament_initiator': participant.tournament.initiator.username
+            }, status=200)
+
+    return JsonResponse({'error': 'Invalid request method'}, status=405)
