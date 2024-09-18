@@ -301,36 +301,38 @@ def list_invited_participants(request):
 @login_required
 def is_user_in_tournament(request):
     if request.method == "GET":
-        # Check if the user is a participant in any pending tournaments (status = 0)
-        participant = Participants.objects.filter(user=request.user, tournament__status=0).select_related('tournament').first()
+        # Check if the user is a participant in any pending or active tournaments (status = 0 or 1)
+        participant = Participants.objects.filter(
+            user=request.user, 
+            tournament__status__in=[0, 1]  # Checking both pending and active tournaments
+        ).select_related('tournament').first()
 
         if not participant:
             return JsonResponse({
                 'in_tournament': False,
-                'message': 'User is not in any pending tournament'
+                'message': 'User is not in any pending or active tournament'
             }, status=200)
 
         user = request.user
-        # Check if the user has accepted the invitation
-        if participant.is_accepted is True:
+
+        # If the tournament is active (status = 1)
+        if participant.tournament.status == 1:
             return JsonResponse({
                 'user': user.username,
-                'in_tournament': 1,
-                'status': 'Accepted',
+                'in_tournament': True,
+                'status': 'Active',
+                'test': participant.tournament.status,
                 'tournament_id': participant.tournament.id,
                 'tournament_initiator': participant.tournament.initiator.username
             }, status=200)
-        elif participant.is_accepted is None:
+
+        # If the user has accepted the invitation to a pending tournament (status = 0)
+        if participant.is_accepted is True and participant.tournament.status == 0:
             return JsonResponse({
-                'in_tournament': 0,
+                'user': user.username,
+                'in_tournament': True,
                 'status': 'Pending',
-                'tournament_id': participant.tournament.id,
-                'tournament_initiator': participant.tournament.initiator.username
-            }, status=200)
-        elif participant.is_accepted is False:
-            return JsonResponse({
-                'in_tournament': 2,
-                'status': 'Declined',
+                'test': participant.tournament.status,
                 'tournament_id': participant.tournament.id,
                 'tournament_initiator': participant.tournament.initiator.username
             }, status=200)

@@ -4,8 +4,6 @@ import { loadContent } from "../router.js";
 import { backButtonListener } from "./profile.js";
 
 export async function matchHistory () {
-
-
 	try
 	{
 		const response = await fetch('http://localhost:8000/match_history/', {
@@ -57,8 +55,6 @@ export async function matchHistory () {
 								</table>
 								<button type="button" id="back-button" class="btn btn-primary" translate="back"></button>
 							</div>
-
-
 						</div>
 					</div>
 				</div>
@@ -68,12 +64,9 @@ export async function matchHistory () {
 		const contentElement = document.getElementById('content');
 		if (contentElement)
 		{
-			
-			contentElement.innerHTML = matchHistoryHTML;
-			
+			contentElement.innerHTML = matchHistoryHTML;			
 			updateContent();
 			backButtonListener();
-
 		}
 		else
 		{
@@ -89,85 +82,102 @@ export async function matchHistory () {
 }
 
 export async function loadChartOne() {
-    try {
-        
-        const response = await fetch('http://localhost:8000/friends_statistics/', {
-            method: 'GET',
-            credentials: 'include'
-        });
+	try
+	{
+		const response = await fetch('http://localhost:8000/friends_statistics/', {
+			method: 'GET',
+			credentials: 'include'
+		});
 
-        if (!response.ok) {
-            console.error('Failed loading friends statistics:', response.statusText);
-            showAlert('Error occurred loading friends statistics. Try Again.', 'danger');
-            return;
-        }
+		if (!response.ok)
+		{
+			console.error('Failed loading friends statistics:', response.statusText);
+			showAlert('Error occurred loading friends statistics. Try Again.', 'danger');
+			return;
+		}
 
-        const data = await response.json();
-        let winsTotal = 0;
-        let lossesTotal = 0;
+		const data = await response.json();
+		
+		const chartLabels = data.friends.map(friend => friend.friend_name);
+		const winPercentages = data.friends.map(friend => {
+			const totalGames = friend.wins + friend.losses;
+			return totalGames > 0 ? (friend.wins / totalGames) * 100 : 0;
+		});
 
-        
-        data.friends.forEach(friend => {
-            winsTotal += friend.wins;
-            lossesTotal += friend.losses;
-        });
-
-
-		// const chartsHTML = `
-		// 	<div class="container mt-5">
-		// 			<div class="row">
-		// 				<div class="col-md-12">
-		// 					<h2>Line Chart 1</h2>
-		// 					<canvas id="myChart"></canvas>
-		// 				</div>
-		// 			</div>
-					
-	
-		// 		</div>
-
-		// `;		
 		const chartsHTML = `
 			<div class="chart-container" style="width: 100%">
-					<h2>Line Chart 1</h2>
-					<canvas class="chart" id="myChart"></canvas>
+				<canvas class="chart" id="myChart"></canvas>
+				<div id="profile-card" style="text-align: center; padding: 50px; font-size: 1.2em; font-weight: bold; background-color: white">
+					<button type="button" id="back-button" class="btn btn-primary float-right" translate="back"></button>
+				</div>
 			</div>		
-			`;
+		`;
 
 		const contentElement = document.getElementById('content');
 		if (contentElement)
 		{
-			
 			contentElement.innerHTML = chartsHTML;
-			
-			let ctx = document.getElementById("myChart").getContext("2d");
-			let myChart = new Chart(ctx, {
-				type: "line",
+
+			const ctx = document.getElementById("myChart").getContext("2d");
+
+			const myChart = new Chart(ctx, {
+				type: "bar",
 				data: {
-					labels: [
-						"Monday",
-						"Tuesday",
-						"Wednesday",
-						"Thursday",
-						"Friday",
-						"Saturday",
-						"Sunday",
-					],
-					datasets: [
-						{
-							label: "work load",
-							data: [2, 9, 3, 17, 6, 3, 7],
-							backgroundColor: "rgba(153,205,1,0.6)",
-						},
-						{
-							label: "free hours",
-							data: [2, 2, 5, 5, 2, 1, 10],
-							backgroundColor: "rgba(155,153,10,0.6)",
-						},
-					],
+					labels: chartLabels,
+					datasets: [{
+						label: 'Win Percentage',
+						data: winPercentages,
+						backgroundColor: 'rgba(75, 192, 192, 0.6)',
+						borderColor: 'rgba(75, 192, 192, 1)',
+						borderWidth: 1
+					}]
 				},
+				options: {
+					scales: {
+						xAxes: [{
+							ticks: {
+								fontSize: 16,
+								fontColor: '#333',
+								fontStyle: 'bold',
+							},
+							scaleLabel: {
+								display: true,
+								labelString: 'Friends\' Names',
+								fontSize: 15,
+								fontColor: '#333'
+							}
+						}],
+						yAxes: [{
+							ticks: {
+								beginAtZero: true,
+								callback: function(value) {
+									return value + '%';
+								}
+							},
+							scaleLabel: {
+								display: true,
+								labelString: 'Win Percentage (%)'
+							}
+						}]
+					},
+					tooltips: {
+						callbacks: {
+							label: function(tooltipItem, data) {
+								const value = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
+								return 'Win Percentage: ' + value.toFixed(2) + '%';
+							}
+						}
+					},
+					title: {
+						display: true,
+						text: "Win Percentages of Friends"
+					},
+					legend: {
+						display: false
+					}
+				}
 			});
-			
-			
+
 			updateContent();
 			backButtonListener();
 
@@ -184,98 +194,111 @@ export async function loadChartOne() {
 		loadContent('profile');
 	}
 }
+	
 
 export async function loadChartTwo() {
-    try {
-        
+    try 
+	{
         const response = await fetch('http://localhost:8000/friends_statistics/', {
             method: 'GET',
             credentials: 'include'
         });
 
-        if (!response.ok) {
+        if (!response.ok)
+		{
             console.error('Failed loading friends statistics:', response.statusText);
             showAlert('Error occurred loading friends statistics. Try Again.', 'danger');
             return;
         }
 
         const data = await response.json();
-        let winsTotal = 0;
-        let lossesTotal = 0;
 
-        
-        data.friends.forEach(friend => {
-            winsTotal += friend.wins;
-            lossesTotal += friend.losses;
+        const reply = await fetch('http://localhost:8000/profile/', {
+            method: 'GET',
+            credentials: 'include'
         });
 
-
-		// const chartsHTML = `
-		// 	<div class="container mt-5">
-		// 			<div class="row">
-		// 				<div class="col-md-12">
-		// 					<h2>Line Chart 1</h2>
-		// 					<canvas id="myChart"></canvas>
-		// 				</div>
-		// 			</div>
-					
-	
-		// 		</div>
-
-		// `;		
-		const chartsHTML = `
-			<div class="chart-container" style="width: 100%">
-				<canvas id="myChart" style="width: 100%; background-color: white"></canvas>
-			</div>		
-			`;
-
-		const contentElement = document.getElementById('content');
-		if (contentElement)
+        if (!reply.ok)
 		{
-			
-			contentElement.innerHTML = chartsHTML;
-			
-			var xValues = ["Italy", "France", "Spain", "USA", "Argentina"];
-			var yValues = [55, 49, 44, 24, 15];
-			var barColors = [
-			  "#b91d47",
-			  "#00aba9",
-			  "#2b5797",
-			  "#e8c3b9",
-			  "#1e7145"
-			];
-			
-			new Chart("myChart", {
-			  type: "doughnut",
-			  data: {
-				labels: xValues,
-				datasets: [{
-				  backgroundColor: barColors,
-				  data: yValues
-				}]
-			  },
-			  options: {
-				title: {
-				  display: true,
-				  text: "World Wide Wine Production 2018"
-				}
-			  }
-			});
-			
-			
-			updateContent();
-			backButtonListener();
+            console.error('Failed loading profile statistics:', response.statusText);
+            showAlert('Error occurred loading profile statistics. Try Again.', 'danger');
+            return;
+        }
+        const ownData = await reply.json();
 
-		}
+        const chartNames = data.friends.map(friend => friend.friend_name);
+        const wins = data.friends.map(friend => friend.wins);
+        const losses = data.friends.map(friend => friend.losses);
+        
+        chartNames.push(ownData.username);
+        wins.push(ownData.wins);
+        losses.push(ownData.losses); 
+
+        const totalWins = wins.reduce((count, win) => count + win, 0);
+		const totalLosses = losses.reduce((count, loss) => count + loss, 0);
+		const totalGames = totalWins + totalLosses;
+
+        const chartColors = ["#36a2eb", "#ff6384"];
+
+        const chartsHTML = `
+            <div class="chart-container" style="width: 100%">
+                <canvas id="myChart" style="width: 100%; background-color: white"></canvas>
+				<div id="profile-card" style="text-align: center; padding: 20px; font-size: 1.2em; font-weight: bold; background-color: white">
+               		Total Games Played: ${totalGames}
+					<button type="button" id="back-button" class="btn btn-primary float-right" translate="back"></button>
+            	</div>
+            </div>
+        `;
+
+        const contentElement = document.getElementById('content');
+        if (contentElement)
+		{
+            contentElement.innerHTML = chartsHTML;
+
+            new Chart("myChart", {
+                type: "doughnut",
+                data: {
+                    labels: ['Wins', 'Losses'],
+                    datasets: [{
+                        label: 'Overall Stats',
+                        backgroundColor: chartColors,
+                        data: [totalWins, totalLosses]
+                    }]
+                },
+                options: {
+                    title: {
+                        display: true,
+                        text: "Overall Wins & Losses with friends"
+                    },
+                    tooltips: {
+                        callbacks: {
+                            label: function (tooltipItem, data) {
+                                const dataset = data.datasets[tooltipItem.datasetIndex];
+                                const total = dataset.data.reduce((sum, value) => sum + value, 0);
+                                const currentValue = dataset.data[tooltipItem.index];
+                                const percentage = Math.floor(((currentValue / total) * 100) + 0.5);
+                                const statType = data.labels[tooltipItem.index];
+                                return statType + ': ' + currentValue + ' (' + percentage + '%)';
+                            }
+                        }
+                    }
+                }
+            });
+
+            updateContent();
+            backButtonListener();
+        } 
 		else
 		{
-			console.error('Content element not found');
-		}
-	}
+            console.error('Content element not found');
+			showAlert('Error occured loading graph. Try Again', 'danger');
+			loadContent('profile');
+        }
+    }
 	catch (error)
 	{
-		console.error('Error fetching chart:', error);
-		showAlert('Error fetching chart. Try Again.', 'danger');
-		loadContent('profile');
-	}
+        console.error('Error fetching chart:', error);
+        showAlert('Error fetching chart. Try Again.', 'danger');
+        loadContent('profile');
+    }
 }

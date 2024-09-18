@@ -3,6 +3,9 @@ import { updateContent } from "./i18n";
 import { loadContent } from "./router";
 import { showAlert } from "./index.js";
 
+export async function loadTournamentLobby() {
+	
+}
 
 export async function tournamentSetUp(count) {
 	console.log("Called tournamentSetUp", count);
@@ -77,6 +80,8 @@ export async function tournamentSetUp(count) {
 				</form>
 
 				<button type="button" id="start-tournament-btn" class="btn btn-success w-100 mt-3" translate="start tournament"></button>
+				<button type="button" id="cancel-tournament-btn" class="btn btn-danger w-100 mt-3" translate="cancel tournament"></button>
+
 			</div>
 		</div>`;
 

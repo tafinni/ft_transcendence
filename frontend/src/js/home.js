@@ -19,6 +19,10 @@ export async function loadHome() {
                         <button class="btn btn-link btn-md mb-3" id="back-to-invites" style="color: white">Back to invites</button>
                     </div>
 
+                    <div id="enter-tournament" class="d-none mt-3 flex-column align-items-center">
+                        <button class="btn btn-light btn-md mb-3" id="enter-tournament-btn">Enter tournament</button>
+                    </div>
+
                     <div id="tournament-options" class="d-none mt-3 flex-column align-items-center">
                         <p class="w-100 text-center mb-2" style="color: white;" translate="how many players?"></p>
                         <div id="num-players" class="d-flex justify-content-center w-100">
@@ -106,8 +110,10 @@ async function setTournamentButtons() {
         const tournamentOptions = document.getElementById('tournament-options');
         const tournamentWaiting = document.getElementById('tournament-waiting');
         const tournamentFormExists = document.getElementById('tournament-form-exists');
+        const enterTournament = document.getElementById('enter-tournament');
 
         const backToInvitesButton = document.getElementById('back-to-invites');
+        const enterTournamentButton = document.getElementById('enter-tournament-btn');
     
         const response = await fetch(`http://localhost:8000/is_user_in_tournament/`, {
             method: 'GET',
@@ -123,11 +129,29 @@ async function setTournamentButtons() {
         const data = await response.json();
         console.log('Response data:', data); // Debugging
 
-        if (data.in_tournament && data.tournament_initiator !== data.user)
+        if (data.in_tournament && data.status == 'Active')
+        {
+            enterTournament.classList.remove('d-none');
+            enterTournament.classList.add('d-flex');
+
+            tournamentWaiting.classList.add('d-none');
+            tournamentWaiting.classList.remove('d-flex');
+
+            tournamentOptions.classList.add('d-none');
+            tournamentOptions.classList.remove('d-flex');
+
+            tournamentFormExists.classList.add('d-none');
+            tournamentFormExists.classList.remove('d-flex');
+        }
+        else if (data.in_tournament && data.tournament_initiator !== data.user && data.status == 'Pending')
         {
             // User is part of a pending tournament, show waiting message
             tournamentWaiting.classList.remove('d-none');
             tournamentWaiting.classList.add('d-flex');
+
+
+            enterTournament.classList.add('d-none');
+            enterTournament.classList.remove('d-flex');
 
             tournamentOptions.classList.add('d-none');
             tournamentOptions.classList.remove('d-flex');
@@ -140,6 +164,10 @@ async function setTournamentButtons() {
             tournamentFormExists.classList.remove('d-none');
             tournamentFormExists.classList.add('d-flex');
 
+
+            enterTournament.classList.add('d-none');
+            enterTournament.classList.remove('d-flex');
+
             tournamentWaiting.classList.add('d-none');
             tournamentWaiting.classList.remove('d-flex');
 
@@ -150,6 +178,9 @@ async function setTournamentButtons() {
         {
             tournamentOptions.classList.remove('d-none');
             tournamentOptions.classList.add('d-flex');
+
+            enterTournament.classList.add('d-none');
+            enterTournament.classList.remove('d-flex');
 
             tournamentWaiting.classList.add('d-none');
             tournamentWaiting.classList.remove('d-flex');
@@ -162,6 +193,12 @@ async function setTournamentButtons() {
             backToInvitesButton.addEventListener('click', (event) => {
                 event.preventDefault();
                 tournamentSetUp(4);
+            });
+        }
+        if (enterTournamentButton) {
+            enterTournamentButton.addEventListener('click', (event) => {
+                event.preventDefault();
+                loadContent('tournament-lobby');
             });
         }
     }

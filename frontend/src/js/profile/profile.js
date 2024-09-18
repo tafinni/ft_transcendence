@@ -71,8 +71,6 @@ export async function loadProfile() {
 							<button type="submit" id="match-history-button" class="btn btn-info" translate="match history"></button>
 							<button type="button" id="chart-one-button" class="btn btn-warning">1</button>
 							<button type="button" id="chart-two-button" class="btn btn-warning">2</button>
-
-
 						</div>
 					</div>
 				</div>

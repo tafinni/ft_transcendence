@@ -7,6 +7,7 @@ import { loadGame, endGame, startGame } from './game.js';
 import { loadResult } from './result.js';
 import { showAlert } from './index.js';
 import { getCookie } from './csrf.js';
+import { loadTournamentLobby } from './tournament.js';
 
 /* Set navigation bar visibility */
 function navLinkVisibility(state) {
@@ -83,6 +84,10 @@ export async function loadContent(content, scoreLeft, scoreRight, oppIsHuman, ad
 			break;
 		case 'result':
 			contentElement.innerHTML = await loadResult(scoreLeft, scoreRight, oppIsHuman);
+			navLinkVisibility(1);
+			break;
+		case 'tournament-lobby':
+			contentElement.innerHTML = await loadTournamentLobby();
 			navLinkVisibility(1);
 			break;
 		default:

@@ -61,7 +61,6 @@ def update_profile(request):
                 return JsonResponse({'error': 'Avatar file is too large'}, status=400)
             if not avatar.name.lower().endswith(('.png', '.jpg', '.jpeg')):
                 return JsonResponse({'error': 'Invalid file type for avatar'}, status=400)
-            #avatar_response = upload_avatar(request) #?
             user_profile.avatar.save(avatar.name, avatar, save=True)
         if preferred_language:
             user_profile.preferred_language = preferred_language
@@ -97,24 +96,6 @@ def change_password(request):
         login(request, user)
         return JsonResponse({'message': 'Password changed successfully'})
     
-    return JsonResponse({'error': 'Invalid request method'}, status=405)
-
-
-
-@login_required
-@csrf_protect
-def upload_avatar(request):
-    if request.method == "POST":
-        user = request.user
-        user_profile, created = UserProfile.objects.get_or_create(user=user)
-        avatar = request.FILES.get('avatar')
-        if avatar:
-            user_profile.avatar.save(avatar.name, avatar, save=True)
-            user_profile.save()
-            return JsonResponse({'message': 'Avatar uploaded successfully'})
-        else:
-            return JsonResponse({'error': 'No avatar provided'}, status=400)
-
     return JsonResponse({'error': 'Invalid request method'}, status=405)
 
 
