@@ -22,16 +22,7 @@ export const vars = {
     ball_passed: false,
     ball_passed_timer: 0,
     gameover_timer: 0,
-    reset: function() {
-        // this.lives_left = this.lives_bot = this.lives_top = this.lives_top = score_to_win
-        // this.ballX = this.ballY = this.ball_direction = this.bounce_distance = this.ball_passed_timer = 0
-        // this.gameover_timer = 0
-        // this.l_left_pressed = this.l_right_pressed = this.r_left_pressed = this.r_right_pressed = false
-        // this.game_running = this.game_started = this.ball_passed = false
-        // this.score_to_win = score_to_win
-       // this.ball_speed = i.ball_base_speed / 2
-       resetvars()
-    }
+    reset: function() { resetvars() }
 }
 const default_vars = JSON.parse(JSON.stringify(vars))
 function resetvars() {
@@ -87,3 +78,12 @@ export const score = new THREE.Mesh(
 )
 score.name = "score_original"
 score.position.set(20, 0, 0)
+
+//debug
+// export const ball2 = new THREE.Mesh(
+//     new THREE.SphereGeometry(0.1, 16, 16),
+//     new THREE.MeshNormalMaterial()
+// )
+// ball2.name = "ball"
+// ball2.position.set(1000000 * i.avmax_pmx, 0.1, 1)
+// i.scene.add(ball2)

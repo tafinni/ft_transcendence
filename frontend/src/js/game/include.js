@@ -6,17 +6,22 @@ import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js'
 // DEBUG
 export const debug = true
 
+// Timers
+export const aftergame_timer = 115 // 60 = 1 second
+export const idle_timer = 360 // 60 = 1 second
+
 // Consts
 export const area_vmax = 2
 export const paddle_vmax = 1.65
 export const pos_max = 1000000
-export const ball_radius = 12500
+export const ball_radius = 50000
 export const paddle_halfwidth = (area_vmax - paddle_vmax) * pos_max / area_vmax + (ball_radius * 1.5) // ball_radius simplified
 export const ball_max = pos_max - ball_radius
 export const paddle_max = pos_max - paddle_halfwidth
-export const player_speed = 12000
-export const ball_base_speed = 8000
-export const ball_increase_speed = 1000
+export const player_speed = 20000 // 20000
+export const ball_base_speed = 55000 // 14000
+export const ball_start_speed = 7000
+export const ball_increase_speed = 2000
 export const score_to_win = 3
 export const obj_stack = []
 
