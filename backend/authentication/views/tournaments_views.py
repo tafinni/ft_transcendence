@@ -342,7 +342,7 @@ def is_user_in_tournament(request):
     if participant.is_accepted is None and participant.tournament.status == 0:
         return JsonResponse({
             'user': user.username,
-            'in_tournament': True,
+            'in_tournament': None,
             'status': 'Pending',
             'test': participant.tournament.status,
             'test2': 'invited but not accepted',
