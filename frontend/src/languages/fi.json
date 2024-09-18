@@ -64,9 +64,15 @@
 	"invite to tournament": "Kutsu turnaukseen",
 	"enter player username": "Kirjoita käyttäjänimi",
 	"invite player": "Kutsu pelaaja",
-	"start tournament": "Aloita turnaus"
+	"start tournament": "Aloita turnaus",
+	"player count": "Pelaajien määrä",
+	"tournament for": "Turnaus",
+	"for players": "pelaajalle",
+	"players": "pelaajat",
 
-
-
-
+	"cancel tournament": "Peru turnaus",
+	"wait for tournament to start": "Odota turnauksen alkua",
+	"back to invites": "Takaisin kutsuihin",
+	"enter tournament": "Turnaukseen"
+	
 }

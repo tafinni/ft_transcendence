@@ -351,3 +351,26 @@ def is_user_in_tournament(request):
         }, status=200)
 
     return JsonResponse({'error': 'Invalid request method'}, status=405)
+
+@login_required
+@csrf_protect
+def cancel_tournament(request):
+    if request.method == "POST":
+        try:
+            body = json.loads(request.body)
+            tournament_id = body.get('tournament_id')
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid JSON'}, status=400)
+
+        try:
+            tournament = Tournament.objects.get(id=tournament_id, initiator=request.user, status=0)  # status=0 means 'Pending'
+        except Tournament.DoesNotExist:
+            return JsonResponse({'error': 'Tournament does not exist or is not pending'}, status=404)
+
+        # If the tournament exists and is found, delete it
+        tournament.delete()
+        return JsonResponse({'success': 'Tournament canceled and deleted successfully'}, status=200)
+
+    return JsonResponse({'error': 'Invalid request method'}, status=405)
+
+    

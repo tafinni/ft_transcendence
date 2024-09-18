@@ -102,96 +102,130 @@ export async function tournamentSetUp(count) {
 			updatePlayersList(tournamentID);
 		});
 
+		const cancelTournamentButton = document.getElementById('cancel-tournament-btn');
+		cancelTournamentButton.addEventListener('click', () => {
+			cancelTournament(tournamentID);
+		});
+
 		const startTournamentButton = document.getElementById('start-tournament-btn');
 		startTournamentButton.addEventListener('click', async (e) => {
 			e.preventDefault();
-		try
-		{
-			const csrftoken = getCookie('csrftoken');
-			const response = await fetch('http://localhost:8000/start_tournament/',
+			try
 			{
-				method: 'POST',
-				headers: { 'X-CSRFToken': csrftoken },
-				credentials: 'include',
-				body: JSON.stringify({ tournament_id: tournamentID })
-			});
-	
-			if (response.ok)
-			{
-				const data = await response.json();
-				console.log('Starting tournament successful');
-				showAlert(data.message, 'success');
-				loadContent('home');
-			}
-			else
-			{
-				const errorData = await response.json();
-				console.error('Starting tournament failed: ', errorData);
-				errorMessage.textContent = errorData.error;
-				errorMessage.style.display = 'block';
-			}
-		}
-		catch (error)
-		{
-			console.error('Error during start tournament', error);
-			showAlert('Error during starting tournament. Try Again', 'danger');
-		}
-	
-	});
-
-
-
-
-	document.getElementById('add-player-form').addEventListener('submit', async (e) => {
-		e.preventDefault();
+				const csrftoken = getCookie('csrftoken');
+				const response = await fetch('http://localhost:8000/start_tournament/',
+				{
+					method: 'POST',
+					headers: { 'X-CSRFToken': csrftoken },
+					credentials: 'include',
+					body: JSON.stringify({ tournament_id: tournamentID })
+				});
 		
-		const newPlayerInput = document.getElementById('new-player');
-		const username = newPlayerInput.value.trim();
-		const errorMessage = document.getElementById('error-message');
-		errorMessage.style.display = 'none';
-
-	
-		if (!username) return;
-	
-		try
-		{
-			const csrftoken = getCookie('csrftoken');
-			const response = await fetch('http://localhost:8000/invite_to_tournament/',
+				if (response.ok)
+				{
+					const data = await response.json();
+					console.log('Starting tournament successful');
+					showAlert(data.message, 'success');
+					loadContent('home');
+				}
+				else
+				{
+					const errorData = await response.json();
+					console.error('Starting tournament failed: ', errorData);
+					errorMessage.textContent = errorData.error;
+					errorMessage.style.display = 'block';
+				}
+			}
+			catch (error)
 			{
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrftoken },
-				credentials: 'include',
-				body: JSON.stringify({ opponent_username: username, tournament_id: tournamentID })
+				console.error('Error during start tournament', error);
+				showAlert('Error during starting tournament. Try Again', 'danger');
+			}
+		
 			});
-	
-			if (response.ok)
-			{
-				const responseData = await response.json();
-				console.log('Sending invite to player successful', responseData);
-				updatePlayersList(tournamentID);
-			}
-			else
-			{
-				const errorData = await response.json();
-				console.error('Error inviting player', errorData);
-				errorMessage.textContent = errorData.error;
-				errorMessage.style.display = 'block';
-				return ;
-			}
-		}
-		catch (error)
-		{
-			console.error('Error during tournament setup', error);
-			showAlert('Error during tournament setup. Try again.', 'danger');
-		}
 
-		newPlayerInput.value = '';
-	});
+		document.getElementById('add-player-form').addEventListener('submit', async (e) => {
+			e.preventDefault();
+			
+			const newPlayerInput = document.getElementById('new-player');
+			const username = newPlayerInput.value.trim();
+			const errorMessage = document.getElementById('error-message');
+			errorMessage.style.display = 'none';
+		
+			if (!username) return;
+		
+			try
+			{
+				const csrftoken = getCookie('csrftoken');
+				const response = await fetch('http://localhost:8000/invite_to_tournament/',
+				{
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrftoken },
+					credentials: 'include',
+					body: JSON.stringify({ opponent_username: username, tournament_id: tournamentID })
+				});
+		
+				if (response.ok)
+				{
+					const responseData = await response.json();
+					console.log('Sending invite to player successful', responseData);
+					updatePlayersList(tournamentID);
+				}
+				else
+				{
+					const errorData = await response.json();
+					console.error('Error inviting player', errorData);
+					errorMessage.textContent = errorData.error;
+					errorMessage.style.display = 'block';
+					return ;
+				}
+			}
+			catch (error)
+			{
+				console.error('Error during tournament setup', error);
+				showAlert('Error during tournament setup. Try again.', 'danger');
+			}
+
+			newPlayerInput.value = '';
+		});
+	}
+	else
+		console.error('Content element not found');
 }
-else
-	console.error('Content element not found');
 
+async function cancelTournament(tournament_id) {
+	try
+	{
+		const csrftoken = getCookie('csrftoken');
+		const response = await fetch('http://localhost:8000/cancel_tournament/',
+		{
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrftoken },
+			credentials: 'include',
+			body: JSON.stringify({ tournament_id })
+		});
 
+		if (response.ok)
+		{
+			const responseData = await response.json();
+			console.log('Cancelling tournament successful', responseData);
+			showAlert('Tournament cancelled', 'success');
+			loadContent('home');
+		}
+		else
+		{
+			const errorData = await response.json();
+			console.error('Cancelling tournamnet', errorData);
+			showAlert('Error cancelling tournament. Try again.', 'danger');
+			loadContent('home');
+		}
+	}
+	catch (error)
+	{
+		console.error('Error cancelling tournament', error);
+		showAlert('Error cancelling tournament. Try again.', 'danger');
+		loadContent('home');
+	}
 }
 
 

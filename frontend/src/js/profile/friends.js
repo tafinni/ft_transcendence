@@ -20,16 +20,13 @@ export async function displayFriends() {
 	}
 
 	const data = await response.json();
-
-	console.log('display friends called', data); // Debugging
 	const friends = data.friends;
 
 	const friendsListContainer = document.getElementById('friends-list');
-	friendsListContainer.innerHTML = ''; // Clear existing content
+	friendsListContainer.innerHTML = '';
 
 	friends.forEach((friend, index) => {
 		const colors = ['#f0f0f0', '#fffff'];
-
 
 		const friendItem = document.createElement('div');
 		friendItem.className = 'friend-item';
@@ -43,6 +40,7 @@ export async function displayFriends() {
 		onlineStatus.className = 'online-status';
 		onlineStatus.style.marginRight = '10px';
 		onlineStatus.style.fontSize = '80%';
+
 		if (friend.online_status == true)
 		{
 			onlineStatus.innerHTML = '<i class="bi bi-circle-fill"></i>';
@@ -91,14 +89,12 @@ export async function displayFriendRequests() {
 		showAlert('Error occured displaying friend requests. Try again.', 'danger');
 		return ;
 	}
+	const data = await response.json();
 
-	const data = await response.json(); // Parse the JSON response
-
-	console.log('display requests called', data); // Debugging
 	const friends = data.friend_requests;
 
 	const friendsListContainer = document.getElementById('friend-requests');
-	friendsListContainer.innerHTML = ''; // Clear existing content
+	friendsListContainer.innerHTML = '';
 
 	friends.forEach((friend, index) => {
 		const colors = ['#f0f0f0', '#fffff'];
@@ -208,51 +204,55 @@ async function declineFriend(request_user_username) {
 	}
 }
 
-
-
 export async function addFriend() {
 	const response = await fetch('http://localhost:8000/profile/', {
 		method: 'GET',
 		credentials: 'include'
 	});
-	if (!response.ok) { console.error('Failed loading profile:', response.statusText); return `<h1>Error loading profile</h1>`; }
+	if (!response.ok)
+	{
+		console.error('Failed loading profile:', response.statusText);
+		showAlert('Error occured adding friend. Try again.', 'danger');
+		return ;
+	}
 
 	const addFriendHTML = `
-	<div class="container mt-5">
-        <div class="card" style="background-color: white; padding: 20px; border-radius: 10px;">
-		<form id="add-friends-form">
-			<div class="form-group">
-				<label for="friends-name" translate="friend's name"></label>
-				<input type="text" id="new-friend" class="form-control" required>
+		<div class="container mt-5">
+			<div class="card" style="background-color: white; padding: 20px; border-radius: 10px;">
+			<form id="add-friends-form">
+				<div class="form-group">
+					<label for="friends-name" translate="friend's name"></label>
+					<input type="text" id="new-friend" class="form-control" required>
+				</div>
+				<button type="submit" class="btn btn-success mt-3" translate="send request"></button>
+				<button type="button" id="cancel-button" class="btn btn-link" translate="cancel"></button>
+			</form>
 			</div>
-			<button type="submit" class="btn btn-success mt-3" translate="send request"></button>
-			<button type="button" id="cancel-button" class="btn btn-link" translate="cancel"></button>
-		</form>
 		</div>
-	</div>
-`;
+	`;
 
 
 	const contentElement = document.getElementById('content');
-	if (contentElement) {
+	if (contentElement)
+	{
 		contentElement.innerHTML = addFriendHTML;
 		updateContent();
 		saveFriend();
 	}
 	else
-	{
 		console.error('Content element not found');
-	}
 }
 
 
 
 async function saveFriend() {
-
-    console.log('saveFriend called'); // Debugging
-
 	const addFriendsForm = document.getElementById('add-friends-form');
-	if (!addFriendsForm) { console.error('Add friends form not found'); return ; }
+	if (!addFriendsForm)
+	{
+		console.error('Add friends form not found');
+		showAlert('Error occured adding friend. Try again.', 'danger');
+		loadContent('profile');
+	}
 
 	const cancelButton = document.getElementById('cancel-button');
 
@@ -261,8 +261,6 @@ async function saveFriend() {
 
 		const friend_username = document.getElementById('new-friend').value;
 		
-		console.log('Add friends form submitted');
-
 		try
 		{
 			const csrftoken = getCookie('csrftoken');
@@ -297,7 +295,6 @@ async function saveFriend() {
 	});
 
 	cancelButton.addEventListener('click', () => {
-		console.log('Cancelled add friend'); // Debugging
 		loadContent('profile');
 	});
 }
@@ -333,6 +330,7 @@ async function removeFriend(friend_username) {
 	{
 		console.error('Error during removing friend', error);
 		showAlert('Error occured when removing friend. Try again.', 'danger');
+		loadContent('profile');
 	}
 }
 

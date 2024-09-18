@@ -2,6 +2,7 @@ import { loadContent } from "./router.js";
 import { tournamentSetUp } from "./tournament.js"
 import { showAlert } from "./index.js";
 
+
 export async function loadHome() {
     const htmlContent = `
         <div class="container-fluid d-flex justify-content-center align-items-center">
@@ -12,15 +13,15 @@ export async function loadHome() {
                     <button class="btn btn-warning btn-lg mb-3" id="tournament-btn" translate="tournament">Tournament</button>
 
                     <div id="tournament-waiting" class="d-none mt-3 flex-column align-items-center">
-                    <p class="w-100 text-center mb-2" style="color: white;">Wait for tournament to start</p>
+                    <p class="w-100 text-center mb-2" style="color: white;" translate="wait for tournament to start">Wait for tournament to start</p>
                     </div>
 
                     <div id="tournament-form-exists" class="d-none mt-3 flex-column align-items-center">
-                        <button class="btn btn-link btn-md mb-3" id="back-to-invites" style="color: white">Back to invites</button>
+                        <button class="btn btn-link btn-md mb-3" id="back-to-invites" style="color: white" translate="back to invites">Back to invites</button>
                     </div>
 
                     <div id="enter-tournament" class="d-none mt-3 flex-column align-items-center">
-                        <button class="btn btn-light btn-md mb-3" id="enter-tournament-btn">Enter tournament</button>
+                        <button class="btn btn-light btn-md mb-3" id="enter-tournament-btn" translate="enter tournament">Enter tournament</button>
                     </div>
 
                     <div id="tournament-options" class="d-none mt-3 flex-column align-items-center">
@@ -41,8 +42,7 @@ export async function loadHome() {
         const singlePlayer = document.getElementById('single-player-btn');
         const twoPlayer = document.getElementById('local-multiplayer-btn');
         const tournamentButton = document.getElementById('tournament-btn');
-
-
+        let options = false;
 
         if (singlePlayer) {
             singlePlayer.addEventListener('click', (event) => {
@@ -57,53 +57,44 @@ export async function loadHome() {
             });
         }
 
+        tournamentButton.addEventListener('click', async (event) => {
+            event.preventDefault();
+            if (options === false)
+                options = true;
+            else if (options === true)
+                options = false;
+            setTournamentButtons(options);
 
-            tournamentButton.addEventListener('click', async (event) => {
-                event.preventDefault();
-                console.log('Tournament button clicked');
-                setTournamentButtons();
+            const fourPlayersButton = document.getElementById('four-players');
+            const eightPlayersButton = document.getElementById('eight-players');
+            const sixteenPlayersButton = document.getElementById('sixteen-players');
 
-////////////////////////////////////////////////////////////////////////////
-
-
-
-////////////////////////////////////////////////////////////////////////////
-                
-                
-                
-                initTournament();
-                const fourPlayersButton = document.getElementById('four-players');
-                const eightPlayersButton = document.getElementById('eight-players');
-                const sixteenPlayersButton = document.getElementById('sixteen-players');
-
-                if (fourPlayersButton) {
-                    fourPlayersButton.addEventListener('click', (event) => {
-                        event.preventDefault();
-                        tournamentSetUp(4);
-                    });
-                }
-                if (eightPlayersButton) {
-                    eightPlayersButton.addEventListener('click', (event) => {
-                        event.preventDefault();
-                        tournamentSetUp(8);
-                    });
-                }
-                if (sixteenPlayersButton) {
-                    sixteenPlayersButton.addEventListener('click', (event) => {
-                        event.preventDefault();
-                        tournamentSetUp(16);
-                    });
-                }
+            if (fourPlayersButton) {
+                fourPlayersButton.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    tournamentSetUp(4);
+                });
+            }
+            if (eightPlayersButton) {
+                eightPlayersButton.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    tournamentSetUp(8);
+                });
+            }
+            if (sixteenPlayersButton) {
+                sixteenPlayersButton.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    tournamentSetUp(16);
+                });
+            }
 
 
-            });
-
-
-});
+        });
+    });
     return htmlContent;
 }
 
-async function setTournamentButtons() {
+async function setTournamentButtons(options) {
 
     try
     {
@@ -127,9 +118,22 @@ async function setTournamentButtons() {
         }
 
         const data = await response.json();
-        console.log('Response data:', data); // Debugging
 
-        if (data.in_tournament && data.status == 'Active')
+        if (options === false)
+        {
+            tournamentOptions.classList.add('d-none');
+            tournamentOptions.classList.remove('d-flex');
+
+            enterTournament.classList.add('d-none');
+            enterTournament.classList.remove('d-flex');
+
+            tournamentWaiting.classList.add('d-none');
+            tournamentWaiting.classList.remove('d-flex');
+
+            tournamentFormExists.classList.add('d-none');
+            tournamentFormExists.classList.remove('d-flex');
+        }
+        else if (data.in_tournament && data.status == 'Active')
         {
             enterTournament.classList.remove('d-none');
             enterTournament.classList.add('d-flex');
@@ -145,10 +149,8 @@ async function setTournamentButtons() {
         }
         else if (data.in_tournament && data.tournament_initiator !== data.user && data.status == 'Pending')
         {
-            // User is part of a pending tournament, show waiting message
             tournamentWaiting.classList.remove('d-none');
             tournamentWaiting.classList.add('d-flex');
-
 
             enterTournament.classList.add('d-none');
             enterTournament.classList.remove('d-flex');
@@ -163,7 +165,6 @@ async function setTournamentButtons() {
         {
             tournamentFormExists.classList.remove('d-none');
             tournamentFormExists.classList.add('d-flex');
-
 
             enterTournament.classList.add('d-none');
             enterTournament.classList.remove('d-flex');
@@ -207,10 +208,4 @@ async function setTournamentButtons() {
         console.error('Error during checking tournament status', error);
         showAlert('Error occurred. Try again.', 'danger');
     }
-}
-
-
-
-async function initTournament() {
-
 }

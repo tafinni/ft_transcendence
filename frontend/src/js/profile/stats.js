@@ -189,8 +189,8 @@ export async function loadChartOne() {
 	}
 	catch (error)
 	{
-		console.error('Error fetching match history:', error);
-		showAlert('Error fetching match history. Try Again.', 'danger');
+		console.error('Error fetching chart:', error);
+		showAlert('Error fetching chart. Try Again.', 'danger');
 		loadContent('profile');
 	}
 }
