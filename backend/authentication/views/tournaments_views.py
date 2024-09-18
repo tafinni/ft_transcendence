@@ -28,6 +28,17 @@ def accept_tournament_invitation(request):
             return JsonResponse({'error': 'Finish current tournament'}, status=400)
 
 
+
+        participant1 = Participants.objects.filter(
+            user=request.user, 
+            tournament__status=0, 
+            is_accepted=True  # Only check for accepted tournaments
+        ).select_related('tournament').first()
+
+        if participant1:
+            return JsonResponse({'error': 'Finish current tournament'}, status=400)
+
+
         if not initiator_username:
             return JsonResponse({'error': 'Initiator username is required'}, status=400)
 
@@ -40,6 +51,10 @@ def accept_tournament_invitation(request):
         tournament = Tournament.objects.filter(initiator=initiator, status=0).first()  # Status=0 means 'Pending'
         if not tournament:
             return JsonResponse({'error': 'Tournament does not exist or already processed'}, status=404)
+        
+        accepted = Participants.objects.filter(tournament=tournament, is_accepted=True)
+        if tournament.player_count == accepted.count():
+            return JsonResponse({'error': 'Tournament full'}, status=404)
         
         accepted = Participants.objects.filter(tournament=tournament, is_accepted=True)
         if tournament.player_count == accepted.count():
@@ -100,6 +115,7 @@ def decline_tournament_invitation(request):
 
         return JsonResponse({'message': f'Tournament invitation declined: {initiator_display} vs {user_display}'})
     
+    
     return JsonResponse({'error': 'Invalid request method'}, status=405)
 
 
@@ -118,6 +134,7 @@ def invite_to_tournament(request):
 
         if not opponent_username or not tournament_id:
             return JsonResponse({'error': 'Opponent username and tournament ID are required'}, status=400)
+   
    
         try:
             opponent = User.objects.get(username=opponent_username)
@@ -195,6 +212,15 @@ def create_tournament(request):
                 'player_count': existing_tournament.player_count
             })
 
+        existing_tournament = Tournament.objects.filter(initiator=request.user, status__in=[0]).first()
+        if existing_tournament:
+            existing_tournament.player_count #= player_count
+            return JsonResponse({
+                'message': 'You already have a pending tournament.',
+                'tournament_id': existing_tournament.id,
+                'player_count': existing_tournament.player_count
+            })
+
         tournament = Tournament.objects.create(
             initiator=request.user,
             player_count=player_count,
@@ -210,6 +236,7 @@ def create_tournament(request):
 
         # Prepare response message
         initiator_display = request.user.userprofile.display_name or request.user.username
+        return JsonResponse({'message': f'Tournament created by {initiator_display}', 'tournament_id': tournament.id, 'player_count': tournament.player_count})
         return JsonResponse({'message': f'Tournament created by {initiator_display}', 'tournament_id': tournament.id, 'player_count': tournament.player_count})
 
     return JsonResponse({'error': 'Invalid request method'}, status=405)
@@ -263,7 +290,7 @@ def start_tournament(request):
 
     return JsonResponse({'error': 'Invalid request method'}, status=405)
 
-
+@login_required
 def list_invited_participants(request):
     if request.method == "GET":
         tournament_id = request.GET.get('tournament_id')
@@ -373,4 +400,62 @@ def cancel_tournament(request):
 
     return JsonResponse({'error': 'Invalid request method'}, status=405)
 
-    
+
+
+@login_required
+def get_tournament_matches(request):
+    if request.method == "GET":
+        tournament_id = request.GET.get('tournament_id')
+        
+        try:
+            tournament = Tournament.objects.get(id=tournament_id)
+        except Tournament.DoesNotExist:
+            return JsonResponse({'error': 'Tournament not found'}, status=404)
+
+        # Check if the current user is a participant in the tournament
+        is_participant = Participants.objects.filter(tournament=tournament, user=request.user).exists()
+        if not is_participant and request.user != tournament.initiator:
+            return JsonResponse({'error': 'You are not allowed to view this tournament'}, status=403)
+
+        # Retrieve all results for the current tournament
+        results = ResultTournament.objects.filter(tournament=tournament)
+
+        # Get participants from tournament
+        participants = Participants.objects.filter(tournament=tournament)
+        matches_list = []
+
+        if not results.exists():
+            round_number = 1
+            #берем старый список 
+            #старый номер группы
+            groups = {}
+            for participant in participants:
+                group_number = participant.group_number
+                if group_number not in groups:
+                    groups[group_number] = []
+            groups[group_number].append(participant)
+
+            for group_number, group_participants in groups.items():
+                if len(group_participants) == 2:  # Ensure there are exactly two participants in a group
+                    participant1, participant2 = group_participants
+                    user_display1 = participant1.user.userprofile.display_name or participant1.user.username
+                    user_display2 = participant2.user.userprofile.display_name or participant2.user.username
+
+                    matches_list.append({
+                        'round_number': 1,  # Assuming the round number is 1 if no results exist yet
+                        'group_number': group_number,
+                        'player_1': user_display1,
+                        'player_2': user_display2,
+                        'result': 'Pending'
+                    })
+
+            
+ #       else:
+            #тут пересоздаем группы, переопределяем номер и увеличиваем раунд.
+
+
+        return JsonResponse({'matches': matches_list}, status=200)
+
+    return JsonResponse({'error': 'Invalid request method'}, status=405)
+
+

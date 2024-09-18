@@ -68,7 +68,8 @@ class Tournament(models.Model):
     STATUS_CHOICES = [
         (0, 'Pending'),
         (1, 'Active'),
-        (2, 'Completed'), 
+        (2, 'Completed'),
+        (3, 'DElete') 
     ]
 
     initiator = models.ForeignKey(User, related_name='initiated_tournaments', on_delete=models.CASCADE)
@@ -102,7 +103,8 @@ class ResultTournament(models.Model):
     tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE)
     user = models.ForeignKey(User, related_name='result_tournaments_as_user', on_delete=models.CASCADE)
     opponent = models.ForeignKey(User, related_name='result_tournaments_as_opponent', on_delete=models.CASCADE)
-    result = models.CharField(max_length=10, choices=RESULT_CHOICES, blank=True, null=True)  # ?
+    result = models.CharField(max_length=10, choices=RESULT_CHOICES, blank=True, null=True) 
+    round_number = models.IntegerField(default=1)  
 
     class Meta:
         constraints = [

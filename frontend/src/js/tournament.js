@@ -4,7 +4,42 @@ import { loadContent } from "./router";
 import { showAlert } from "./index.js";
 
 export async function loadTournamentLobby() {
-	
+	try
+	{
+		const response = await fetch(`http://localhost:8000/is_user_in_tournament/`, {
+            method: 'GET',
+            credentials: 'include',
+        });
+
+        if (!response.ok) {
+            console.error('Failed:', response.statusText);
+            showAlert('Error occurred. Try again.', 'danger');
+            return;
+        }
+
+        const data = await response.json();
+		
+		const reply = await fetch(`http://localhost:8000/get_tournament_matches/?tournament_id=${data.tournament_id}`, {
+			method: 'GET',
+			credentials: 'include',
+		});
+		if (!reply.ok)
+		{
+			console.error('Failed loading tournament matches:', response.statusText);
+			showAlert('Error occurred loading tournament matches. Try again.', 'danger');
+			return;
+		}
+
+		const newData = await reply.json();
+		console.log('testing: ', newData);
+
+	}
+	catch (error)
+	{
+		console.error('Error with tournament lobby', error);
+		showAlert('Error occured with tournament lobby. Try again.', 'danger');
+		loadContent('home');
+	}	
 }
 
 export async function tournamentSetUp(count) {
@@ -142,7 +177,7 @@ export async function tournamentSetUp(count) {
 				showAlert('Error during starting tournament. Try Again', 'danger');
 			}
 		
-			});
+		});
 
 		document.getElementById('add-player-form').addEventListener('submit', async (e) => {
 			e.preventDefault();
