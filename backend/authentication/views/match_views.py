@@ -10,6 +10,8 @@ from django.conf import settings
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 import datetime
+from django.core.exceptions import ObjectDoesNotExist
+
 
 @login_required
 @csrf_protect
@@ -51,7 +53,7 @@ def public_match_history(request):
 
 @login_required
 @csrf_protect
-#@csrf_exempt
+@csrf_exempt
 def add_result(request):
     data = json.loads(request.body)
     user = request.user
@@ -85,7 +87,6 @@ def add_result(request):
 @login_required
 def friends_statistics(request):
     user = request.user
-
     try:
         friendships = Friendship.objects.filter(user=user, accepted=True)
     except Friendship.DoesNotExist:
@@ -108,4 +109,3 @@ def friends_statistics(request):
         })
 
     return JsonResponse({'friends': friends_data})
-

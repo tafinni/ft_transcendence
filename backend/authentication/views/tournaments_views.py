@@ -263,7 +263,7 @@ def start_tournament(request):
 
     return JsonResponse({'error': 'Invalid request method'}, status=405)
 
-
+@login_required
 def list_invited_participants(request):
     if request.method == "GET":
         tournament_id = request.GET.get('tournament_id')
@@ -300,39 +300,113 @@ def list_invited_participants(request):
 
 @login_required
 def is_user_in_tournament(request):
-    if request.method == "GET":
-        # Check if the user is a participant in any pending tournaments (status = 0)
-        participant = Participants.objects.filter(user=request.user, tournament__status=0).select_related('tournament').first()
+    #if request.method == "GET":
+        # Check if the user is a participant in any pending or active tournaments (status = 0 or 1)
+    participant = Participants.objects.filter(
+        user=request.user, 
+        tournament__status__in=[0, 1]  # Checking both pending and active tournaments
+    ).select_related('tournament').first()
 
-        if not participant:
-            return JsonResponse({
-                'in_tournament': False,
-                'message': 'User is not in any pending tournament'
-            }, status=200)
+    if not participant:
+        return JsonResponse({
+            'in_tournament': False,
+            'message': 'User is not in any pending or active tournament'
+        }, status=200)
 
-        user = request.user
-        # Check if the user has accepted the invitation
-        if participant.is_accepted is True:
-            return JsonResponse({
-                'user': user.username,
-                'in_tournament': 1,
-                'status': 'Accepted',
-                'tournament_id': participant.tournament.id,
-                'tournament_initiator': participant.tournament.initiator.username
-            }, status=200)
-        elif participant.is_accepted is None:
-            return JsonResponse({
-                'in_tournament': 0,
-                'status': 'Pending',
-                'tournament_id': participant.tournament.id,
-                'tournament_initiator': participant.tournament.initiator.username
-            }, status=200)
-        elif participant.is_accepted is False:
-            return JsonResponse({
-                'in_tournament': 2,
-                'status': 'Declined',
-                'tournament_id': participant.tournament.id,
-                'tournament_initiator': participant.tournament.initiator.username
-            }, status=200)
+    user = request.user
+
+    # If the tournament is active (status = 1)
+    if participant.tournament.status == 1:
+        return JsonResponse({
+            'user': user.username,
+            'in_tournament': True,
+            'status': 'Active',
+            'test': participant.tournament.status,
+            'tournament_id': participant.tournament.id,
+            'tournament_initiator': participant.tournament.initiator.username
+        }, status=200)
+
+    # If the user has accepted the invitation to a pending tournament (status = 0)
+    if participant.is_accepted is True and participant.tournament.status == 0:
+        return JsonResponse({
+            'user': user.username,
+            'in_tournament': True,
+            'status': 'Pending',
+            'test': participant.tournament.status,
+            'tournament_id': participant.tournament.id,
+            'tournament_initiator': participant.tournament.initiator.username
+        }, status=200)
+
+
+    # If the user has accepted the invitation to a pending tournament (status = 0)
+    if participant.is_accepted is None and participant.tournament.status == 0:
+        return JsonResponse({
+            'user': user.username,
+            'in_tournament': None,
+            'status': 'Pending',
+            'test': participant.tournament.status,
+            'test2': 'invited but not accepted',
+            'tournament_id': participant.tournament.id,
+            'tournament_initiator': participant.tournament.initiator.username
+        }, status=200)
 
     return JsonResponse({'error': 'Invalid request method'}, status=405)
+
+
+@login_required
+def get_tournament_matches(request):
+    if request.method == "GET":
+        tournament_id = request.GET.get('tournament_id')
+        
+        try:
+            tournament = Tournament.objects.get(id=tournament_id)
+        except Tournament.DoesNotExist:
+            return JsonResponse({'error': 'Tournament not found'}, status=404)
+
+        # Check if the current user is a participant in the tournament
+        is_participant = Participants.objects.filter(tournament=tournament, user=request.user).exists()
+        if not is_participant and request.user != tournament.initiator:
+            return JsonResponse({'error': 'You are not allowed to view this tournament'}, status=403)
+
+        # Retrieve all results for the current tournament
+        results = ResultTournament.objects.filter(tournament=tournament)
+
+        # Get participants from tournament
+        participants = Participants.objects.filter(tournament=tournament)
+        matches_list = []
+
+        if not results.exists():
+            round_number = 1
+            #берем старый список 
+            #старый номер группы
+            groups = {}
+            for participant in participants:
+                group_number = participant.group_number
+                if group_number not in groups:
+                    groups[group_number] = []
+            groups[group_number].append(participant)
+
+            for group_number, group_participants in groups.items():
+                if len(group_participants) == 2:  # Ensure there are exactly two participants in a group
+                    participant1, participant2 = group_participants
+                    user_display1 = participant1.user.userprofile.display_name or participant1.user.username
+                    user_display2 = participant2.user.userprofile.display_name or participant2.user.username
+
+                    matches_list.append({
+                        'round_number': 1,  # Assuming the round number is 1 if no results exist yet
+                        'group_number': group_number,
+                        'player_1': user_display1,
+                        'player_2': user_display2,
+                        'result': 'Pending'
+                    })
+
+            
+ #       else:
+            #тут пересоздаем группы, переопределяем номер и увеличиваем раунд.
+
+
+        return JsonResponse({'matches': matches_list}, status=200)
+
+    return JsonResponse({'error': 'Invalid request method'}, status=405)
+
+
