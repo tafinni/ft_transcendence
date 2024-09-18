@@ -8,7 +8,12 @@ import * as l2 from './2p-pong-lib.js'
 import { vars as v } from './2p-pong-include.js'
 
 export const camera = i.gcamera
-export const tick = l2.tick
+export const tick = () => {
+    i2.left.position.x = v.left_pos * i.pvmax_pmx
+    i2.right.position.x = v.right_pos * i.pvmax_pmx
+    i2.ball.position.z = v.ballX * i.avmax_pmx
+    i2.ball.position.x = v.ballY * i.avmax_pmx
+}
 
 export function startGame() {
     i.scene.add(i2.plate, i2.left, i2.right, i2.top, i2.bot)
