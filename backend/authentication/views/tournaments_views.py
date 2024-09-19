@@ -375,18 +375,18 @@ def get_tournament_matches(request):
 
         if not results.exists():
             # Get participants from tournament
-            participants = Participants.objects.filter(tournament=tournament)
+            participants = Participants.objects.filter(tournament=tournament, is_accepte=True) # accept
             if not participants.exists():
                 return JsonResponse({'error': 'No participants in this tournament'}, status=400)
            # round_number = 1
-            groups = {}
+            groups: dict = {} #dic
             for participant in participants:
                 group_number = participant.group_number
                 if group_number not in groups:
                     groups[group_number] = []
                 groups[group_number].append(participant)
             # Create matches for round 1
-            for group_number, group_participants in groups.items():
+            for group_number, group_participants in groups.items(): #?
                 if len(group_participants) == 2:  # Ensure there are exactly two participants in a group
                     participant1, participant2 = group_participants
                     user_display1 = participant1.user.userprofile.display_name or participant1.user.username
