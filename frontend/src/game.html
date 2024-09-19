@@ -52,7 +52,7 @@
     <button type="submit" id="sologame" class="btn btn-info" translate="sologame">Solo Game</button>
     <button type="submit" id="local2p" class="btn btn-info" translate="local2p">Local 2P</button>
     <button type="submit" id="local4p" class="btn btn-info" translate="local4p">Local 4P</button>
-    <button type="submit" id="ttt" class="btn btn-info" translate="tictactie">Tic-tac-toe</button>
+    <button type="submit" id="ttt" class="btn btn-info" translate="tictactoe">Tic-tac-toe</button>
     <form id="playerSelectForm">
       <label for="username">Player Name:</label><br>
       <input type="text" id="username" name="username" list="players">
@@ -82,7 +82,7 @@
         startGame();
 	    })
       const tttButton = document.getElementById("ttt");
-      fourpButton.addEventListener('click', () => {
+      tttButton.addEventListener('click', () => {
         loadGame(5);
         startGame();
 	    })

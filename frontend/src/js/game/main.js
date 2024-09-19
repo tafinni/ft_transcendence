@@ -19,19 +19,11 @@ window.addEventListener('resize', () => {
     t.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 })
 
-// Camera setups
-t.camera.position.z = 5
-t.scene.add(t.camera)
-t.gcamera.position.set(4, 4, 4)
-t.gcamera.rotation.y = Math.PI / 2
-t.gcamera.lookAt(t.scene.position)
-t.scene.add(t.gcamera)
-
 // Frame tick
 const tick = () => {
     m.tick()
     //m.controls.update()
-    t.renderer.render(t.scene, m.camera)
+    t.renderer.render(t.scene, t.renderer.camera)
     window.requestAnimationFrame(tick)
 }
 tick()
@@ -76,8 +68,9 @@ export function sendResults(scoreLeft, scoreRight, oppIsHuman) {
 export function switchToIdle() {
     m.cleanUp()
     m = i
-    m.addIdleObjs()
+    m.startGame()
 }
+switchToIdle()
 
 // external functions
 export function startQuickGame() {
@@ -101,6 +94,15 @@ function startFourLocal() {
 function startTTT() {
     console.log('startTTT')
     m.cleanUp()
-    m = () => {}
+    m = ttt
     m.startGame()
 }
+
+// Camera setups
+//t.camera.position.z = 5
+//t.scene.add(t.camera)
+//t.gcamera.position.set(4, 4, 4)
+//t.gcamera.rotation.y = Math.PI / 2
+//t.gcamera.lookAt(t.scene.position)
+//t.scene.add(t.gcamera)
+//t.renderer.camera = t.camera

@@ -22,6 +22,7 @@ export const tick = l4.tick
 // }
 
 export function startGame() {
+    i.renderer.camera = i.newIsoCamera()
     i.scene.add(i4.plate, i4.left, i4.right, i4.top, i4.bot)
     i.scene.add(i4.corner, i4.corner2, i4.corner3, i4.corner4)
     i.scene.add(i4.ball)

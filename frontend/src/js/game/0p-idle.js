@@ -41,23 +41,33 @@ export function rmvIdleObjs() {
     t.scene.remove(cube, cube2, ball)
 }
 
-export function cleanUp() {
-    rmvIdleObjs()
-}
 
+let idle_mode = false
 const radius = 5; // Distance from origin
 
-export const camera = t.gcamera
+export function cleanUp() {
+    rmvIdleObjs()
+    idle_mode = false   
+}
+
+export const camera = t.camera
 export const controls = t.gcontrols
 export const tick = () =>
 {
-    const elapsedTime = t.clock.getElapsedTime()
-    t.camera.position.x = radius * Math.cos(elapsedTime);
-    t.camera.position.z = radius * Math.sin(elapsedTime);
-    t.camera.lookAt(t.scene.position);
+    if (idle_mode) {
+        const elapsedTime = t.clock.getElapsedTime()
+        t.renderer.camera.position.x = radius * Math.cos(elapsedTime);
+        t.renderer.camera.position.z = radius * Math.sin(elapsedTime);
+        t.renderer.camera.lookAt(t.scene.position);
+    }
 }
 
 //external functions
-export function startIdle() {
-
+export function startGame() {
+    t.renderer.camera = new THREE.PerspectiveCamera(75, t.sizes.width / t.sizes.height, 0.1, 100)
+    t.renderer.camera.position.x = radius * Math.cos(0);
+    t.renderer.camera.position.z = radius * Math.sin(0);
+    t.renderer.camera.lookAt(t.scene.position);
+    addIdleObjs()
+    idle_mode = true
 }

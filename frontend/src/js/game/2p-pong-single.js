@@ -16,6 +16,7 @@ export const tick = () => {
 }
 
 export function startGame() {
+    i.renderer.camera = i.newIsoCamera()
     i.scene.add(i2.plate, i2.left, i2.right, i2.top, i2.bot)
     i.scene.add(i2.ball)
     v.left_pos = v.right_pos = 0

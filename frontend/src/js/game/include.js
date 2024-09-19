@@ -19,11 +19,12 @@ export const paddle_halfwidth = (area_vmax - paddle_vmax) * pos_max / area_vmax 
 export const ball_max = pos_max - ball_radius
 export const paddle_max = pos_max - paddle_halfwidth
 export const player_speed = 20000 // 20000
-export const ball_base_speed = 55000 // 14000
+export const ball_base_speed = 14000 // 14000
 export const ball_start_speed = 7000
 export const ball_increase_speed = 2000
 export const score_to_win = 3
 export const obj_stack = []
+export const d = 3 // this is for orthographic camera
 
 // Export canvas, scene, textureLoader
 export const canvas = document.querySelector('canvas.webgl')
@@ -93,14 +94,22 @@ export function getAspect() { return sizes.width / sizes.height }
 export const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
 //export const controls = new OrbitControls(camera, canvas)
 //controls.enableDamping = true
-const d = 3
 export const gcamera = new THREE.OrthographicCamera(-d * getAspect(), d * getAspect(), d, -d, 1, 1000)
 //export const gcontrols = new OrbitControls(gcamera, canvas)
 //gcontrols.enableDamping = true
 
+export function newIsoCamera() {
+    const newcamera = new THREE.OrthographicCamera(-d * getAspect(), d * getAspect(), d, -d, 1, 1000)
+    newcamera.position.set(4, 4, 4)
+    newcamera.rotation.y = Math.PI / 2
+    newcamera.lookAt(scene.position)
+    return newcamera
+}
+
 export const renderer = new THREE.WebGLRenderer({
     canvas: canvas
 })
+renderer.camera = camera
 renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 export const clock = new THREE.Clock()
