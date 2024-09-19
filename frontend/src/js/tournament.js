@@ -120,11 +120,11 @@ async function playerAuth(tournament_id, round, group) {
 						<div id="error-message" class="text-danger mb-3" styl2="display: none;"></div>
 						<div class="form-group mb-3">
 							<label for="username" class="form-label" translate="username"></label>
-							<input type="text" class="form-control" id="username" required>
+							<input type="text" class="form-control" id="username2" required>
 						</div>
 						<div class="form-group mb-3">
 							<label for="password" class="form-label" translate="password"></label>
-							<input type="password" class="form-control" id="password" required>
+							<input type="password" class="form-control" id="password2" required>
 						</div>
 						<button type="submit" class="btn btn-primary w-100">Authenticate</button>
 					</form>
@@ -155,7 +155,9 @@ async function playerAuth(tournament_id, round, group) {
 			}
 
 			let player1 = false;
+			let name1;
 			let player2 = false;
+			let name2;
 			auth1Form.addEventListener('submit', async (event) => {
 				event.preventDefault();
 				const username = document.getElementById('username').value;
@@ -177,6 +179,7 @@ async function playerAuth(tournament_id, round, group) {
 						const data = await response.json();
 						console.log(data);
 						player1 = true;
+						name1 = username;
 					}
 					else
 					{
@@ -192,8 +195,8 @@ async function playerAuth(tournament_id, round, group) {
 
 			auth2Form.addEventListener('submit', async (event) => {
 				event.preventDefault();
-				const username = document.getElementById('username').value;
-				const password = document.getElementById('password').value;
+				const username = document.getElementById('username2').value;
+				const password = document.getElementById('password2').value;
 
 				try
 				{
@@ -211,6 +214,7 @@ async function playerAuth(tournament_id, round, group) {
 						const data = await response.json();
 						console.log(data);
 						player2 = true;
+						name2 = username;
 					}
 					else
 					{
@@ -229,7 +233,8 @@ async function playerAuth(tournament_id, round, group) {
 				continueButton.addEventListener('click', () => {
 					if (player1 === true && player2 === true)
 					{
-						loadContent('localMulti');
+						console.log("Users are", name1, "and", name2);
+						loadContent('tourney', 0, 0, 0, name1, name2);
 					}
 					else
 						console.log('authenticate players');

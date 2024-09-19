@@ -2,7 +2,7 @@ import * as THREE from 'three'
 import gsap from 'gsap'
 
 import * as t from './game.defs.js'
-import { switchToIdle, sendResults } from './game.js'
+import { switchToIdle, sendResults, sendTourneyResults } from './game.js'
 
 const plate = new THREE.Mesh(
     new THREE.BoxGeometry(4, 0.01, 4),
@@ -82,8 +82,11 @@ c.ball_max = c.pos_max - c.ball_radius
 c.paddle_max = c.pos_max - c.paddle_halfwidth
 Object.freeze(c)
 const v = {
+    matchIsTourney: false,
     left_pos: 0,
+    leftName: "",
     right_pos: 0,
+    rightName: "",
     up_pressed: false,
     down_pressed: false,
     up2_pressed: false,
@@ -179,9 +182,15 @@ function resetRound() {
 function addScore(player) {
     if (player === 'left') {
         if (v.score_left === v.score_to_win) {
-            console.log('victory')
-            showVictory()
-            return
+            if (v.matchIsTourney == false){
+                console.log('victory')
+                showVictory()
+                return
+            }
+            else{
+                showResult()
+                return
+            }
         }
         const score_clone = score.clone()
         score_clone.name = "score"
@@ -193,9 +202,15 @@ function addScore(player) {
     }
     else if (player === 'right') {
         if (v.score_right === v.score_to_win) {
+            if (v.matchIsTourney == false){
             console.log('loss')
             showLoss()
             return
+            }
+            else{
+                showResult()
+                return
+            }
         }
         const score_clone = score.clone()
         score_clone.name = "score"
@@ -223,6 +238,11 @@ function showLoss() {
     sendResults(v.score_left, v.score_right, true)
 }
 
+function showResult(){
+    sendTourneyResults(v.score_left, v.score_right, true, v.leftName, v.rightName)
+    v.score_left++
+    v.score_right++
+}
 function resetScore() {
     v.score_left = v.score_right = 0
     t.scene.remove(t.win_text)
@@ -231,18 +251,31 @@ function resetScore() {
         t.scene.remove(t.scene.getObjectByName("score"))
 }
 
-export function startGame() {
+export function startGame(isTourney, name1, name2) {
     t.scene.add(plate, left, right, top, bot)
     t.scene.add(ball)
     document.addEventListener("keydown", onDocumentKeyDown, true);
     document.addEventListener("keyup", onDocumentKeyUp, true);
-    const playerselect = document.getElementById("playerSelectForm")
-    playerselect.style.zIndex = 100
-    playerselect.addEventListener("submit", (e) => {
-        e.preventDefault()
-        startSolo()
-        playerselect.style.zIndex = -999
-    })
+    if (!isTourney)
+    {
+        const playerselect = document.getElementById("playerSelectForm")
+        playerselect.style.zIndex = 100
+        playerselect.addEventListener("submit", (e) => {
+            e.preventDefault()
+            startSolo(0)
+            playerselect.style.zIndex = -999
+        })
+    }
+    else
+    {
+        const beginMatch = document.getElementById('begin-tourney-match')
+        beginMatch.addEventListener('click', (e) => {
+            e.preventDefault
+            console.log("Tournament match between", name1, "and", name2, "started");
+            startSolo(1, name1, name2);
+            beginMatch.remove();
+        })
+    }
 }
 
 export function cleanUp() {
@@ -270,8 +303,14 @@ function onDocumentKeyUp(event) {
     else if (key_code === 37) { v.up2_pressed = false }
     else if (key_code === 39) { v.down2_pressed = false }
 }
-function startSolo() {
+function startSolo(isTourney, name1, name2) {
     v.game_started = true
+    if (isTourney)
+    {
+        v.matchIsTourney = true
+        v.leftName = name1
+        v.rightName = name2
+    }
     console.log(v)
     ball_drop.restart()
 }

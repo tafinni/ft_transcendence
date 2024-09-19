@@ -4,7 +4,7 @@ import { loadRegister, initializeRegister } from './register.js';
 import { loadProfile } from './profile/profile.js';
 import { updateContent, initI18next } from './i18n.js';
 import { loadGame, endGame, startGame } from './game.js';
-import { loadResult } from './result.js';
+import { loadResult, loadTourneyResult} from './result.js';
 import { showAlert } from './index.js';
 import { getCookie } from './csrf.js';
 import { loadTournamentLobby } from './tournament.js';
@@ -33,7 +33,7 @@ function navLinkVisibility(state) {
 }
 
 /* Update page content */
-export async function loadContent(content, scoreLeft, scoreRight, oppIsHuman, addHistory = true) {
+export async function loadContent(content, scoreLeft, scoreRight, oppIsHuman, name1, name2, addHistory = true) {
   await initI18next;
   const contentElement = document.getElementById('content');
 
@@ -79,13 +79,23 @@ export async function loadContent(content, scoreLeft, scoreRight, oppIsHuman, ad
 			break;
 		case 'localMulti':
 			contentElement.innerHTML = await loadGame(1);
-			startGame();
+			startGame(1);
+			navLinkVisibility(2);
+			break;
+		case 'tourney':
+			contentElement.innerHTML = await loadGame(3);
+			startGame(3, name1, name2);
 			navLinkVisibility(2);
 			break;
 		case 'result':
 			contentElement.innerHTML = await loadResult(scoreLeft, scoreRight, oppIsHuman);
 			navLinkVisibility(1);
 			break;
+		case 'tourneyResult':
+			contentElement.innerHTML = await loadTourneyResult(scoreLeft, scoreRight, name1, name2);
+			navLinkVisibility(1);
+			break;
+
 		case 'tournament-lobby':
 			await loadTournamentLobby();
 			navLinkVisibility(1);
