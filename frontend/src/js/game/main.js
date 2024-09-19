@@ -99,7 +99,8 @@ function startFourLocal() {
 }
 
 function startTTT() {
+    console.log('startTTT')
     m.cleanUp()
-    m = ttt
+    m = () => {}
     m.startGame()
 }

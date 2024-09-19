@@ -3,10 +3,14 @@ import * as THREE from 'three'
 //import GUI from 'lil-gui'
 //import gsap from 'gsap'
 
-import * as t from './include.js'
+import * as i from './include.js'
+import TicTacToeGrid from './ttt-include.js'
+
+export const tick = () => {}
 
 export function startGame() {
-
+    console.log('tictactoe startGame')
+    const game = new TicTacToeGrid(document.getElementById('webgl'))
 }
 
 export function cleanUp() {
