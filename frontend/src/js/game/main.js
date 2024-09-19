@@ -7,6 +7,7 @@ import * as i from './0p-idle.js'
 import * as s2 from './2p-pong-single.js'
 import * as l2 from './2p-pong-local.js'
 import * as l4 from './4p-pong-local.js'
+import * as ttt from './ttt-local.js'
 
 // Variable to track current mode
 let m = i
@@ -56,6 +57,7 @@ export function startGame() {
     if (gametype === 0) startQuickGame()
     else if (gametype === 1) startTwoLocal()
     else if (gametype === 2) startFourLocal()
+    else if (gametype === 5) startTTT()
     gametype = -1
 }
 
@@ -93,5 +95,11 @@ export function startTwoLocal() {
 function startFourLocal() {
     m.cleanUp()
     m = l4
+    m.startGame()
+}
+
+function startTTT() {
+    m.cleanUp()
+    m = ttt
     m.startGame()
 }
