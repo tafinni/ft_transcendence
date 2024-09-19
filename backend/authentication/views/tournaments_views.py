@@ -376,6 +376,8 @@ def get_tournament_matches(request):
         if not results.exists():
             # Get participants from tournament
             participants = Participants.objects.filter(tournament=tournament)
+            if not participants.exists():
+                return JsonResponse({'error': 'No participants in this tournament'}, status=400)
            # round_number = 1
             groups = {}
             for participant in participants:
