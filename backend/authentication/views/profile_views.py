@@ -188,3 +188,24 @@ def public_profile(request):
             'avatar': user_profile.avatar.url,
         }
         return JsonResponse(data) #ADD ERRORS
+    
+@csrf_exempt
+def check_game_password(request):
+    if request.method == "POST":
+        try:
+            body = json.loads(request.body)
+            check_user = body.get('check_user')
+            check_pass = body.get('check_pass')
+
+            if not check_user or not check_pass:
+                return JsonResponse({'error': 'Username and password are required'}, status=400)
+
+            user2 = authenticate(request, username=check_user, password=check_pass)
+            
+            if user2 is not None:
+                return JsonResponse({'message': 'Authentication successful'}, status=200)
+            else:
+                return JsonResponse({'error': 'Authentication failed'}, status=400)
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid JSON'}, status=400)
+    return JsonResponse({'error': 'Invalid request method'}, status=405)

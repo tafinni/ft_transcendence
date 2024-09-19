@@ -426,7 +426,7 @@ def get_tournament_matches(request):
 
         if not results.exists():
             # Get participants from tournament
-            participants = Participants.objects.filter(tournament=tournament, is_accepte=True) # accept
+            participants = Participants.objects.filter(tournament=tournament, is_accepted=True) # accept
             if not participants.exists():
                 return JsonResponse({'error': 'No participants in this tournament'}, status=400)
            # round_number = 1
@@ -435,6 +435,7 @@ def get_tournament_matches(request):
                 group_number = participant.group_number
                 if group_number not in groups:
                     groups[group_number] = []
+
                 groups[group_number].append(participant)
             # Create matches for round 1
             for group_number, group_participants in groups.items(): #?
@@ -513,3 +514,62 @@ def get_tournament_matches(request):
 
     return JsonResponse({'error': 'Invalid request method'}, status=405)
 
+
+
+@login_required
+@csrf_protect
+def get_next_match(request):
+    if request.method == "GET":
+        tournament_id = request.GET.get('tournament_id')
+    
+        try:
+            tournament = Tournament.objects.get(id=tournament_id)
+        except Tournament.DoesNotExist:
+            return JsonResponse({'error': 'Tournament not found'}, status=404)
+    
+        # Check if the current user is a participant in the tournament
+        is_participant = Participants.objects.filter(tournament=tournament, user=request.user).exists()
+        if not is_participant and request.user != tournament.initiator:
+            return JsonResponse({'error': 'You are not allowed to view this tournament'}, status=403)
+        
+        # Retrieve all results for the current tournament
+        results = ResultTournament.objects.filter(tournament=tournament)
+
+        # Get the current round or set it to 1 if no results exist
+        current_round = results.aggregate(max_round=Max('round_number'))['max_round'] or 1
+
+        # Look for the next match for the current user in the current round
+        next_match = results.filter(
+            round_number=current_round,
+            user=request.user
+        ).first()
+
+        if not next_match:
+            # Try checking if the current user is an opponent in any matches
+            next_match = results.filter(
+                round_number=current_round,
+                opponent=request.user
+            ).first()
+
+        if not next_match:
+            return JsonResponse({'message': 'No upcoming match found for this user'}, status=200)
+
+        # Get opponent information
+        if next_match.user == request.user:
+            opponent = next_match.opponent
+        else:
+            opponent = next_match.user
+
+        opponent_display_name = opponent.userprofile.display_name or opponent.username
+
+        # Check if the match has been played
+        match_status = next_match.result or 'Pending'
+
+        # Return match info
+        return JsonResponse({
+            'round_number': next_match.round_number,
+            'opponent': opponent_display_name,
+            'match_status': match_status
+        }, status=200)
+    
+    return JsonResponse({'error': 'Invalid request method'}, status=405)

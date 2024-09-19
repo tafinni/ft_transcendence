@@ -87,7 +87,7 @@ export async function loadContent(content, scoreLeft, scoreRight, oppIsHuman, ad
 			navLinkVisibility(1);
 			break;
 		case 'tournament-lobby':
-			contentElement.innerHTML = await loadTournamentLobby();
+			await loadTournamentLobby();
 			navLinkVisibility(1);
 			break;
 		default:

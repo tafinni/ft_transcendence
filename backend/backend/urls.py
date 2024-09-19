@@ -37,7 +37,8 @@ urlpatterns = [
     path('profile/', profile_views.profile, name='profile'),
     path('change_password/', profile_views.change_password, name='change_password'),
     path('public_profile/', profile_views.public_profile, name='public_profile'),
-
+    path('check_game_password/', profile_views.check_game_password, name='check_game_password'),
+    
     path('match_history/', match_views.match_history, name='match_history'),
     path('public_match_history/', match_views.public_match_history, name='public_match_history'),
     path('add_result/', match_views.add_result, name='add_result'),
@@ -59,6 +60,7 @@ urlpatterns = [
     path('is_user_in_tournament/', tournaments_views.is_user_in_tournament, name='is_user_in_tournament'),
     path('cancel_tournament/', tournaments_views.cancel_tournament, name='cancel_tournament'),
     path('get_tournament_matches/', tournaments_views.get_tournament_matches, name='get_tournament_matches'),
+    path('get_next_match/', tournaments_views.get_next_match, name='get_next_match'),
 
 ]
 
