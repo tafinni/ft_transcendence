@@ -109,3 +109,5 @@ def friends_statistics(request):
         })
 
     return JsonResponse({'friends': friends_data})
+
+

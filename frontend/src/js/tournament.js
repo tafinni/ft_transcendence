@@ -83,7 +83,8 @@ async function playerAuth(tournament_id, round, group) {
 	// get players' names
 	try
 	{
-/* 		const response = await fetch(`http://localhost:8000/get_match_details/?tournament_id=${tournament_id}&round=${round}&group=${group}`, {
+		
+		const response = await fetch(`http://localhost:8000/get_players/?tournament_id=${tournament_id}&round=${round}&group=${group}`, {
 			method: 'GET',
 			credentials: 'include',
 		});
@@ -94,7 +95,8 @@ async function playerAuth(tournament_id, round, group) {
 			return;
 		}
 		
-		const playerData = await response.json(); */
+		const playerData = await response.json();
+		console.log('player names: ', playerData);
 
 		const startHTML = `
 			<div class="bg-fade container-fluid d-flex justify-content-center align-items-center">
@@ -120,11 +122,11 @@ async function playerAuth(tournament_id, round, group) {
 						<div id="error-message" class="text-danger mb-3" styl2="display: none;"></div>
 						<div class="form-group mb-3">
 							<label for="username" class="form-label" translate="username"></label>
-							<input type="text" class="form-control" id="username" required>
+							<input type="text" class="form-control" id="username2" required>
 						</div>
 						<div class="form-group mb-3">
 							<label for="password" class="form-label" translate="password"></label>
-							<input type="password" class="form-control" id="password" required>
+							<input type="password" class="form-control" id="password2" required>
 						</div>
 						<button type="submit" class="btn btn-primary w-100">Authenticate</button>
 					</form>
@@ -192,8 +194,8 @@ async function playerAuth(tournament_id, round, group) {
 
 			auth2Form.addEventListener('submit', async (event) => {
 				event.preventDefault();
-				const username = document.getElementById('username').value;
-				const password = document.getElementById('password').value;
+				const username = document.getElementById('username2').value;
+				const password = document.getElementById('password2').value;
 
 				try
 				{
@@ -236,7 +238,9 @@ async function playerAuth(tournament_id, round, group) {
 				});
 			}
 
-		} else {
+		}
+		else
+		{
 			console.error('Content element not found');
 		}
 	}

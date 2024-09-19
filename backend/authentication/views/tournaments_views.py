@@ -573,3 +573,63 @@ def get_next_match(request):
         }, status=200)
     
     return JsonResponse({'error': 'Invalid request method'}, status=405)
+
+
+
+
+def get_players(request):
+    tournament_id = request.GET.get('tournament_id')
+    round_num = request.GET.get('round')
+    group_num = request.GET.get('group')
+
+
+    if not tournament_id or not round_num or not group_num:
+        return JsonResponse({'error': 'Tournament ID, round number, and group number are required'}, status=400)
+
+    try:
+        tournament = Tournament.objects.get(id=tournament_id)
+    except Tournament.DoesNotExist:
+        return JsonResponse({'error': 'Tournament not found'}, status=404)
+
+    # Check if the current user is a participant in the tournament
+    is_participant = Participants.objects.filter(tournament=tournament, user=request.user).exists()
+    if not is_participant and request.user != tournament.initiator:
+        return JsonResponse({'error': 'You are not allowed to view this tournament'}, status=403)
+
+    # Retrieve participants for the specified group and round
+    participants = Participants.objects.filter(
+        tournament=tournament,
+        group_number=group_num,
+        is_accepted=True  # Only include accepted participants
+    ).select_related('user')
+
+    # Ensure we have at least two players for the specified round
+    players_in_round = [
+        participant.user for participant in participants
+        if ResultTournament.objects.filter(
+            tournament=tournament,
+            user=participant.user,
+            round_number=round_num
+        ).exists()
+    ]
+
+    if len(players_in_round) < 2:
+        return JsonResponse({'error': 'Not enough players found for the specified round and group'}, status=404)
+
+    # Ensure we have at least two players
+    player1 = players_in_round[0]
+    player2 = players_in_round[1]
+
+    player1_display_name = player1.userprofile.display_name or player1.username
+    player2_display_name = player2.userprofile.display_name or player2.username
+
+    return JsonResponse({
+        'player1': {
+            'username': player1.username,
+            'display_name': player1_display_name
+        },
+        'player2': {
+            'username': player2.username,
+            'display_name': player2_display_name
+        }
+    })
