@@ -37,10 +37,12 @@ urlpatterns = [
     path('profile/', profile_views.profile, name='profile'),
     path('change_password/', profile_views.change_password, name='change_password'),
     path('public_profile/', profile_views.public_profile, name='public_profile'),
+    path('check_game_password/', profile_views.check_game_password, name='check_game_password'),
 
     path('match_history/', match_views.match_history, name='match_history'),
     path('public_match_history/', match_views.public_match_history, name='public_match_history'),
     path('add_result/', match_views.add_result, name='add_result'),
+    path('friends_statistics/', match_views.friends_statistics, name='friends_statistics'),
     path('friends_statistics/', match_views.friends_statistics, name='friends_statistics'),
 
     path('add_friend/', friends_views.add_friend, name='add_friend'),
@@ -49,13 +51,13 @@ urlpatterns = [
     path('decline_friend_request/', friends_views.decline_friend_request, name='decline_friend_request'),
 
     path('create_tournament/', tournaments_views.create_tournament, name='create_tournament'),
-    path('create_tournament/', tournaments_views.create_tournament, name='create_tournament'),
     path('invite_to_tournament/', tournaments_views.invite_to_tournament, name='invite_to_tournament'),
     path('accept_tournament_invitation/', tournaments_views.accept_tournament_invitation, name='accept_tournament_invitation'),
     path('decline_tournament_invitation/', tournaments_views.decline_tournament_invitation, name='decline_tournament_invitation'),
     path('list_invited_participants/', tournaments_views.list_invited_participants, name='list_invited_participants'),
     path('start_tournament/', tournaments_views.start_tournament, name='start_tournament'),
     path('is_user_in_tournament/', tournaments_views.is_user_in_tournament, name='is_user_in_tournament'),
+    path('cancel_tournament/', tournaments_views.cancel_tournament, name='cancel_tournament'),
     path('get_tournament_matches/', tournaments_views.get_tournament_matches, name='get_tournament_matches'),
 
 ]
