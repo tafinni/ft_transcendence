@@ -26,12 +26,16 @@ export function gametick60() {
     }
     if (v.l_left_pressed) v.left_pos -= i.player_speed
     if (v.l_right_pressed) v.left_pos += i.player_speed
+
     if (v.left_pos > i.paddle_max) v.left_pos = i.paddle_max
     else if (v.left_pos < -i.paddle_max) v.left_pos = -i.paddle_max
+
     if (v.r_left_pressed) v.right_pos -= i.player_speed
     if (v.r_right_pressed) v.right_pos += i.player_speed
+
     if (v.right_pos > i.paddle_max) v.right_pos = i.paddle_max
     else if (v.right_pos < -i.paddle_max) v.right_pos = -i.paddle_max
+
     if (!v.game_started || !v.game_running) return
     if (v.ball_speed < i.ball_base_speed) {
         v.ball_speed += Math.floor((i.ball_base_speed - v.ball_speed) / 100) * 10

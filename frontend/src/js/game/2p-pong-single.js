@@ -9,12 +9,14 @@ import { vars as v } from './2p-pong-include.js'
 
 export const camera = i.gcamera
 export const tick = () => {
+    aiMovePurple();
     i2.left.position.x = v.left_pos * i.pvmax_pmx
     i2.right.position.x = v.right_pos * i.pvmax_pmx
     i2.ball.position.z = v.ballX * i.avmax_pmx
     i2.ball.position.x = v.ballY * i.avmax_pmx
 }
 
+// let timerPurple = 0;
 export function startGame() {
     i.scene.add(i2.plate, i2.left, i2.right, i2.top, i2.bot)
     i.scene.add(i2.ball)
@@ -49,8 +51,8 @@ function onDocumentKeyDown(event) {
     var key_code = event.which
     if (key_code === 65) { v.l_left_pressed = true }
     else if (key_code === 68) { v.l_right_pressed = true }
-    else if (key_code === 37) { v.r_left_pressed = true }
-    else if (key_code === 39) { v.r_right_pressed = true }
+    // else if (key_code === 37) { v.r_left_pressed = true }
+    // else if (key_code === 39) { v.r_right_pressed = true }
     else if (key_code === 80) { 
         if (i.debug) {
             if (!v.game_started) reallyStart()
@@ -62,6 +64,56 @@ function onDocumentKeyUp(event) {
     var key_code = event.which
     if (key_code === 65) { v.l_left_pressed = false }
     else if (key_code === 68) { v.l_right_pressed = false }
-    else if (key_code === 37) { v.r_left_pressed = false }
-    else if (key_code === 39) { v.r_right_pressed = false }
+    // else if (key_code === 37) { v.r_left_pressed = false }
+    // else if (key_code === 39) { v.r_right_pressed = false }
+}
+
+let supposedZPurple;
+
+function predictBallZPurple() {
+    let predictedZ = v.ballY; // ball initial position
+    let predictedDeltaZ = Math.sin(v.ball_direction) * v.ball_speed; // change in z-axis per step
+    let distanceToPaddleAxis = i.pos_max + v.ballX; // distance from paddle movement axis
+    let predictedDirection = v.ball_direction;
+    if (distanceToPaddleAxis > i.pos_max * 2 || distanceToPaddleAxis < 0) // if beyond either paddle
+        return 0;
+    console.log("init dist:", distanceToPaddleAxis);
+    while (distanceToPaddleAxis > 0) {
+        predictedZ += predictedDeltaZ;
+        if (predictedZ < -i.pos_max || predictedZ > i.pos_max) {
+            console.log("Ball hit the wall at Z:", predictedZ, "with distance to paddle:", distanceToPaddleAxis);
+            predictedDirection *= -1;
+            predictedDeltaZ *= -1;
+        }
+        if (predictedZ < -i.pos_max) {
+            predictedZ = -i.pos_max;
+        } else if (predictedZ > i.pos_max) {
+            predictedZ = i.pos_max;
+        }
+        distanceToPaddleAxis -= Math.abs((Math.cos(predictedDirection) * v.ball_speed));
+    }
+    return predictedZ;
+}
+
+function aiMovePurple() {
+    let predictedZ;
+    // if (Date.now() - timerPurple > 1000) {
+        predictedZ = predictBallZPurple();
+        supposedZPurple = predictedZ;
+        // console.log("v.r.pos:", v.right_pos);
+        // timerPurple = Date.now();
+    // }
+
+    if (v.right_pos > supposedZPurple) {
+        v.r_left_pressed = true;
+        v.r_right_pressed = false;
+    } else if (v.right_pos < supposedZPurple) {
+        v.r_left_pressed = false;
+        v.r_right_pressed = true;
+    }
+    else{
+        v.r_left_pressed = false;
+        v.r_right_pressed = false;
+    }
+    // console.log("left pressed:", v.r_left_pressed, "right pressed:", v.r_right_pressed);
 }
