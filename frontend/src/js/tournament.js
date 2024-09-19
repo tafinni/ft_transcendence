@@ -2,69 +2,8 @@ import { getCookie } from "./csrf";
 import { updateContent } from "./i18n";
 import { loadContent } from "./router";
 import { showAlert } from "./index.js";
+import { startGame } from "./game.js";
 
-
-/* export async function loadTournamentLobby() {
-	try
-	{
-		const response = await fetch(`http://localhost:8000/is_user_in_tournament/`, {
-            method: 'GET',
-            credentials: 'include',
-        });
-
-        if (!response.ok) {
-            console.error('Failed:', response.statusText);
-            showAlert('Error occurred. Try again.', 'danger');
-            return;
-        }
-
-        const data = await response.json();
-		
-		const reply = await fetch(`http://localhost:8000/get_tournament_matches/?tournament_id=${data.tournament_id}`, {
-			method: 'GET',
-			credentials: 'include',
-		});
-		if (!reply.ok)
-		{
-			console.error('Failed loading tournament matches:', response.statusText);
-			showAlert('Error occurred loading tournament matches. Try again.', 'danger');
-			return;
-		}
-
-		const newData = await reply.json();
-		//console.log('testing: ', newData);
-
-	const lobbyHTML = `
-		<div class="container mt-5">
-			<button type="button" id="start-match-btn" class="btn btn-warning">Start match</button>
-		</div>
-	`;
-
-	const contentElement = document.getElementById('content');
-	if (contentElement)
-	{
-		contentElement.innerHTML = lobbyHTML;
-		updateContent();
-
-		const startMatchButton = document.getElementById('start-match-btn');
-		if (startMatchButton)
-		{
-			startMatchButton.addEventListener('click', () => {
-				console.log('Clicked start match button');
-				nextMatch(data.tournament_id);
-			});
-		}
-	}
-	else
-		console.error('Content element not found');
-	}
-	catch (error)
-	{
-		console.error('Error with tournament lobby', error);
-		showAlert('Error occured with tournament lobby. Try again.', 'danger');
-		loadContent('home');
-	}
-} */
 
 export async function loadTournamentLobby() {
 	try {
@@ -124,7 +63,7 @@ export async function loadTournamentLobby() {
 					const group = button.getAttribute('data-group');
 					console.log(`Start game for round ${round}, group ${group}`);
 					// Implement your logic to start the game for the selected match
-					startGame(data.tournament_id, round, group);
+					playerAuth(data.tournament_id, round, group);
 				});
 			});
 		} else {
@@ -137,181 +76,180 @@ export async function loadTournamentLobby() {
 	}
 }
 
-async function startGame(tournamentId, round, group) {
+async function playerAuth(tournament_id, round, group) {
 	// Implement your logic to start the game for the selected match
-	console.log(`Starting game for tournament ${tournamentId}, round ${round}, group ${group}`);
+	console.log(`Starting game for tournament ${tournament_id}, round ${round}, group ${group}`);
 
-	const startHTML = `
-		<div class="bg-fade container-fluid d-flex justify-content-center align-items-center">
-			<div class="card p-4" style="width: 20rem;">
-'				<h3 class="card-title text-center mb-4">Player 1</h3>
-'				<form id="auth1-form" method="POST">
-					<div id="error-message" class="text-danger mb-3" styl2="display: none;"></div>
-					<div class="form-group mb-3">
-						<label for="username" class="form-label" translate="username"></label>
-						<input type="text" class="form-control" id="username" required>
-					</div>
-					<div class="form-group mb-3">
-						<label for="password" class="form-label" translate="password"></label>
-						<input type="password" class="form-control" id="password" required>
-					</div>
-					<button type="submit" class="btn btn-primary w-100">Authenticate</button>
-				</form>
-			</div>
-
-			<div class="card p-4" style="width: 20rem;">
-				<h3 class="card-title text-center mb-4">Player 2</h3>
-				<form id="auth2-form" method="POST">
-					<div id="error-message" class="text-danger mb-3" styl2="display: none;"></div>
-					<div class="form-group mb-3">
-						<label for="username" class="form-label" translate="username"></label>
-						<input type="text" class="form-control" id="username" required>
-					</div>
-					<div class="form-group mb-3">
-						<label for="password" class="form-label" translate="password"></label>
-						<input type="password" class="form-control" id="password" required>
-					</div>
-					<button type="submit" class="btn btn-primary w-100">Authenticate</button>
-				</form>
-				<button type="click" id="continue-btn" class="btn btn-warning w-100">Continue</button>
-
-			</div>
-		</div>
-	`;
-
-	const contentElement = document.getElementById('content');
-	if (contentElement) {
-		contentElement.innerHTML = startHTML;
-		updateContent();
-
-		const auth1Form = document.getElementById('auth1-form');
-		if (!auth1Form)
-		{
-			console.error('Auth1 form not found');
-			showAlert('Error occured. Try again', 'danger');
-			return ;
-		}
-		const auth2Form = document.getElementById('auth2-form');
-		if (!auth2Form)
-		{
-			console.error('Auth1 form not found');
-			showAlert('Error occured. Try again', 'danger');
-			return ;
-		}
-
-		let player1 = false;
-		let player2 = false;
-		auth1Form.addEventListener('submit', async (event) => {
-			event.preventDefault();
-			const username = document.getElementById('username').value;
-			const password = document.getElementById('password').value;
-
-			try
-			{
-				const csrftoken = getCookie('csrftoken');
-				const response = await fetch('http://localhost:8000/check_game_password/',
-				{
-					method: 'POST',
-					credentials: 'include',
-					headers: { 'Content-Type' : 'application/json', 'X-CSRFToken': csrftoken  },
-					body: JSON.stringify({ check_user: username, check_pass: password })
-				});
-		
-				if (response.ok)
-				{
-					const data = await response.json();
-					console.log(data);
-					player1 = true;
-				}
-				else
-				{
-					const errorData = await response.json();
-					console.error(errorData);
-				}
-			}
-			catch (error)
-			{
-				console.error(error);
-			}
+	// get players' names
+	try
+	{
+/* 		const response = await fetch(`http://localhost:8000/get_match_details/?tournament_id=${tournament_id}&round=${round}&group=${group}`, {
+			method: 'GET',
+			credentials: 'include',
 		});
 
-		auth2Form.addEventListener('submit', async (event) => {
-			event.preventDefault();
-			const username = document.getElementById('username').value;
-			const password = document.getElementById('password').value;
-
-			try
-			{
-				const csrftoken = getCookie('csrftoken');
-				const response = await fetch('http://localhost:8000/check_game_password/',
-				{
-					method: 'POST',
-					credentials: 'include',
-					headers: { 'Content-Type' : 'application/json', 'X-CSRFToken': csrftoken  },
-					body: JSON.stringify({ check_user: username, check_pass: password })
-				});
+		if (!response.ok) {
+			console.error('Failed fetching match details:', response.statusText);
+			showAlert('Error occurred fetching match details. Try again.', 'danger');
+			return;
+		}
 		
-				if (response.ok)
-				{
-					const data = await response.json();
-					console.log(data);
-					player2 = true;
-				}
-				else
-				{
-					const errorData = await response.json();
-					console.error(errorData);
-				}
-			}
-			catch (error)
-			{
-				console.error(error);
-			}
-		});
+		const playerData = await response.json(); */
 
-		const continueButton = document.getElementById('continue-btn');
-		if (continueButton) {
-			continueButton.addEventListener('click', () => {
-				if (player1 === true && player2 === true)
-					console.log('open game');
-				else
-					console.log('authenticate players');
+		const startHTML = `
+			<div class="bg-fade container-fluid d-flex justify-content-center align-items-center">
+				<div class="card p-4" style="width: 20rem;">
+	'				<h3 class="card-title text-center mb-4">Player 1</h3>
+	'				<form id="auth1-form" method="POST">
+						<div id="error-message" class="text-danger mb-3" styl2="display: none;"></div>
+						<div class="form-group mb-3">
+							<label for="username" class="form-label" translate="username"></label>
+							<input type="text" class="form-control" id="username" required>
+						</div>
+						<div class="form-group mb-3">
+							<label for="password" class="form-label" translate="password"></label>
+							<input type="password" class="form-control" id="password" required>
+						</div>
+						<button type="submit" class="btn btn-primary w-100">Authenticate</button>
+					</form>
+				</div>
+
+				<div class="card p-4" style="width: 20rem;">
+					<h3 class="card-title text-center mb-4">Player 2</h3>
+					<form id="auth2-form" method="POST">
+						<div id="error-message" class="text-danger mb-3" styl2="display: none;"></div>
+						<div class="form-group mb-3">
+							<label for="username" class="form-label" translate="username"></label>
+							<input type="text" class="form-control" id="username" required>
+						</div>
+						<div class="form-group mb-3">
+							<label for="password" class="form-label" translate="password"></label>
+							<input type="password" class="form-control" id="password" required>
+						</div>
+						<button type="submit" class="btn btn-primary w-100">Authenticate</button>
+					</form>
+					<button type="click" id="continue-btn" class="btn btn-warning w-100">Continue</button>
+
+				</div>
+			</div>
+		`;
+
+		const contentElement = document.getElementById('content');
+		if (contentElement) {
+			contentElement.innerHTML = startHTML;
+			updateContent();
+
+			const auth1Form = document.getElementById('auth1-form');
+			if (!auth1Form)
+			{
+				console.error('Auth1 form not found');
+				showAlert('Error occured. Try again', 'danger');
+				return ;
+			}
+			const auth2Form = document.getElementById('auth2-form');
+			if (!auth2Form)
+			{
+				console.error('Auth1 form not found');
+				showAlert('Error occured. Try again', 'danger');
+				return ;
+			}
+
+			let player1 = false;
+			let player2 = false;
+			auth1Form.addEventListener('submit', async (event) => {
+				event.preventDefault();
+				const username = document.getElementById('username').value;
+				const password = document.getElementById('password').value;
+
+				try
+				{
+					const csrftoken = getCookie('csrftoken');
+					const response = await fetch('http://localhost:8000/check_game_password/',
+					{
+						method: 'POST',
+						credentials: 'include',
+						headers: { 'Content-Type' : 'application/json', 'X-CSRFToken': csrftoken  },
+						body: JSON.stringify({ check_user: username, check_pass: password })
+					});
+			
+					if (response.ok)
+					{
+						const data = await response.json();
+						console.log(data);
+						player1 = true;
+					}
+					else
+					{
+						const errorData = await response.json();
+						console.error(errorData);
+					}
+				}
+				catch (error)
+				{
+					console.error(error);
+				}
 			});
+
+			auth2Form.addEventListener('submit', async (event) => {
+				event.preventDefault();
+				const username = document.getElementById('username').value;
+				const password = document.getElementById('password').value;
+
+				try
+				{
+					const csrftoken = getCookie('csrftoken');
+					const response = await fetch('http://localhost:8000/check_game_password/',
+					{
+						method: 'POST',
+						credentials: 'include',
+						headers: { 'Content-Type' : 'application/json', 'X-CSRFToken': csrftoken  },
+						body: JSON.stringify({ check_user: username, check_pass: password })
+					});
+			
+					if (response.ok)
+					{
+						const data = await response.json();
+						console.log(data);
+						player2 = true;
+					}
+					else
+					{
+						const errorData = await response.json();
+						console.error(errorData);
+					}
+				}
+				catch (error)
+				{
+					console.error(error);
+				}
+			});
+
+			const continueButton = document.getElementById('continue-btn');
+			if (continueButton) {
+				continueButton.addEventListener('click', () => {
+					if (player1 === true && player2 === true)
+					{
+						loadContent('localMulti');
+					}
+					else
+						console.log('authenticate players');
+				});
+			}
+
+		} else {
+			console.error('Content element not found');
 		}
-
-
-
-	} else {
-		console.error('Content element not found');
+	}
+	catch (error)
+	{
+		console.error(error);
 	}
 
 
 	
-	// You can send a request to the server to start the game, or navigate to a game page
 }
 	
 
-// Function to start a match
-async function startMatch(matchId) {
-    try {
-        const response = await fetch(`http://localhost:8000/start_match/${matchId}/`, {
-            method: 'POST',
-            credentials: 'include',
-        });
-
-        if (!response.ok) {
-            console.error('Failed to start match:', response.statusText);
-            showAlert('Error occurred starting the match. Try again.', 'danger');
-            return;
-        }
-
-        showAlert('Match started successfully!', 'success');
-        loadTournamentLobby(); // Reload the lobby to update the match status
-    } catch (error) {
-        console.error('Error starting match', error);
-        showAlert('Error occurred with match start. Try again.', 'danger');
-    }
-}
 
 
 export async function tournamentSetUp(count) {
