@@ -41,7 +41,7 @@ export async function loadContent(content, scoreLeft, scoreRight, oppIsHuman, ad
 	{
 		content = 'login';
 		console.log('Redirected to login');
-		alert('Please log in');
+		showAlert('Please log in', 'danger');
 	}
 
 	if (addHistory)

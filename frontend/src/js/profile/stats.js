@@ -20,8 +20,6 @@ export async function matchHistory () {
 		const data = await response.json();
 		const matches = data.matches;
 
-		console.log('matchHistory called', data);
-
 		const matchHistoryHTML = `
 			<div class="container mt-5">
 				<div class="row">
@@ -69,9 +67,7 @@ export async function matchHistory () {
 			backButtonListener();
 		}
 		else
-		{
 			console.error('Content element not found');
-		}
 	}
 	catch (error)
 	{
@@ -180,12 +176,9 @@ export async function loadChartOne() {
 
 			updateContent();
 			backButtonListener();
-
 		}
 		else
-		{
 			console.error('Content element not found');
-		}
 	}
 	catch (error)
 	{
@@ -284,14 +277,13 @@ export async function loadChartTwo() {
                     }
                 }
             });
-
             updateContent();
             backButtonListener();
         } 
 		else
 		{
             console.error('Content element not found');
-			showAlert('Error occured loading graph. Try Again', 'danger');
+			showAlert('Error occured loading chart. Try Again', 'danger');
 			loadContent('profile');
         }
     }

@@ -4,6 +4,7 @@ import { loadContent } from "../router.js";
 import { checkUserLanguage } from "../i18n.js";
 import { showAlert } from "../index.js";
 import { getCookie } from '../csrf.js';
+import { loadProfile } from "./profile.js";
 
 export async function editInfo() {
 
@@ -70,13 +71,12 @@ export async function editInfo() {
 	else
 	{
 		console.error('Content element not found');
+		showAlert('Error occured. Try again.', 'danger');
+		loadContent('profile');
 	}
 }
 
 export async function saveInfo() {
-
-    console.log('saveInfo called'); // Debugging
-
     const editInfoForm = document.getElementById('edit-info-form');
     if (!editInfoForm)
 	{
@@ -124,11 +124,11 @@ export async function saveInfo() {
         {
             console.error('Error during edit info', error);
 			showAlert('Error editin user info. Try again.', 'danger');
+			loadContent('profile');
         }
     });
 
 	cancelButton.addEventListener('click', () => {
-		console.log('Cancelled edit info'); // Debugging
 		loadContent('profile');
 	});
 }
@@ -164,11 +164,12 @@ export async function editAvatar() {
 	else
 	{
 		console.error('Content element not found');
+		showAlert('Error occured. Try again', 'danger');
+		loadContent('profile');
 	}
 }
 
 async function saveAvatar() {
-    console.log('saveInfo called'); // Debugging
 
     const editAvatarForm = document.getElementById('edit-avatar-form');
     if (!editAvatarForm)
@@ -200,7 +201,7 @@ async function saveAvatar() {
             if (response.ok)
             {
                 const data = await response.json();
-                console.log('Edit avatar successful'); // Debugging
+                console.log('Edit avatar successful');
                 showAlert(data.message, 'success');
                 loadContent('profile');
             }
@@ -220,7 +221,6 @@ async function saveAvatar() {
     });
 
 	cancelButton.addEventListener('click', () => {
-		console.log('Cancelled edit info');
 		loadContent('profile');
 	});
 }

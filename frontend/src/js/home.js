@@ -119,7 +119,8 @@ async function setTournamentButtons(options) {
 
         const data = await response.json();
 
-        if (options === false)
+        // second click closes options
+        if (options === false) 
         {
             tournamentOptions.classList.add('d-none');
             tournamentOptions.classList.remove('d-flex');
@@ -133,6 +134,7 @@ async function setTournamentButtons(options) {
             tournamentFormExists.classList.add('d-none');
             tournamentFormExists.classList.remove('d-flex');
         }
+        // Player is in active tournament
         else if (data.in_tournament && data.status == 'Active')
         {
             enterTournament.classList.remove('d-none');
@@ -147,6 +149,7 @@ async function setTournamentButtons(options) {
             tournamentFormExists.classList.add('d-none');
             tournamentFormExists.classList.remove('d-flex');
         }
+        // Player is in a pending tournament
         else if (data.in_tournament && data.tournament_initiator !== data.user && data.status == 'Pending')
         {
             tournamentWaiting.classList.remove('d-none');
@@ -161,6 +164,7 @@ async function setTournamentButtons(options) {
             tournamentFormExists.classList.add('d-none');
             tournamentFormExists.classList.remove('d-flex');
         }
+        // Player starter of pending tournament
         else if (data.in_tournament && data.tournament_initiator === data.user)
         {
             tournamentFormExists.classList.remove('d-none');
@@ -173,8 +177,9 @@ async function setTournamentButtons(options) {
             tournamentWaiting.classList.remove('d-flex');
 
             tournamentOptions.classList.add('d-none');
-            tournamentOptions.classList.remove('d-flex');   
+            tournamentOptions.classList.remove('d-flex');
         }
+        // Player can start new tournament
         else 
         {
             tournamentOptions.classList.remove('d-none');

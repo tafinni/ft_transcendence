@@ -170,12 +170,9 @@ export async function loadProfile() {
 		await displayFriendRequests();
 		await displayGameInvites();
 		buttonListener();
-
 	}
 	else
-	{
 		console.error('Content element not found');
-	}
 }
 
 async function displayGameInvites() {
@@ -193,10 +190,8 @@ async function displayGameInvites() {
 	}
 
 	const data = await response.json();
-	console.log('display game invites called', data); // Debugging
 
 	const invites = data.tournament_invitations;
-
 	const gameInviteContainer = document.getElementById('game-invite-list');
 	gameInviteContainer.innerHTML = '';
 
@@ -241,7 +236,6 @@ async function displayGameInvites() {
 async function acceptInvite(initiator_username) {
 	try
 	{
-		console.log('initiator username: ', initiator_username);
 		const csrftoken = getCookie('csrftoken');
 		const response = await fetch('http://localhost:8000/accept_tournament_invitation/',
 		{
@@ -270,11 +264,11 @@ async function acceptInvite(initiator_username) {
 	{
 		console.error('Error during accepting game invite', error);
 		showAlert('Error occured when accepting invite. Try again.', 'danger');
+		loadContent('profile');
 	}
 }
 
 async function declineInvitation(initiator_username) {
-	
 	try
 	{
 		const csrftoken = getCookie('csrftoken');
@@ -314,7 +308,6 @@ export async function backButtonListener() {
 	if (backButton)
 	{
 		backButton.addEventListener('click', () => {
-			console.log('Clicked back button');
 			loadContent('profile');
 		});
 	}
@@ -331,15 +324,14 @@ export async function buttonListener () {
 	if (chartOneButton)
 	{
 		chartOneButton.addEventListener('click', () => {
-			console.log('Clicked chart one button');
 			loadChartOne();
 		});
 	}
+
 	const chartTwoButton = document.getElementById('chart-two-button');
 	if (chartTwoButton)
 	{
 		chartTwoButton.addEventListener('click', () => {
-			console.log('Clicked chart two button');
 			loadChartTwo();
 		});
 	}
@@ -347,33 +339,32 @@ export async function buttonListener () {
 	if (editButton) {
    		editButton.addEventListener('click', () => {
         	editInfo();
-    });
+ 	   });
 	}
 
 	if (editAvatarButton) {
 		editAvatarButton.addEventListener('click', () => {
 			editAvatar();
-	});
+		});
 	}
 
 	if (pwdButton) {
 		pwdButton.addEventListener('click', () => {
 			changePassword();
-	});
+		});
 	}
 
 	if (addFriendButton) {
 		addFriendButton.addEventListener('click', () => {
 			addFriend();
-	});
+		});
 	}
 
 	if (matchHistoryButton) {
 		matchHistoryButton.addEventListener('click', () => {
 			matchHistory();
-	});
+		});
 	}
-
 }
 
 

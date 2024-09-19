@@ -39,12 +39,14 @@ export async function loadTournamentLobby() {
 		console.error('Error with tournament lobby', error);
 		showAlert('Error occured with tournament lobby. Try again.', 'danger');
 		loadContent('home');
-	}	
+	}
+
+	const lobbyHTML = `
+	
+	`;
 }
 
 export async function tournamentSetUp(count) {
-	console.log("Called tournamentSetUp", count);
-
 	let tournamentID = -1;
 
 	const csrftoken = getCookie('csrftoken');
@@ -79,7 +81,6 @@ export async function tournamentSetUp(count) {
 		showAlert('Error during tournament setup. Try again.', 'danger');
 		loadContent('home');
 	}
-	console.log("the tournament id: ", tournamentID);
 
 	let setUpHTML = `
 		<div class="card-body d-flex flex-column align-items-center">
@@ -175,6 +176,7 @@ export async function tournamentSetUp(count) {
 			{
 				console.error('Error during start tournament', error);
 				showAlert('Error during starting tournament. Try Again', 'danger');
+				return ;
 			}
 		
 		});
@@ -280,7 +282,6 @@ async function updatePlayersList(tournamentID) {
 		if (response.ok)
 		{
 			const data = await response.json();
-			console.log('Getting player list successful');
 
 			const playersContainer = document.getElementById('players-container');
 			playersContainer.innerHTML = '';

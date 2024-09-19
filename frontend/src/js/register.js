@@ -56,8 +56,6 @@ export function initializeRegister() {
 		const username = document.getElementById('username').value;
 		const password = document.getElementById('password').value;
 
-		console.log('Form submitted'); // Debuggin, testing
-
 		const csrftoken = getCookie('csrftoken');
 
 		try
@@ -73,13 +71,12 @@ export function initializeRegister() {
 			if (response.ok)
 			{
 				const data = await response.json();
-				console.log('Registration successful:', data); // debugging, testing
+				console.log('Registration successful:', data);
 				showAlert(data.message, 'success');
 				loadContent('login');
 			}
 			else
 			{
-				console.error('Registration failed:', response.statusText);
 				const errorData = await response.json();
 				console.error('Registration failed:', errorData);
 				errorMessage.textContent = errorData.error;
@@ -89,11 +86,11 @@ export function initializeRegister() {
 		catch (error)
 		{
 			console.error('Error during registration:', error);
+			showAlert('Error occured. Try again.', 'danger');
 		}
 	});
 
 	cancelButton.addEventListener('click', () => {
-		console.log('Cancelled registration'); // Debugging
 		loadContent('login');
 	});
 }
