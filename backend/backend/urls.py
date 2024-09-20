@@ -62,6 +62,7 @@ urlpatterns = [
     path('cancel_tournament/', tournaments_views.cancel_tournament, name='cancel_tournament'),
     path('get_tournament_matches/', tournaments_views.get_tournament_matches, name='get_tournament_matches'),
     path('get_next_match/', tournaments_views.get_next_match, name='get_next_match'),
+    path('get_players/', tournaments_views.get_players, name='get_players'),
 
 ]
 

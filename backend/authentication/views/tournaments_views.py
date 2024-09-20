@@ -573,3 +573,33 @@ def get_next_match(request):
         }, status=200)
     
     return JsonResponse({'error': 'Invalid request method'}, status=405)
+
+
+@login_required
+def get_players(request):
+    tournament_id = request.GET.get('tournament_id')
+    group_num = request.GET.get('group')
+
+    # if not tournament_id or not round_num or not group_num:
+    if not tournament_id or not group_num:
+        return JsonResponse({'error': 'Tournament ID, round number, and group number are required', "req": str(request.GET)}, status=400)
+
+    # Retrieve participants for the specified group and round
+    participants = Participants.objects.filter(
+        tournament_id=tournament_id,
+        group_number=group_num,
+        is_accepted=True 
+    ).select_related('user')
+
+    players_in_round = [p.user for p in participants]
+
+    if len(players_in_round) != 2:
+        return JsonResponse({'error': 'Not enough players found for the specified round and group'}, status=404)
+
+    resp = {}
+    for i, p in enumerate(players_in_round, start=1):
+        resp[f'player{i}'] = {
+            'username': p.username,
+            'display_name': p.userprofile.display_name or p.username
+        }
+    return JsonResponse(resp)
