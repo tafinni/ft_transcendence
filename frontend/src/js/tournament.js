@@ -34,14 +34,17 @@ export async function loadTournamentLobby() {
 		}
 
 		const newData = await reply.json();
+		console.log('testing: ', newData);
 
-		// Generate HTML for tournament matches
 		const matchesHTML = newData.matches.map(match => `
 			<div class="match-container mb-3">
 				<p style="color: white"><strong>Round ${match.round_number}, Group ${match.group_number}</strong></p>
 				<p style="color: white">${match.player_1} vs ${match.player_2}</p>
-				<button type="button" class="btn btn-primary start-game-btn" data-round="${match.round_number}" data-group="${match.group_number}">Start Game</button>
-			</div>
+				${match.result === 'Pending' ? 
+					`<button type="button" class="btn btn-primary start-game-btn" data-round="${match.round_number}" data-group="${match.group_number}">Start Game</button>` 
+					: 
+					`<button type="button" class="btn btn-secondary" disabled>${match.result === 'in_progress' ? 'In Progress' : 'Completed'}</button>`
+				}			</div>
 		`).join('');
 
 		const lobbyHTML = `
@@ -62,7 +65,6 @@ export async function loadTournamentLobby() {
 					const round = button.getAttribute('data-round');
 					const group = button.getAttribute('data-group');
 					console.log(`Start game for round ${round}, group ${group}`);
-					// Implement your logic to start the game for the selected match
 					playerAuth(data.tournament_id, round, group);
 				});
 			});
@@ -77,14 +79,13 @@ export async function loadTournamentLobby() {
 }
 
 async function playerAuth(tournament_id, round, group) {
-	// Implement your logic to start the game for the selected match
 	console.log(`Starting game for tournament ${tournament_id}, round ${round}, group ${group}`);
 
 	// get players' names
 	try
 	{
 		
-		const response = await fetch(`http://localhost:8000/get_players/?tournament_id=${tournament_id}&round=${round}&group=${group}`, {
+		const response = await fetch(`http://localhost:8000/get_players/?tournament_id=${tournament_id}&group=${group}`, {
 			method: 'GET',
 			credentials: 'include',
 		});
@@ -101,12 +102,12 @@ async function playerAuth(tournament_id, round, group) {
 		const startHTML = `
 			<div class="bg-fade container-fluid d-flex justify-content-center align-items-center">
 				<div class="card p-4" style="width: 20rem;">
-	'				<h3 class="card-title text-center mb-4">Player 1</h3>
-	'				<form id="auth1-form" method="POST">
+					<h3 class="card-title text-center mb-4">Player 1</h3>
+					<form id="auth1-form" method="POST">
 						<div id="error-message" class="text-danger mb-3" styl2="display: none;"></div>
 						<div class="form-group mb-3">
 							<label for="username" class="form-label" translate="username"></label>
-							<input type="text" class="form-control" id="username" required>
+							<input type="text" class="form-control" id="username" value="${playerData.player1.username}" readonly>
 						</div>
 						<div class="form-group mb-3">
 							<label for="password" class="form-label" translate="password"></label>
@@ -122,7 +123,7 @@ async function playerAuth(tournament_id, round, group) {
 						<div id="error-message" class="text-danger mb-3" styl2="display: none;"></div>
 						<div class="form-group mb-3">
 							<label for="username" class="form-label" translate="username"></label>
-							<input type="text" class="form-control" id="username2" required>
+							<input type="text" class="form-control" id="username2" value="${playerData.player2.username}" readonly>
 						</div>
 						<div class="form-group mb-3">
 							<label for="password" class="form-label" translate="password"></label>
@@ -248,9 +249,6 @@ async function playerAuth(tournament_id, round, group) {
 	{
 		console.error(error);
 	}
-
-
-	
 }
 	
 

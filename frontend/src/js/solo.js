@@ -124,7 +124,7 @@ let ball_passed_timer = 0
 let gameover_timer = 0
 function gametick() {
     if (!game_running) {
-        if (score_left > score_to_win || score_right > score_to_win) 
+        if (score_left > score_to_win || score_right > score_to_win)
             if (gameover_timer++ > 360)
                 switchToIdle()
         return
