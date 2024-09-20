@@ -2,6 +2,8 @@ import { loadContent } from "./router.js";
 import { tournamentSetUp } from "./tournament.js"
 import { showAlert } from "./index.js";
 
+// local tournament dropdown triggers double events, this is used to prevent the second event
+var preventDuplicateLT = false
 
 export async function loadHome() {
     const htmlContent = `
@@ -10,27 +12,13 @@ export async function loadHome() {
                 <div class="card-body d-flex flex-column align-items-center">
                     <button class="btn btn-primary btn-lg mb-3" id="single-player-btn" translate="single player">Single Player</button>
                     <button class="btn btn-success btn-lg mb-3" id="local-multiplayer-btn" translate="local multiplayer">Local Multiplayer</button>
-                    <button class="btn btn-warning btn-lg mb-3" id="tournament-btn" translate="tournament">Tournament</button>
-
-                    <div id="tournament-waiting" class="d-none mt-3 flex-column align-items-center">
-                    <p class="w-100 text-center mb-2" style="color: white;" translate="wait for tournament to start">Wait for tournament to start</p>
-                    </div>
-
-                    <div id="tournament-form-exists" class="d-none mt-3 flex-column align-items-center">
-                        <button class="btn btn-link btn-md mb-3" id="back-to-invites" style="color: white" translate="back to invites">Back to invites</button>
-                    </div>
-
-                    <div id="enter-tournament" class="d-none mt-3 flex-column align-items-center">
-                        <button class="btn btn-light btn-md mb-3" id="enter-tournament-btn" translate="enter tournament">Enter tournament</button>
-                    </div>
-
-                    <div id="tournament-options" class="d-none mt-3 flex-column align-items-center">
-                        <p class="w-100 text-center mb-2" style="color: white;" translate="how many players?"></p>
-                        <div id="num-players" class="d-flex justify-content-center w-100">
-                            <button class="btn btn-light mx-1" id="four-players">4</button>
-                            <button class="btn btn-light mx-1" id="eight-players">8</button>
-                            <button class="btn btn-light mx-1" id="sixteen-players">16</button>
-                        </div>
+                    <div id="lt-event" class="dropdown ml-auto align-items-center">
+                        <button class="btn btn-primary dropdown-toggle btn-lg mb-3 align-items-center" type="button" id="local-tournament" data-toggle="dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Local Tournament</button>
+                        <div class="dropdown-menu" aria-labelledby="local-tournament">
+                        <a class="dropdown-item" href="#">2 players</a>
+                        <a class="dropdown-item" href="#">4 players</a>
+                        <a class="dropdown-item" href="#">8 players</a>
+                        <a class="dropdown-item" href="#">16 players</a>
                     </div>
                 </div>
             </div>
@@ -41,7 +29,8 @@ export async function loadHome() {
     window.requestAnimationFrame(() => {
         const singlePlayer = document.getElementById('single-player-btn');
         const twoPlayer = document.getElementById('local-multiplayer-btn');
-        const tournamentButton = document.getElementById('tournament-btn');
+        //const tournamentButton = document.getElementById('tournament-btn');
+        const localtourButton = document.getElementById('lt4')
         let options = false;
 
         if (singlePlayer) {
@@ -56,42 +45,32 @@ export async function loadHome() {
                 loadContent('localMulti');
             });
         }
-
-        tournamentButton.addEventListener('click', async (event) => {
-            event.preventDefault();
-            if (options === false)
-                options = true;
-            else if (options === true)
-                options = false;
-            setTournamentButtons(options);
-
-            const fourPlayersButton = document.getElementById('four-players');
-            const eightPlayersButton = document.getElementById('eight-players');
-            const sixteenPlayersButton = document.getElementById('sixteen-players');
-
-            if (fourPlayersButton) {
-                fourPlayersButton.addEventListener('click', (event) => {
-                    event.preventDefault();
-                    tournamentSetUp(4);
-                });
+        const dropdownContainer = document.getElementById('lt-event');
+        
+        dropdownContainer.addEventListener('click', function(event) {
+            if (event.target.classList.contains('dropdown-item')) {
+                event.preventDefault();
+                if (!preventDuplicateLT) {
+                    //console.log(`Selected option: ${event.target.textContent}`);
+                    const option = event.target.textContent
+                    if (option.indexOf('2') !== -1) startLocalTournament(2)
+                    else if (option.indexOf('4') !== -1) startLocalTournament(4)
+                    else if (option.indexOf('8') !== -1) startLocalTournament(8)
+                    else if (option.indexOf('16') !== -1) startLocalTournament(16)
+                    //console.log(event.target.textContent)
+                    preventDuplicateLT = true
+                }
+                setTimeout(() => { preventDuplicateLT = false
+                }, 200); // Adjust timeout as needed
+                //console.log(event)
             }
-            if (eightPlayersButton) {
-                eightPlayersButton.addEventListener('click', (event) => {
-                    event.preventDefault();
-                    tournamentSetUp(8);
-                });
-            }
-            if (sixteenPlayersButton) {
-                sixteenPlayersButton.addEventListener('click', (event) => {
-                    event.preventDefault();
-                    tournamentSetUp(16);
-                });
-            }
-
-
         });
     });
     return htmlContent;
+}
+
+async function startLocalTournament(players) {
+    loadContent('localtournament', players)
 }
 
 async function setTournamentButtons(options) {

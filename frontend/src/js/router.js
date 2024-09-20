@@ -8,6 +8,7 @@ import { loadResult } from './result.js';
 import { showAlert } from './index.js';
 import { getCookie } from './csrf.js';
 import { loadTournamentLobby } from './tournament.js';
+import { loadLocalTournament } from './localtournament.js'
 
 /* Set navigation bar visibility */
 function navLinkVisibility(state) {
@@ -88,6 +89,10 @@ export async function loadContent(content, scoreLeft, scoreRight, oppIsHuman, ad
 			break;
 		case 'tournament-lobby':
 			await loadTournamentLobby();
+			navLinkVisibility(1);
+			break;
+		case 'localtournament':
+			await loadLocalTournament(scoreLeft);
 			navLinkVisibility(1);
 			break;
 		default:
