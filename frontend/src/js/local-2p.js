@@ -235,7 +235,7 @@ function showLoss() {
     t.lose_text.lookAt(t.gcamera.position)
     t.scene.add(t.lose_text)
     v.score_right++
-    sendResults(v.score_left, v.score_right, true, v.name2)
+    sendResults(v.score_left, v.score_right, true, v.nameRight)
 }
 
 function showResult(){
@@ -251,7 +251,7 @@ function resetScore() {
         t.scene.remove(t.scene.getObjectByName("score"))
 }
 
-export function startGame(isTourney, name1, name2) {
+export function startGame(isTourney, nameLeft, nameRight) {
     t.scene.add(plate, left, right, top, bot)
     t.scene.add(ball)
     document.addEventListener("keydown", onDocumentKeyDown, true);
@@ -277,8 +277,8 @@ export function startGame(isTourney, name1, name2) {
         const beginMatch = document.getElementById('begin-tourney-match')
         beginMatch.addEventListener('click', (e) => {
             e.preventDefault
-            console.log("Tournament match between", name1, "and", name2, "started");
-            startSolo(1, name1, name2);
+            console.log("Tournament match between", nameLeft, "and", nameRight, "started");
+            startSolo(1, nameLeft, nameRight);
             beginMatch.remove();
         })
     }
@@ -309,17 +309,17 @@ function onDocumentKeyUp(event) {
     else if (key_code === 37) { v.up2_pressed = false }
     else if (key_code === 39) { v.down2_pressed = false }
 }
-function startSolo(isTourney, name1, name2) {
+function startSolo(isTourney, nameLeft, nameRight) {
     v.game_started = true
     if (isTourney)
     {
         v.matchIsTourney = true
-        v.leftName = name1
-        v.rightName = name2
+        v.leftName = nameLeft
+        v.rightName = nameRight
     }
     else
     {   
-        v.rightName = name2;
+        v.rightName = nameRight;
     }
     console.log(v)
     ball_drop.restart()

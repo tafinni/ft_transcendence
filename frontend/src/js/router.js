@@ -33,7 +33,7 @@ function navLinkVisibility(state) {
 }
 
 /* Update page content */
-export async function loadContent(content, scoreLeft, scoreRight, oppIsHuman, name1, name2, addHistory = true) {
+export async function loadContent(content, scoreLeft, scoreRight, oppIsHuman, nameLeft, nameRight, addHistory = true) {
   await initI18next;
   const contentElement = document.getElementById('content');
 
@@ -84,15 +84,15 @@ export async function loadContent(content, scoreLeft, scoreRight, oppIsHuman, na
 			break;
 		case 'tourney':
 			contentElement.innerHTML = await loadGame(3);
-			startGame(3, name1, name2);
+			startGame(3, nameLeft, nameRight);
 			navLinkVisibility(2);
 			break;
 		case 'result':
-			contentElement.innerHTML = await loadResult(scoreLeft, scoreRight, oppIsHuman, name2);
+			contentElement.innerHTML = await loadResult(scoreLeft, scoreRight, oppIsHuman, nameRight);
 			navLinkVisibility(1);
 			break;
 		case 'tourneyResult':
-			contentElement.innerHTML = await loadTourneyResult(scoreLeft, scoreRight, name1, name2);
+			contentElement.innerHTML = await loadTourneyResult(scoreLeft, scoreRight, nameLeft, nameRight);
 			navLinkVisibility(1);
 			break;
 

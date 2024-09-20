@@ -50,7 +50,7 @@ export async function loadResult(scoreLeft, scoreRight, oppIsHuman, oppName) {
     }
 }
 
-export async function loadTourneyResult(scoreLeft, scoreRight, name1, name2) {
+export async function loadTourneyResult(scoreLeft, scoreRight, nameLeft, nameRight) {
 	const csrftoken = getCookie('csrftoken');
     await fetch('http://localhost:8000/add_tourney_result/',
         {
@@ -58,7 +58,7 @@ export async function loadTourneyResult(scoreLeft, scoreRight, name1, name2) {
             credentials: 'include',
             headers: {
                 'Content-Type': 'application/json', 'X-CSRFToken': csrftoken },
-            body: JSON.stringify({scoreLeft, scoreRight, name1, name2})
+            body: JSON.stringify({scoreLeft, scoreRight, nameLeft, nameRight})
         });
     loadContent('home')
 }

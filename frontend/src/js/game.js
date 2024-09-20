@@ -54,11 +54,11 @@ export function loadGame(nbr) {
     return ``
 }
 
-export function startGame(gametype, name1, name2) {
+export function startGame(gametype, nameLeft, nameRight) {
     if (gametype === 0) startQuickGame()
     else if (gametype === 1) startTwoLocal()
     else if (gametype === 2) startFourLocal()
-    else if (gametype === 3) startTourney(name1, name2)
+    else if (gametype === 3) startTourney(nameLeft, nameRight)
     gametype = -1
 }
 
@@ -74,9 +74,9 @@ export function sendResults(scoreLeft, scoreRight, oppIsHuman, oppName) {
     }
 }
 
-export function sendTourneyResults(scoreLeft, scoreRight, oppIsHuman, name1, name2) {
+export function sendTourneyResults(scoreLeft, scoreRight, oppIsHuman, nameLeft, nameRight) {
     try {
-        loadContent('tourneyResult', scoreLeft, scoreRight, oppIsHuman, name1, name2)
+        loadContent('tourneyResult', scoreLeft, scoreRight, oppIsHuman, nameLeft, nameRight)
     } catch (error) {
         console.log('failed to sendResults:', error)
     }
@@ -101,10 +101,10 @@ export function startTwoLocal() {
     m.startGame(0)
 }
 
-export function startTourney(name1, name2){
+export function startTourney(nameLeft, nameRight){
     m.cleanUp()
     m = l2
-    m.startGame(1, name1, name2)
+    m.startGame(1, nameLeft, nameRight)
 }
 
 function startFourLocal() {

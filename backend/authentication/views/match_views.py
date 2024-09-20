@@ -51,42 +51,35 @@ def public_match_history(request):
             return JsonResponse({'error': 'User not found'}, status=404)
 
 
-# @login_required
-# @csrf_protect
-# @csrf_exempt
-# def add_result(request):
-#     data = json.loads(request.body)
-#     user = request.user
-#     user_stats = UserStats.objects.get(user=user)
-#     sLeft = data.get('scoreLeft')
-#     sRight = data.get('scoreRight')
-#     oppStatus = data.get('oppIsHuman')
-#     if (sLeft > sRight):
-#         user_stats.wins += 1
-#         result = 'WIN' + ' ' + str(sLeft) + '-' + str(sRight)
-#     elif (sRight > sLeft):
-#         user_stats.losses += 1
-#         result = 'LOST' + ' ' + str(sLeft) + '-' + str(sRight)
-#     else:
-#         result = 'DRAW' + ' ' + str(sLeft) + '-' + str(sRight)
-#     user_stats.save()
+@login_required
+def friends_statistics(request):
+    user = request.user
+    try:
+        friendships = Friendship.objects.filter(user=user, accepted=True)
+    except Friendship.DoesNotExist:
+        return JsonResponse({'error': 'No friends found'}, status=404)
 
-#     if oppStatus == 0:
-#         opp = 'AI'
-#     else:
-#         opp = 'Human'
-#     MatchHistory.objects.create(
-#         user = user,
-#         opponent = opp,
-#         date = datetime.datetime.now(),
-#         result = result
-#     )
-#     return JsonResponse({'message': 'Result saved successfully'})
+    friends_data = []
 
-# # better version, check all required params are sent before switching to it
+    for friendship in friendships:
+        friend = friendship.friend
+        try:
+            stats = UserStats.objects.get(user=friend)
+        except ObjectDoesNotExist:
+            stats = UserStats(user=friend, wins=0, losses=0)
+            stats.save() # ?
+
+        friends_data.append({
+            'friend_name': friend.username,
+            'wins': stats.wins,
+            'losses': stats.losses,
+        })
+
+    return JsonResponse({'friends': friends_data})
+
 @login_required
 @csrf_protect
-@csrf_exempt
+#@csrf_exempt
 def add_result(request):
     data = json.loads(request.body)
     user = request.user
@@ -154,46 +147,43 @@ def add_result(request):
         )
     return JsonResponse({'message': 'Result saved successfully'})
 
-@login_required
-def friends_statistics(request):
-    user = request.user
-    try:
-        friendships = Friendship.objects.filter(user=user, accepted=True)
-    except Friendship.DoesNotExist:
-        return JsonResponse({'error': 'No friends found'}, status=404)
-
-    friends_data = []
-
-    for friendship in friendships:
-        friend = friendship.friend
-        try:
-            stats = UserStats.objects.get(user=friend)
-        except ObjectDoesNotExist:
-            stats = UserStats(user=friend, wins=0, losses=0)
-            stats.save() # ?
-
-        friends_data.append({
-            'friend_name': friend.username,
-            'wins': stats.wins,
-            'losses': stats.losses,
-        })
-
-    return JsonResponse({'friends': friends_data})
-
-# @csrf_protect
-@csrf_exempt
+# @csrf_exempt
+@csrf_protect
 def add_tourney_result(request):
     data = json.loads(request.body)
-    pLeft = data.get('name1')
+    pLeft = data.get('nameLeft')
     userLeft = User.objects.get(username=pLeft)
     sLeft = data.get('scoreLeft')
-    pRight = data.get('name2')
+    pRight = data.get('nameRight')
     userRight = User.objects.get(username=pRight)
     sRight = data.get('scoreRight')
+    # testing
+    # try:
+    #     leftUser = User.objects.get(usrname=userLeft)
+    #     leftStats = UserStats.objects.get(user=leftUser)
+    #     rightUser = User.objects.get(username=userRight)
+    #     rightStats = UserStats.objects.get(user=rightUser)
+    #     if (sLeft > sRight):
+    #         leftStats.wins += 1
+    #         rightStats.losses +=1
+    #         leftResult = 'Tournament match: WIN' + ' ' + str(sLeft) + '-' + str(sRight)
+    #         rightResult = 'Tournament match: LOST' + ' ' + str(sRight) + '-' + str(sLeft)
+    #     elif (sRight > sLeft):
+    #         leftStats.losses += 1
+    #         rightStats.wins += 1
+    #         leftResult = 'Tournament match: LOST' + ' ' + str(sLeft) + '-' + str(sRight)
+    #         rightResult = 'Tournament match: WIN' + ' ' + str(sRight) + '-' + str(sLeft)
+    #     else:
+    #         leftResult = 'Tournament match: DRAW' + ' ' + str(sLeft) + '-' + str(sRight)
+    #         rightResult = 'Tournament match: DRAW' + ' ' + str(sRight) + '-' + str(sLeft)
+    #     leftStats.save()
+    #     rightStats.save()
+    # except:
+    # testing end
     if (sLeft > sRight):
-        result = 'WIN' + ' ' + str(sLeft) + '-' + str(sRight)
+        result = 'win' + ' ' + str(sLeft) + '-' + str(sRight)
     else:
-        result = 'LOST' + ' ' + str(sLeft) + '-' + str(sRight)
+        result = 'lost' + ' ' + str(sLeft) + '-' + str(sRight)
 
     MatchHistory.objects.create(
         user = userLeft,
@@ -202,9 +192,9 @@ def add_tourney_result(request):
         result = result
     )
     if (sLeft < sRight):
-        result = 'WIN' + ' ' + str(sLeft) + '-' + str(sRight)
+        result = 'win' + ' ' + str(sLeft) + '-' + str(sRight)
     else:
-        result = 'LOST' + ' ' + str(sLeft) + '-' + str(sRight)
+        result = 'lost' + ' ' + str(sLeft) + '-' + str(sRight)
 
     MatchHistory.objects.create(
         user = userRight,

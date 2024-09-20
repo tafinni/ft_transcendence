@@ -120,7 +120,7 @@ async function playerAuth(tournament_id, round, group) {
 						<div id="error-message" class="text-danger mb-3" styl2="display: none;"></div>
 						<div class="form-group mb-3">
 							<label for="username" class="form-label" translate="username"></label>
-							<input type="text" class="form-control" id="username2" required>
+							<input type="text" class="form-control" id="usernameRight" required>
 						</div>
 						<div class="form-group mb-3">
 							<label for="password" class="form-label" translate="password"></label>
@@ -155,9 +155,9 @@ async function playerAuth(tournament_id, round, group) {
 			}
 
 			let player1 = false;
-			let name1;
+			let nameLeft;
 			let player2 = false;
-			let name2;
+			let nameRight;
 			auth1Form.addEventListener('submit', async (event) => {
 				event.preventDefault();
 				const username = document.getElementById('username').value;
@@ -179,7 +179,7 @@ async function playerAuth(tournament_id, round, group) {
 						const data = await response.json();
 						console.log(data);
 						player1 = true;
-						name1 = username;
+						nameLeft = username;
 					}
 					else
 					{
@@ -195,7 +195,7 @@ async function playerAuth(tournament_id, round, group) {
 
 			auth2Form.addEventListener('submit', async (event) => {
 				event.preventDefault();
-				const username = document.getElementById('username2').value;
+				const username = document.getElementById('usernameRight').value;
 				const password = document.getElementById('password2').value;
 
 				try
@@ -214,7 +214,7 @@ async function playerAuth(tournament_id, round, group) {
 						const data = await response.json();
 						console.log(data);
 						player2 = true;
-						name2 = username;
+						nameRight = username;
 					}
 					else
 					{
@@ -233,8 +233,8 @@ async function playerAuth(tournament_id, round, group) {
 				continueButton.addEventListener('click', () => {
 					if (player1 === true && player2 === true)
 					{
-						console.log("Users are", name1, "and", name2);
-						loadContent('tourney', 0, 0, 0, name1, name2);
+						console.log("Users are", nameLeft, "and", nameRight);
+						loadContent('tourney', 0, 0, 0, nameLeft, nameRight);
 					}
 					else
 						console.log('authenticate players');
