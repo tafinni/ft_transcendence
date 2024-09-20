@@ -189,7 +189,7 @@ def public_profile(request):
             'avatar': user_profile.avatar.url,
         }
         return JsonResponse(data) #ADD ERRORS
-    
+
 @csrf_exempt
 def check_game_password(request):
     if request.method == "POST":

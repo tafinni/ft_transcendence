@@ -44,6 +44,7 @@ urlpatterns = [
     path('add_result/', match_views.add_result, name='add_result'),
     path('add_tourney_result/', match_views.add_tourney_result, name='add_tourney_result'),
     path('friends_statistics/', match_views.friends_statistics, name='friends_statistics'),
+    path('friends_statistics/', match_views.friends_statistics, name='friends_statistics'),
 
     path('add_friend/', friends_views.add_friend, name='add_friend'),
     path('remove_friend/', friends_views.remove_friend, name='remove_friend'),
