@@ -9,14 +9,15 @@ import { vars as v } from './2p-pong-include.js'
 
 export const camera = i.gcamera
 export const tick = () => {
-    aiMovePurple();
+    if (v.game_running)
+        aiMovePurple();
     i2.left.position.x = v.left_pos * i.pvmax_pmx
     i2.right.position.x = v.right_pos * i.pvmax_pmx
     i2.ball.position.z = v.ballX * i.avmax_pmx
     i2.ball.position.x = v.ballY * i.avmax_pmx
 }
 
-// let timerPurple = 0;
+let timerPurple = 0;
 export function startGame() {
     i.scene.add(i2.plate, i2.left, i2.right, i2.top, i2.bot)
     i.scene.add(i2.ball)
@@ -33,6 +34,7 @@ export function reallyStart() {
     l2.resetRound()
     l2.ball_drop.restart()
 }
+
 
 export function cleanUp() {
     if (i2.interval.id !== -1)
@@ -68,46 +70,71 @@ function onDocumentKeyUp(event) {
     // else if (key_code === 39) { v.r_right_pressed = false }
 }
 
-let supposedZPurple;
+let supposedXPurple;
 
-function predictBallZPurple() {
-    let predictedZ = v.ballY; // ball initial position
-    let predictedDeltaZ = Math.sin(v.ball_direction) * v.ball_speed; // change in z-axis per step
-    let distanceToPaddleAxis = i.pos_max + v.ballX; // distance from paddle movement axis
-    let predictedDirection = v.ball_direction;
-    if (distanceToPaddleAxis > i.pos_max * 2 || distanceToPaddleAxis < 0) // if beyond either paddle
-        return 0;
-    console.log("init dist:", distanceToPaddleAxis);
-    while (distanceToPaddleAxis > 0) {
-        predictedZ += predictedDeltaZ;
-        if (predictedZ < -i.pos_max || predictedZ > i.pos_max) {
-            console.log("Ball hit the wall at Z:", predictedZ, "with distance to paddle:", distanceToPaddleAxis);
-            predictedDirection *= -1;
-            predictedDeltaZ *= -1;
-        }
-        if (predictedZ < -i.pos_max) {
-            predictedZ = -i.pos_max;
-        } else if (predictedZ > i.pos_max) {
-            predictedZ = i.pos_max;
-        }
-        distanceToPaddleAxis -= Math.abs((Math.cos(predictedDirection) * v.ball_speed));
-    }
-    return predictedZ;
+function within2PI(initial){
+    while (initial < 0)
+        initial += Math.PI * 2;
+    while (initial > Math.PI * 2)
+        initial -= Math.PI * 2;
+    return initial;
 }
 
-function aiMovePurple() {
-    let predictedZ;
-    // if (Date.now() - timerPurple > 1000) {
-        predictedZ = predictBallZPurple();
-        supposedZPurple = predictedZ;
-        // console.log("v.r.pos:", v.right_pos);
-        // timerPurple = Date.now();
-    // }
+function predictBallXPurple() {
+    //conversion from ball cooridnates to world coordinates
+    //ball-x = world-z, ball-y = world-x
+    //using world coordinates from now on
+    let predictedX = v.ballY; // ball initial position
+    let predictedDeltaX = -Math.cos(v.ball_direction) * v.ball_speed; // change in X-axis per step
+    let deltaZ = -Math.sin(v.ball_direction) * v.ball_speed; // change in Z-axis per step
+    let distanceRemaining = i.pos_max + v.ballX; // distance from paddle movement axis
+    // let predictedDirection = v.ball_direction;
+    if (distanceRemaining > i.pos_max * 2 || distanceRemaining < 0) // if beyond either paddle
+        return 0;
+    console.log("init dist:", distanceRemaining);
+    while (distanceRemaining > 0) {
+        predictedX += predictedDeltaX;
+        if (predictedX < -i.pos_max || predictedX > i.pos_max) {
+            // console.log("Ball hit the wall at X:", predictedX, "with distance to paddle:", distanceRemaining);
+            // predictedDirection *= -1;
+            predictedDeltaX *= -1;
+        }
+        if (predictedX < -i.pos_max) {
+            predictedX = -i.pos_max;
+        } else if (predictedX > i.pos_max) {
+            predictedX = i.pos_max;
+        }
 
-    if (v.right_pos > supposedZPurple) {
+        let effectiveDirection = within2PI(v.ball_direction);
+        // distanceRemaining -= Math.abs((Math.cos(predictedDirection) * v.ball_speed));
+        if (effectiveDirection > 0 && effectiveDirection < Math.PI)
+            distanceRemaining += deltaZ;
+        else if (effectiveDirection > Math.PI && effectiveDirection < Math.PI * 2)
+            distanceRemaining -= deltaZ;
+        else
+            return 0;
+        // console.log("dist now", distanceRemaining, "ball dir", v.ball_direction);
+        if (distanceRemaining > i.pos_max * 2) // if beyond either paddle
+            return 0;
+    }
+    return predictedX;
+}
+
+
+function aiMovePurple() {
+    let predictedX;
+    if (Date.now() - timerPurple > 1000) {
+        predictedX = predictBallXPurple();
+        supposedXPurple = predictedX;
+        console.log("guessing, time now", Date.now());
+        timerPurple = Date.now();
+    }
+
+    // console.log("pos is",v.right_pos, "supp is", supposedXPurple);
+    if (v.right_pos > supposedXPurple) {
         v.r_left_pressed = true;
         v.r_right_pressed = false;
-    } else if (v.right_pos < supposedZPurple) {
+    } else if (v.right_pos < supposedXPurple) {
         v.r_left_pressed = false;
         v.r_right_pressed = true;
     }
