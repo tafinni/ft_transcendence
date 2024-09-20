@@ -1,7 +1,7 @@
 import { getCookie } from './csrf.js';
 import { loadContent } from './router.js';
 
-export async function loadResult(scoreLeft, scoreRight, oppIsHuman) {
+export async function loadResult(scoreLeft, scoreRight, oppIsHuman, oppName) {
 
 	const response = await fetch('http://localhost:8000/profile/', {
 		method: 'GET',
@@ -18,7 +18,7 @@ export async function loadResult(scoreLeft, scoreRight, oppIsHuman) {
                 credentials: 'include',
                 headers: {
                     'Content-Type': 'application/json', 'X-CSRFToken': csrftoken },
-                body: JSON.stringify({scoreLeft, scoreRight, oppIsHuman})
+                body: JSON.stringify({scoreLeft, scoreRight, oppIsHuman, oppName})
             });
     }
     if (scoreLeft > scoreRight)

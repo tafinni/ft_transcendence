@@ -66,9 +66,9 @@ export function endGame() {
     gametype = -1
 }
 
-export function sendResults(scoreLeft, scoreRight, oppIsHuman) {
+export function sendResults(scoreLeft, scoreRight, oppIsHuman, oppName) {
     try {
-        loadContent('result', scoreLeft, scoreRight, oppIsHuman)
+        loadContent('result', scoreLeft, scoreRight, oppIsHuman, "", oppName)
     } catch (error) {
         console.log('failed to sendResults:', error)
     }

@@ -227,7 +227,7 @@ function showVictory() {
     t.win_text.lookAt(t.gcamera.position)
     t.scene.add(t.win_text)
     v.score_left++
-    sendResults(v.score_left, v.score_right, true)
+    sendResults(v.score_left, v.score_right, true, v.rightName)
 }
 
 function showLoss() {
@@ -235,7 +235,7 @@ function showLoss() {
     t.lose_text.lookAt(t.gcamera.position)
     t.scene.add(t.lose_text)
     v.score_right++
-    sendResults(v.score_left, v.score_right, true)
+    sendResults(v.score_left, v.score_right, true, v.name2)
 }
 
 function showResult(){
@@ -259,11 +259,17 @@ export function startGame(isTourney, name1, name2) {
     if (!isTourney)
     {
         const playerselect = document.getElementById("playerSelectForm")
+        const nameForm = document.getElementById('username');
         playerselect.style.zIndex = 100
         playerselect.addEventListener("submit", (e) => {
-            e.preventDefault()
-            startSolo(0)
-            playerselect.style.zIndex = -999
+            let oppName = nameForm.value;
+            console.log("playing against", oppName);
+            if (oppName != "")
+            {
+                e.preventDefault()
+                startSolo(0, "", oppName)
+                playerselect.remove()
+            }
         })
     }
     else
@@ -310,6 +316,10 @@ function startSolo(isTourney, name1, name2) {
         v.matchIsTourney = true
         v.leftName = name1
         v.rightName = name2
+    }
+    else
+    {   
+        v.rightName = name2;
     }
     console.log(v)
     ball_drop.restart()
