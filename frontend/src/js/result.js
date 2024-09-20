@@ -51,23 +51,55 @@ export async function loadResult(scoreLeft, scoreRight, oppIsHuman) {
 }
 
 export async function loadTourneyResult(scoreLeft, scoreRight, name1, name2) {
-    try
-    {
+    try {
+        // Получаем идентификатор турнира
+        const response = await fetch('http://localhost:8000/is_user_in_tournament/', {
+            method: 'GET',
+            credentials: 'include',
+        });
+
+        if (!response.ok) {
+            console.error('Failed to retrieve tournament ID:', response.statusText);
+            return;
+        }
+
+        const data = await response.json();
+        const tournament_id = data.tournament_id;
+
+        // Проверяем, что tournament_id был получен
+        if (!tournament_id) {
+            console.error('Tournament ID not found');
+            return;
+        }
+
+        // Отправляем результат турнира
         const csrftoken = getCookie('csrftoken');
-        await fetch('http://localhost:8000/add_tourney_result/',
-        {
+        const resultResponse = await fetch('http://localhost:8000/add_tourney_result/', {
             method: 'POST',
             credentials: 'include',
             headers: {
-                'Content-Type': 'application/json', 'X-CSRFToken': csrftoken },
-            body: JSON.stringify({scoreLeft, scoreRight, name1, name2})
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrftoken
+            },
+            body: JSON.stringify({
+                scoreLeft,
+                scoreRight,
+                name1,
+                name2,
+                tournament_id // Добавляем tournament_id в запрос
+            })
         });
 
+        if (!resultResponse.ok) {
+            console.error('Failed to submit tournament result:', resultResponse.statusText);
+            return;
+        }
 
-    }
-    catch (error)
-    {
+        // Логируем успешный результат
+      //  console.log('Tournament result successfully submitted');
+        loadContent('tournament-lobby');
+
+    } catch (error) {
         console.error('Error with tournament result', error);
     }
-    loadContent('tournament-lobby')
 }

@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.http import JsonResponse
 import json
-from authentication.models import UserStats, UserProfile, MatchHistory, Friendship
+from authentication.models import UserStats, UserProfile, MatchHistory, Friendship, ResultTournament, Participants, Tournament
 from django.conf import settings
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
@@ -53,7 +53,7 @@ def public_match_history(request):
 
 @login_required
 @csrf_protect
-@csrf_exempt
+#@csrf_exempt
 def add_result(request):
     data = json.loads(request.body)
     user = request.user
@@ -178,35 +178,85 @@ def friends_statistics(request):
     return JsonResponse({'friends': friends_data})
 
 # @csrf_protect
-@csrf_exempt
 def add_tourney_result(request):
-    data = json.loads(request.body)
-    pLeft = data.get('name1')
-    userLeft = User.objects.get(username=pLeft)
-    sLeft = data.get('scoreLeft')
-    pRight = data.get('name2')
-    userRight = User.objects.get(username=pRight)
-    sRight = data.get('scoreRight')
-    if (sLeft > sRight):
-        result = 'WIN' + ' ' + str(sLeft) + '-' + str(sRight)
-    else:
-        result = 'LOST' + ' ' + str(sLeft) + '-' + str(sRight)
+    if request.method == "POST":
+        try:
+            # Parse JSON from request
+            data = json.loads(request.body)
+            pLeft = data.get('name1')
+            sLeft = int(data.get('scoreLeft'))
+            pRight = data.get('name2')
+            sRight = int(data.get('scoreRight'))
+            tournament_id = data.get('tournament_id')
 
-    MatchHistory.objects.create(
-        user = userLeft,
-        opponent = userRight,
-        date = datetime.datetime.now(),
-        result = result
-    )
-    if (sLeft < sRight):
-        result = 'WIN' + ' ' + str(sLeft) + '-' + str(sRight)
-    else:
-        result = 'LOST' + ' ' + str(sLeft) + '-' + str(sRight)
+            # Fetch user objects
+            userLeft = User.objects.get(username=pLeft)
+            userRight = User.objects.get(username=pRight)
 
-    MatchHistory.objects.create(
-        user = userRight,
-        opponent = userLeft,
-        date = datetime.datetime.now(),
-        result = result
-    )
-    return JsonResponse({'message': 'Result saved successfully'})
+            # Fetch or create user stats objects
+            user_statsL, _ = UserStats.objects.get_or_create(user=userLeft)
+            user_statsR, _ = UserStats.objects.get_or_create(user=userRight)
+
+            tournament = Tournament.objects.get(id=tournament_id)
+
+            # Determine result and update stats
+            if sLeft > sRight:
+                result_left = f'WIN {sLeft}-{sRight}'
+                result_right = f'LOSS {sLeft}-{sRight}'
+                user_statsL.wins += 1
+                user_statsR.losses += 1
+                match_result = 'win'
+            elif sLeft < sRight:
+                result_left = f'LOSS {sLeft}-{sRight}'
+                result_right = f'WIN {sLeft}-{sRight}'
+                user_statsL.losses += 1
+                user_statsR.wins += 1
+                match_result = 'loss'
+            else:
+                result_left = f'DRAW {sLeft}-{sRight}'
+                result_right = f'DRAW {sLeft}-{sRight}'
+                match_result = 'draw'
+
+            # Save match history for both players
+            MatchHistory.objects.create(
+                user=userLeft,
+                opponent=pRight,
+                date=datetime.datetime.now(),
+                result=result_left
+            )
+            MatchHistory.objects.create(
+                user=userRight,
+                opponent=pLeft,
+                date=datetime.datetime.now(),
+                result=result_right
+            )
+
+            # Save the updated stats
+            user_statsL.save()
+            user_statsR.save()
+
+            # Update the result in ResultTournament
+            # tournament_match = ResultTournament.objects.get(
+            #     tournament=tournament, 
+            #     user=userLeft, 
+            #     opponent=userRight
+            # )
+
+            tournament_match, created = ResultTournament.objects.get_or_create(
+                tournament=tournament,
+                user=userLeft,
+                opponent=userRight,
+                defaults={'result': match_result}  # Установим начальное значение result, если запись создаётся
+            )
+            tournament_match.result = match_result
+            tournament_match.save()
+
+
+            return JsonResponse({'message': 'Result saved successfully'}, status=200)
+
+        except User.DoesNotExist:
+            return JsonResponse({'error': 'User not found'}, status=404)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+
+    return JsonResponse({'error': 'Invalid request method'}, status=405)
