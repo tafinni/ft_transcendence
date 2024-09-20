@@ -158,7 +158,9 @@ async function playerAuth(tournament_id, round, group) {
 			}
 
 			let player1 = false;
+			let name1;
 			let player2 = false;
+			let name2;
 			auth1Form.addEventListener('submit', async (event) => {
 				event.preventDefault();
 				const username = document.getElementById('username').value;
@@ -180,6 +182,7 @@ async function playerAuth(tournament_id, round, group) {
 						const data = await response.json();
 						console.log(data);
 						player1 = true;
+						name1 = username;
 					}
 					else
 					{
@@ -214,6 +217,7 @@ async function playerAuth(tournament_id, round, group) {
 						const data = await response.json();
 						console.log(data);
 						player2 = true;
+						name2 = username;
 					}
 					else
 					{
@@ -232,7 +236,8 @@ async function playerAuth(tournament_id, round, group) {
 				continueButton.addEventListener('click', () => {
 					if (player1 === true && player2 === true)
 					{
-						loadContent('localMulti');
+						console.log("Users are", name1, "and", name2);
+						loadContent('tourney', 0, 0, 0, name1, name2);
 					}
 					else
 						console.log('authenticate players');
