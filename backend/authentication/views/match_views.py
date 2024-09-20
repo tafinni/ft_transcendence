@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.http import JsonResponse
 import json
-from authentication.models import UserStats, UserProfile, MatchHistory, Friendship
+from authentication.models import UserStats, UserProfile, MatchHistory, Friendship, Participants, Tournament, ResultTournament
 from django.conf import settings
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
@@ -151,55 +151,44 @@ def add_result(request):
 @csrf_protect
 def add_tourney_result(request):
     data = json.loads(request.body)
-    pLeft = data.get('nameLeft')
-    userLeft = User.objects.get(username=pLeft)
+    nameLeft = data.get('nameLeft')
+    userLeft = User.objects.get(username=nameLeft)
     sLeft = data.get('scoreLeft')
-    pRight = data.get('nameRight')
-    userRight = User.objects.get(username=pRight)
+    nameRight = data.get('nameRight')
+    userRight = User.objects.get(username=nameRight)
     sRight = data.get('scoreRight')
-    # testing
-    # try:
-    #     leftUser = User.objects.get(usrname=userLeft)
-    #     leftStats = UserStats.objects.get(user=leftUser)
-    #     rightUser = User.objects.get(username=userRight)
-    #     rightStats = UserStats.objects.get(user=rightUser)
-    #     if (sLeft > sRight):
-    #         leftStats.wins += 1
-    #         rightStats.losses +=1
-    #         leftResult = 'Tournament match: WIN' + ' ' + str(sLeft) + '-' + str(sRight)
-    #         rightResult = 'Tournament match: LOST' + ' ' + str(sRight) + '-' + str(sLeft)
-    #     elif (sRight > sLeft):
-    #         leftStats.losses += 1
-    #         rightStats.wins += 1
-    #         leftResult = 'Tournament match: LOST' + ' ' + str(sLeft) + '-' + str(sRight)
-    #         rightResult = 'Tournament match: WIN' + ' ' + str(sRight) + '-' + str(sLeft)
-    #     else:
-    #         leftResult = 'Tournament match: DRAW' + ' ' + str(sLeft) + '-' + str(sRight)
-    #         rightResult = 'Tournament match: DRAW' + ' ' + str(sRight) + '-' + str(sLeft)
-    #     leftStats.save()
-    #     rightStats.save()
-    # except:
-    # testing end
-    if (sLeft > sRight):
-        result = 'win' + ' ' + str(sLeft) + '-' + str(sRight)
-    else:
-        result = 'lost' + ' ' + str(sLeft) + '-' + str(sRight)
 
+    if (sLeft > sRight):
+        resultLeft = 'win' + ' ' + str(sLeft) + '-' + str(sRight)
+        resultRight = 'lost' + ' ' + str(sLeft) + '-' + str(sRight)
+        winner = "left"
+    else:
+        resultLeft = 'lost' + ' ' + str(sLeft) + '-' + str(sRight)
+        resultRight = 'win' + ' ' + str(sLeft) + '-' + str(sRight)
+        winner = "right"
     MatchHistory.objects.create(
         user = userLeft,
         opponent = userRight,
         date = datetime.datetime.now(),
-        result = result
+        result = resultLeft
     )
-    if (sLeft < sRight):
-        result = 'win' + ' ' + str(sLeft) + '-' + str(sRight)
-    else:
-        result = 'lost' + ' ' + str(sLeft) + '-' + str(sRight)
-
     MatchHistory.objects.create(
         user = userRight,
         opponent = userLeft,
         date = datetime.datetime.now(),
-        result = result
+        result = resultRight
     )
+    participant = Participants.objects.filter(user=userLeft, tournament__status=1).first()
+    tourId = participant.tournament_id
+    tourney = Tournament.objects.get(id=tourId)
+    results = ResultTournament.objects.filter(tournament=tourney)
+    if not results:
+        return JsonResponse({'message': 'no results'})
+    for result in results.filter(round_number=1):
+        if winner == "left":
+            result.result = "win"
+        else:
+            result.result = "loss"
+        result.save()
+        return JsonResponse({'message': 'results saved'})
     return JsonResponse({'message': 'Result saved successfully'})

@@ -82,22 +82,6 @@ export function sendTourneyResults(scoreLeft, scoreRight, oppIsHuman, nameLeft, 
     }
 }
 
-export function sendTourneyResults(scoreLeft, scoreRight, oppIsHuman, name1, name2) {
-    try {
-        loadContent('tourneyResult', scoreLeft, scoreRight, oppIsHuman, name1, name2)
-    } catch (error) {
-        console.log('failed to sendResults:', error)
-    }
-}
-
-export function sendTourneyResults(scoreLeft, scoreRight, oppIsHuman, name1, name2) {
-    try {
-        loadContent('tourneyResult', scoreLeft, scoreRight, oppIsHuman, name1, name2)
-    } catch (error) {
-        console.log('failed to sendResults:', error)
-    }
-}
-
 export function switchToIdle() {
     m.cleanUp()
     m = i

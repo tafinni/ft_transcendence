@@ -116,14 +116,14 @@ async function playerAuth(tournament_id, round, group) {
 						<button type="submit" class="btn btn-primary w-100">Authenticate</button>
 					</form>
 				</div>
-
+				<button type="click" id="continue-btn" class="btn btn-warning w-15">Continue</button>
 				<div class="card p-4" style="width: 20rem;">
 					<h3 class="card-title text-center mb-4">Player 2</h3>
 					<form id="auth2-form" method="POST">
 						<div id="error-message" class="text-danger mb-3" styl2="display: none;"></div>
 						<div class="form-group mb-3">
 							<label for="username" class="form-label" translate="username"></label>
-							<input type="text" class="form-control" id="username2" value="${playerData.player2.username}" readonly>
+							<input type="text" class="form-control" id="usernameRight" value="${playerData.player2.username}" readonly>
 						</div>
 						<div class="form-group mb-3">
 							<label for="password" class="form-label" translate="password"></label>
@@ -131,7 +131,6 @@ async function playerAuth(tournament_id, round, group) {
 						</div>
 						<button type="submit" class="btn btn-primary w-100">Authenticate</button>
 					</form>
-					<button type="click" id="continue-btn" class="btn btn-warning w-100">Continue</button>
 
 				</div>
 			</div>
@@ -183,6 +182,7 @@ async function playerAuth(tournament_id, round, group) {
 						console.log(data);
 						player1 = true;
 						nameLeft = username;
+						auth1Form.remove();
 					}
 					else
 					{
@@ -198,7 +198,7 @@ async function playerAuth(tournament_id, round, group) {
 
 			auth2Form.addEventListener('submit', async (event) => {
 				event.preventDefault();
-				const username = document.getElementById('username2').value;
+				const username = document.getElementById('usernameRight').value;
 				const password = document.getElementById('password2').value;
 
 				try
@@ -218,6 +218,7 @@ async function playerAuth(tournament_id, round, group) {
 						console.log(data);
 						player2 = true;
 						nameRight = username;
+						auth2Form.remove();
 					}
 					else
 					{
