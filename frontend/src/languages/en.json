@@ -74,6 +74,11 @@
 	"wait for tournament to start": "Wait for tournament to start",
 	"back to invites": "Back to invites",
 	"enter tournament": "Enter tournament",
-	"start game": "Start game"
+	"start game": "Start game",
+	"player 1": "Player 1",
+	"player 2": "Player 2",
+	"authenticate": "Authenticate",
+	"continue": "Continue",
+	"begin": "Begin"
 
 }

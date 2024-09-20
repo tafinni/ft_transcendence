@@ -7,6 +7,7 @@ import * as i from './idle.js'
 import * as s from './solo.js'
 import * as l2 from './local-2p.js'
 import * as l4 from './local-4p.js'
+import { updateContent } from "./i18n";
 
 // Variable to track current mode
 let m = i
@@ -50,7 +51,11 @@ export function loadGame(nbr) {
       <input type="submit" value="Invite">
     </form>`
     if (nbr == 3)
-        return '<button class="btn btn-primary btn-lg mb-3" id="begin-tourney-match">Begin</button>'
+    {
+        const HTML = `<button class="btn btn-primary btn-lg mb-3" id="begin-tourney-match" translate="begin"></button>`
+        updateContent();
+        return HTML;
+    }
     return ``
 }
 

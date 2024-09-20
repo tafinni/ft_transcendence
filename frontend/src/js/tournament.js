@@ -6,8 +6,8 @@ import { startGame } from "./game.js";
 
 
 export async function loadTournamentLobby() {
-	try {
-		// Fetch the user's tournament status
+	try
+	{
 		const response = await fetch(`http://localhost:8000/is_user_in_tournament/`, {
 			method: 'GET',
 			credentials: 'include',
@@ -21,7 +21,6 @@ export async function loadTournamentLobby() {
 
 		const data = await response.json();
 		
-		// Fetch the tournament matches
 		const reply = await fetch(`http://localhost:8000/get_tournament_matches/?tournament_id=${data.tournament_id}`, {
 			method: 'GET',
 			credentials: 'include',
@@ -54,7 +53,8 @@ export async function loadTournamentLobby() {
 		`;
 
 		const contentElement = document.getElementById('content');
-		if (contentElement) {
+		if (contentElement)
+		{
 			contentElement.innerHTML = lobbyHTML;
 			updateContent();
 
@@ -68,10 +68,14 @@ export async function loadTournamentLobby() {
 					playerAuth(data.tournament_id, round, group);
 				});
 			});
-		} else {
+		}
+		else
+		{
 			console.error('Content element not found');
 		}
-	} catch (error) {
+	}
+	catch (error)
+	{
 		console.error('Error with tournament lobby', error);
 		showAlert('Error occurred with tournament lobby. Try again.', 'danger');
 		loadContent('home');
@@ -81,7 +85,6 @@ export async function loadTournamentLobby() {
 async function playerAuth(tournament_id, round, group) {
 	console.log(`Starting game for tournament ${tournament_id}, round ${round}, group ${group}`);
 
-	// get players' names
 	try
 	{
 		
@@ -98,13 +101,17 @@ async function playerAuth(tournament_id, round, group) {
 		
 		const playerData = await response.json();
 		console.log('player names: ', playerData);
-
 		const startHTML = `
-			<div class="bg-fade container-fluid d-flex justify-content-center align-items-center">
-				<div class="card p-4" style="width: 20rem;">
-					<h3 class="card-title text-center mb-4">Player 1</h3>
+		<div class="container-fluid d-flex flex-column align-items-center">
+			<div class="d-flex justify-content-center mb-3" style="margin-top: 3%">
+				<div class="card p-4" style="width: 20rem; margin-right: 5%;">
+					<h3 class="card-title text-center mb-4 d-flex justify-content-center align-items-center">
+						<span>${playerData.player1.display_name}</span>
+						<span id="success-1" class="bi bi-check-circle ms-2" style="margin-left: 10px; color: green; display: none;"></span>						
+						<span id="error-message-1" class="bi bi-x-circle ms-2" style="margin-left: 10px; color: red; display: none;"></span>
+
+					</h3>
 					<form id="auth1-form" method="POST">
-						<div id="error-message" class="text-danger mb-3" styl2="display: none;"></div>
 						<div class="form-group mb-3">
 							<label for="username" class="form-label" translate="username"></label>
 							<input type="text" class="form-control" id="username" value="${playerData.player1.username}" readonly>
@@ -113,29 +120,40 @@ async function playerAuth(tournament_id, round, group) {
 							<label for="password" class="form-label" translate="password"></label>
 							<input type="password" class="form-control" id="password" required>
 						</div>
-						<button type="submit" class="btn btn-primary w-100">Authenticate</button>
+						<button type="submit" class="btn btn-primary w-100" translate="authenticate"></button>
 					</form>
 				</div>
-
+	
 				<div class="card p-4" style="width: 20rem;">
-					<h3 class="card-title text-center mb-4">Player 2</h3>
+					<h3 class="card-title text-center mb-4 d-flex justify-content-center align-items-center">
+						<span>${playerData.player2.display_name}</span>
+						<span id="success-2" class="bi bi-check-circle ms-2" style="margin-left: 10px; color: green; display: none;"></span>
+						<span id="error-message-2" class="bi bi-x-circle ms-2" style="margin-left: 10px; color: red; display: none;"></span>
+					</h3>
+
+
 					<form id="auth2-form" method="POST">
-						<div id="error-message" class="text-danger mb-3" styl2="display: none;"></div>
+						<div id="error-message-2" class="text-danger mb-3" style="display: none;"></div>
 						<div class="form-group mb-3">
-							<label for="username" class="form-label" translate="username"></label>
+							<label for="username2" class="form-label" translate="username"></label>
 							<input type="text" class="form-control" id="username2" value="${playerData.player2.username}" readonly>
 						</div>
 						<div class="form-group mb-3">
-							<label for="password" class="form-label" translate="password"></label>
+							<label for="password2" class="form-label" translate="password"></label>
 							<input type="password" class="form-control" id="password2" required>
 						</div>
-						<button type="submit" class="btn btn-primary w-100">Authenticate</button>
+						<button type="submit" class="btn btn-primary w-100" translate="authenticate"></button>
 					</form>
-					<button type="click" id="continue-btn" class="btn btn-warning w-100">Continue</button>
-
 				</div>
 			</div>
-		`;
+	
+			<div class="d-flex justify-content-center mt-3">
+				<button type="button" id="continue-btn" class="btn btn-warning btn-lg" translate="continue"></button>
+z			</div>
+		</div>
+	</div>
+	`;
+	
 
 		const contentElement = document.getElementById('content');
 		if (contentElement) {
@@ -161,6 +179,11 @@ async function playerAuth(tournament_id, round, group) {
 			let name1;
 			let player2 = false;
 			let name2;
+			const errorMessage1 = document.getElementById('error-message-1');
+			const errorMessage2 = document.getElementById('error-message-2');
+			const success1 = document.getElementById('success-1');
+			const success2 = document.getElementById('success-2');
+
 			auth1Form.addEventListener('submit', async (event) => {
 				event.preventDefault();
 				const username = document.getElementById('username').value;
@@ -183,11 +206,17 @@ async function playerAuth(tournament_id, round, group) {
 						console.log(data);
 						player1 = true;
 						name1 = username;
+						success1.style.display = 'block';
+						errorMessage1.style.display = 'none';
 					}
 					else
 					{
 						const errorData = await response.json();
 						console.error(errorData);
+						//errorMessage1.textContent = errorData.error;
+						errorMessage1.style.display = 'block';
+						player1 = false;
+						success1.style.display = 'none';
 					}
 				}
 				catch (error)
@@ -218,11 +247,16 @@ async function playerAuth(tournament_id, round, group) {
 						console.log(data);
 						player2 = true;
 						name2 = username;
+						success2.style.display = 'block';
+						errorMessage2.style.display = 'none';
 					}
 					else
 					{
 						const errorData = await response.json();
 						console.error(errorData);
+						errorMessage2.style.display = 'block';
+						player2 = false;
+						success2.style.display = 'none';
 					}
 				}
 				catch (error)
@@ -230,6 +264,7 @@ async function playerAuth(tournament_id, round, group) {
 					console.error(error);
 				}
 			});
+
 
 			const continueButton = document.getElementById('continue-btn');
 			if (continueButton) {
@@ -239,11 +274,9 @@ async function playerAuth(tournament_id, round, group) {
 						console.log("Users are", name1, "and", name2);
 						loadContent('tourney', 0, 0, 0, name1, name2);
 					}
-					else
-						console.log('authenticate players');
+
 				});
 			}
-
 		}
 		else
 		{
