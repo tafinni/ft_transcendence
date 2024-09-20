@@ -61,6 +61,7 @@ urlpatterns = [
     path('get_tournament_matches/', tournaments_views.get_tournament_matches, name='get_tournament_matches'),
     path('get_next_match/', tournaments_views.get_next_match, name='get_next_match'),
     path('get_players/', tournaments_views.get_players, name='get_players'),
+    path('update_game_status/', tournaments_views.update_game_status, name='update_game_status'),
 
 ]
 
