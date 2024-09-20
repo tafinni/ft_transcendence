@@ -38,10 +38,10 @@ export async function loadTournamentLobby() {
 
 		const matchesHTML = newData.matches.map(match => `
 			<div class="match-container mb-3">
-				<p style="color: white"><strong>Round ${match.round_number}, Group ${match.group_number}</strong></p>
+				<!-- <p style="color: white"><strong>Round ${match.round_number}, Group ${match.group_number}</strong></p> -->
 				<p style="color: white">${match.player_1} vs ${match.player_2}</p>
 				${match.result === 'Pending' ? 
-					`<button type="button" class="btn btn-primary start-game-btn" data-round="${match.round_number}" data-group="${match.group_number}">Start Game</button>` 
+					`<button type="button" class="btn btn-primary start-game-btn" data-round="${match.round_number}" data-group="${match.group_number}" translate="start game"></button>` 
 					: 
 					`<button type="button" class="btn btn-secondary" disabled>${match.result === 'in_progress' ? 'In Progress' : 'Completed'}</button>`
 				}			</div>
