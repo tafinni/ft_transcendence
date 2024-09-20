@@ -82,6 +82,8 @@ def change_password(request):
         confirm_password = body.get('confirm_password')
         if not all([current_password, new_password, confirm_password]):
             return JsonResponse({'error': 'All fields are required'}, status=400)
+        if not user.check_password(current_password):
+            return JsonResponse({'error': 'Current password not valid'}, status=400)
         if new_password != confirm_password:
             return JsonResponse({'error': 'New password and confirm password do not match'}, status=400)
         if new_password == current_password:
@@ -97,7 +99,6 @@ def change_password(request):
         return JsonResponse({'message': 'Password changed successfully'})
     
     return JsonResponse({'error': 'Invalid request method'}, status=405)
-
 
 @login_required
 @csrf_protect
@@ -188,7 +189,7 @@ def public_profile(request):
             'avatar': user_profile.avatar.url,
         }
         return JsonResponse(data) #ADD ERRORS
-
+    
 @csrf_exempt
 def check_game_password(request):
     if request.method == "POST":

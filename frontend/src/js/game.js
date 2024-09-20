@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import gsap from 'gsap'
 
-//import { loadContent } from './router.js'
+import { loadContent } from './router.js'
 import * as t from './game.defs.js'
 import * as i from './idle.js'
 import * as s from './solo.js'
@@ -49,13 +49,16 @@ export function loadGame(nbr) {
       </datalist><br>
       <input type="submit" value="Invite">
     </form>`
+    if (nbr == 3)
+        return '<button class="btn btn-primary btn-lg mb-3" id="begin-tourney-match">Begin</button>'
     return ``
 }
 
-export function startGame() {
+export function startGame(gametype, name1, name2) {
     if (gametype === 0) startQuickGame()
     else if (gametype === 1) startTwoLocal()
     else if (gametype === 2) startFourLocal()
+    else if (gametype === 3) startTourney(name1, name2)
     gametype = -1
 }
 
@@ -66,6 +69,14 @@ export function endGame() {
 export function sendResults(scoreLeft, scoreRight, oppIsHuman) {
     try {
         loadContent('result', scoreLeft, scoreRight, oppIsHuman)
+    } catch (error) {
+        console.log('failed to sendResults:', error)
+    }
+}
+
+export function sendTourneyResults(scoreLeft, scoreRight, oppIsHuman, name1, name2) {
+    try {
+        loadContent('tourneyResult', scoreLeft, scoreRight, oppIsHuman, name1, name2)
     } catch (error) {
         console.log('failed to sendResults:', error)
     }
@@ -87,7 +98,13 @@ export function startQuickGame() {
 export function startTwoLocal() {
     m.cleanUp()
     m = l2
-    m.startGame()
+    m.startGame(0)
+}
+
+export function startTourney(name1, name2){
+    m.cleanUp()
+    m = l2
+    m.startGame(1, name1, name2)
 }
 
 function startFourLocal() {

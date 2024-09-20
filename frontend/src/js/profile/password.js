@@ -40,18 +40,18 @@ export async function changePassword() {
 		savePassword();
 	}
 	else
-	{
 		console.error('Content element not found');
-	}
-
 }
 
 export async function savePassword() {
 
-    console.log('savePassword called'); // Debugging
-
 	const changePasswordForm = document.getElementById('change-password-form');
-	if (!changePasswordForm) { console.error('Change password form not found'); return ; }
+	if (!changePasswordForm)
+	{
+		console.error('Change password form not found');
+		showAlert('Error changing password. Try again', 'danger');
+		loadContent('profile');
+	}
 
 	const errorMessage = document.getElementById('error-message');
 	const cancelButton = document.getElementById('cancel-button');
@@ -62,8 +62,6 @@ export async function savePassword() {
 		const current_password = document.getElementById('current_password').value;
 		const new_password = document.getElementById('new_password').value;
 		const confirm_password = document.getElementById('confirm_password').value;
-
-		console.log('Change password form submitted');
 
 		const csrftoken = getCookie('csrftoken');
 		try
@@ -79,7 +77,7 @@ export async function savePassword() {
 			if (response.ok)
 			{
 				const data = await response.json();
-				console.log('Password change succesfull'); // Debugging
+				console.log('Password change succesfull');
 				showAlert(data.message, 'success');
 				loadContent('profile');
 			}
@@ -94,12 +92,12 @@ export async function savePassword() {
 		catch (error)
 		{
 			console.error('Error during change password', error);
-			showAlert('Error occured when changing the password. Try again.', 'danger')
+			showAlert('Error occured when changing the password. Try again.', 'danger');
+			loadContent('profile');
 		}
 	});
 
 	cancelButton.addEventListener('click', () => {
-		console.log('Cancelled change password'); // Debugging
 		loadContent('profile');
 	});
 }

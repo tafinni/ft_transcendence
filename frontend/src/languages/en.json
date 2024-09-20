@@ -67,7 +67,13 @@
 	"start tournament": "Start tournament",
 	"player count": "Player count",
 	"tournament for": "Tournament for",
-	"players": "Players"
+	"for players": "Players",
+	"players": "Players",
 
+	"cancel tournament": "Cancel tournament",
+	"wait for tournament to start": "Wait for tournament to start",
+	"back to invites": "Back to invites",
+	"enter tournament": "Enter tournament",
+	"start game": "Start game"
 
 }

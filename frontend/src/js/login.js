@@ -1,6 +1,7 @@
 import { checkUserLanguage } from './i18n.js';
 import { loadContent } from './router.js';
 import { getCookie } from './csrf.js';
+import { showAlert } from './index.js';
 
 export function loadLogIn() {
 	return `
@@ -30,10 +31,13 @@ export function loadLogIn() {
 
 export function initializeLogIn() {
 
-	console.log('initializeLogIn called'); // Debugging
-
     const loginForm = document.getElementById('login-form');
-    if (!loginForm) {console.error('Login form not found'); return;}
+    if (!loginForm)
+	{
+		console.error('Login form not found');
+		showAlert('Error occured. Try again.', 'danger');
+		return ;
+	}
 
 	const errorMessage = document.getElementById('error-message');
     const registerButton = document.getElementById('register-button');
@@ -59,9 +63,9 @@ export function initializeLogIn() {
             if (response.ok) 
 			{
                 const data = await response.json();
-                console.log('Login successful:', data); // debugging, testing
-				sessionStorage.setItem("username", username); // added for savin log in
-				localStorage.setItem('username', username); // added, testing
+                console.log('Login successful:', data);
+				sessionStorage.setItem("username", username);
+				localStorage.setItem('username', username);
 				checkUserLanguage();
 				loadContent('home');
 			} 
@@ -82,7 +86,6 @@ export function initializeLogIn() {
     });
 
 	registerButton.addEventListener('click', () => {
-        console.log('Pressed register button'); // Debugging
 		loadContent('register');
 	})
 }

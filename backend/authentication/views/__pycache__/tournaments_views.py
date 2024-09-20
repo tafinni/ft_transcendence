@@ -578,67 +578,56 @@ def get_next_match(request):
 @login_required
 def get_players(request):
     tournament_id = request.GET.get('tournament_id')
+    round_num = request.GET.get('round')
     group_num = request.GET.get('group')
 
-    # if not tournament_id or not round_num or not group_num:
-    if not tournament_id or not group_num:
+    if not tournament_id or not round_num or not group_num:
         return JsonResponse({'error': 'Tournament ID, round number, and group number are required', "req": str(request.GET)}, status=400)
+
+    try:
+        tournament = Tournament.objects.get(id=tournament_id)
+    except Tournament.DoesNotExist:
+        return JsonResponse({'error': 'Tournament not found'}, status=404)
+
+    # Check if the current user is a participant in the tournament
+    is_participant = Participants.objects.filter(tournament=tournament, user=request.user).exists()
+    if not is_participant and request.user != tournament.initiator:
+        return JsonResponse({'error': 'You are not allowed to view this tournament'}, status=403)
 
     # Retrieve participants for the specified group and round
     participants = Participants.objects.filter(
-        tournament_id=tournament_id,
+        tournament=tournament,
         group_number=group_num,
-        is_accepted=True 
+        is_accepted=True  # Only include accepted participants
     ).select_related('user')
 
-    players_in_round = [p.user for p in participants]
+    # Ensure we have at least two players for the specified round
+    players_in_round = [
+        participant.user for participant in participants
+        if ResultTournament.objects.filter(
+            tournament=tournament,
+            user=participant.user,
+            round_number=round_num
+        ).exists()
+    ]
 
-    if len(players_in_round) != 2:
+    if len(players_in_round) < 2:
         return JsonResponse({'error': 'Not enough players found for the specified round and group'}, status=404)
 
-    resp = {}
-    for i, p in enumerate(players_in_round, start=1):
-        resp[f'player{i}'] = {
-            'username': p.username,
-            'display_name': p.userprofile.display_name or p.username
+    # Ensure we have at least two players
+    player1 = players_in_round[0]
+    player2 = players_in_round[1]
+
+    player1_display_name = player1.userprofile.display_name or player1.username
+    player2_display_name = player2.userprofile.display_name or player2.username
+
+    return JsonResponse({
+        'player1': {
+            'username': player1.username,
+            'display_name': player1_display_name
+        },
+        'player2': {
+            'username': player2.username,
+            'display_name': player2_display_name
         }
-    return JsonResponse(resp)
-
-
-@csrf_protect
-@login_required
-def update_game_status(request):
-    # Get player usernames from the request
-    body = json.loads(request.body)
-    player1_username = body.get('player1')
-    player2_username = body.get('player2')
-
-    # Validate input
-    if not player1_username or not player2_username:
-        return JsonResponse({'error': 'Both player1 and player2 usernames are required'}, status=400)
-
-    # Fetch both players from the `User` model
-    try:
-        player1 = User.objects.get(username=player1_username)
-        player2 = User.objects.get(username=player2_username)
-    except User.DoesNotExist:
-        return JsonResponse({'error': 'One or both players not found'}, status=404)
-
-    # Retrieve the game involving both players
-    try:
-        game = ResultTournament.objects.filter(
-            (Q(user=player1) & Q(opponent=player2)) | 
-            (Q(user=player2) & Q(opponent=player1))
-        ).first()
-
-        if not game:
-            return JsonResponse({'error': 'Game between these players not found'}, status=404)
-
-    except ResultTournament.DoesNotExist:
-        return JsonResponse({'error': 'Game not found'}, status=404)
-
-    # Update game status (assuming `game_status` is a field on `ResultTournament`)
-    game.status = 'Completed'  # Or 'started', 'finished', etc.
-    game.save()
-
-    return JsonResponse({'success': 'Game status updated successfully'}, status=200)
+    })

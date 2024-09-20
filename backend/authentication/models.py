@@ -69,7 +69,6 @@ class Tournament(models.Model):
         (0, 'Pending'),
         (1, 'Active'),
         (2, 'Completed'),
-        (3, 'DElete') 
     ]
 
     initiator = models.ForeignKey(User, related_name='initiated_tournaments', on_delete=models.CASCADE)
