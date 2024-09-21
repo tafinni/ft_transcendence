@@ -438,7 +438,7 @@ def get_tournament_matches(request):
                         tournament = tournament,
                         user = participant1.user,
                         opponent = participant2.user,
-                        round_number = 1
+                        round_number = 1,
                     )
                     mResult.save()
                     matches_list.append({
