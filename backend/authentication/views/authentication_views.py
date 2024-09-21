@@ -53,7 +53,8 @@ def login_page(request):
     return JsonResponse({'error': 'Invalid request method'}, status=405)
 
 # Define a view function for the registration page
-@csrf_exempt
+# @csrf_exempt
+@csrf_protect
 def register_page(request):
     if request.method == 'POST':
         body = json.loads(request.body)
