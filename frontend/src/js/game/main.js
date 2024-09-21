@@ -1,7 +1,7 @@
 //import * as THREE from 'three'
-import gsap from 'gsap'
+//import gsap from 'gsap'
 
-//import { loadContent } from './router.js'
+import { loadContent } from '../router.js'
 import * as t from './include.js'
 import * as i from './0p-idle.js'
 import * as s2 from './2p-pong-single.js'
@@ -30,10 +30,11 @@ const tick = () => {
 }
 tick()
 
-var gametype = -1
-export function loadGame(nbr) {
-    gametype = nbr
-    if (nbr === 11111) return `<form id="playerSelectForm">
+var gametype = ''
+export function loadGame(type) {
+    console.log('loadGame:', type)
+    gametype = type
+    if (type === '11111') return `<form id="playerSelectForm">
       <label for="username">Player Name:</label><br>
       <input type="text" id="username" name="username" list="players">
       <datalist id="players">
@@ -48,11 +49,26 @@ export function loadGame(nbr) {
 }
 
 export function startGame() {
-    if (gametype === 0) startQuickGame()
-    else if (gametype === 1) startTwoLocal()
-    else if (gametype === 2) startFourLocal()
-    else if (gametype === 5) startTTT()
-    gametype = -1
+    switch (gametype) {
+        case 's2':
+            startQuickGame();
+            break;
+        case 'l2':
+            startTwoLocal();
+            break;
+        case 's4':
+            //startSolo4P();
+            break;
+        case 'l4':
+            startFourLocal();
+            break;
+        case 'st':
+            //startSoloTTT();
+            break;
+        case 'lt':
+            startTTT();
+            break;
+    }
 }
 
 export function endGame() {
@@ -91,8 +107,6 @@ export async function startTwoTournament(match, next_bracket, p1, p2) {
     m.cleanUp()
     m = t2
     const result = await m.startGame(match, next_bracket, p1, p2)
-    //console.log('LOCALTOUR SEND RESULTS HAPPENS HERE')
-    //console.log(result)
     sendLocalResults(result)
 }
 
@@ -108,12 +122,3 @@ function startTTT() {
     m = ttt
     m.startGame()
 }
-
-// Camera setups
-//t.camera.position.z = 5
-//t.scene.add(t.camera)
-//t.gcamera.position.set(4, 4, 4)
-//t.gcamera.rotation.y = Math.PI / 2
-//t.gcamera.lookAt(t.scene.position)
-//t.scene.add(t.gcamera)
-//t.renderer.camera = t.camera

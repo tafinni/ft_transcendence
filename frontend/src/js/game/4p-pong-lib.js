@@ -218,7 +218,7 @@ function removePlayer(player) {
 
 function showVictory() {
     i.win_text.material.color = v.player_status.filter(i => i.lives !== 0)[0].obj.material.color.clone()
-    i.win_text.lookAt(i.gcamera.position)
+    i.win_text.lookAt(i.renderer.camera.position)
     i.scene.add(i.win_text)
     sendResults(v.score_left, v.score_right, true)
 }
