@@ -33,7 +33,7 @@ tick()
 var gametype = -1
 export function loadGame(nbr) {
     gametype = nbr
-    if (nbr === 1) return `<form id="playerSelectForm">
+    if (nbr === 11111) return `<form id="playerSelectForm">
       <label for="username">Player Name:</label><br>
       <input type="text" id="username" name="username" list="players">
       <datalist id="players">
