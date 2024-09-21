@@ -39,6 +39,15 @@ def accept_tournament_invitation(request):
         if participant1:
             return JsonResponse({'error': 'Finish current tournament'}, status=400)
 
+        participant2 = Participants.objects.filter(
+            user=request.user, 
+            tournament__status=1, 
+            is_accepted=True  # Only check for accepted tournaments
+        ).select_related('tournament').first()
+
+        if participant2:
+            return JsonResponse({'error': 'Finish current tournament'}, status=400)
+
 
         if not initiator_username:
             return JsonResponse({'error': 'Initiator username is required'}, status=400)
