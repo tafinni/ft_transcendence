@@ -186,7 +186,12 @@ def add_tourney_result(request):
     tourney = Tournament.objects.get(id=tourId)
     if not tourney:
         return JsonResponse({'message': 'no tournament'})
-    results = ResultTournament.objects.filter(user=pluser, opponent=pruser, tournament=tourney)
+    # results = ResultTournament.objects.filter(user=pluser, opponent=pruser, tournament=tourney)
+    results = ResultTournament.objects.filter(
+    tournament=tourney,
+    user__in=[pluser, pruser],
+    opponent__in=[pluser, pruser]
+    )
     if not results:
         return JsonResponse({'message': 'no results'})
     for result in results:
