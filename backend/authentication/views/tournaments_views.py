@@ -474,8 +474,8 @@ def get_tournament_matches(request):
                     elif result.result == 'loss':
                         winners.append(result.opponent) 
 
-                # if len(winners) == 1:
-                if current_round == total_rounds + 1:
+                # if len(winners) == 1 and current_round == total_rounds + 1:
+                if len(winners) == 1:
                     # Завершаем турнир, так как остался только один победитель
                     tournament.status = 2  # "Completed"
                     tournament.save()
@@ -526,7 +526,6 @@ def get_tournament_matches(request):
                 for result in results.filter(round_number=current_round):
                     user_display = result.user.userprofile.display_name or result.user.username
                     opponent_display = result.opponent.userprofile.display_name or result.opponent.username
-                    
                     match_info = {
                         'round_number': result.round_number,
                         'group_number': Participants.objects.get(user=result.user, tournament=tournament).group_number,

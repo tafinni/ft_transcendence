@@ -36,7 +36,11 @@ export async function loadTournamentLobby() {
 
 		const newData = await reply.json();
 		if (newData.game_over === true)
+		{
+			console.log("tournament is over");
 			loadContent('home');
+			return;
+		}
 		console.log('testing: ', newData);
 
 		const matchesHTML = newData.matches.map(match => `
