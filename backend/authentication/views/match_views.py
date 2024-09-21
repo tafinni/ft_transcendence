@@ -184,7 +184,11 @@ def add_tourney_result(request):
     pruser = opp.user
     tourId = participant.tournament_id
     tourney = Tournament.objects.get(id=tourId)
+    if not tourney:
+        return JsonResponse({'message': 'no tournament'})
     results = ResultTournament.objects.filter(user=pluser, opponent=pruser, tournament=tourney)
+    if not results:
+        return JsonResponse({'message': 'no results'})
     for result in results:
         if winner == "left":
             result.result = "win"

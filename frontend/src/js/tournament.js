@@ -33,6 +33,8 @@ export async function loadTournamentLobby() {
 		}
 
 		const newData = await reply.json();
+		if (newData.game_over === true)
+			loadContent('home');
 		console.log('testing: ', newData);
 
 		const matchesHTML = newData.matches.map(match => `
