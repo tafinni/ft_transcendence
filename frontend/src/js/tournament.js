@@ -33,7 +33,7 @@ export async function loadTournamentLobby() {
 		}
 
 		const newData = await reply.json();
-		if (newData.game_over === true)
+		if (newData.game_over === true || !newData.matches[0])
 			loadContent('home');
 		console.log('testing: ', newData);
 
