@@ -119,6 +119,7 @@ async function setTournamentButtons(options) {
 
         const data = await response.json();
 
+        console.log('testing: ', data.in_tournament, data.tournament_initiator)
         // second click closes options
         if (options === false) 
         {

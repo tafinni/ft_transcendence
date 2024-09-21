@@ -213,15 +213,6 @@ def create_tournament(request):
                 'player_count': existing_tournament.player_count
             })
 
-        existing_tournament = Tournament.objects.filter(initiator=request.user, status__in=[0]).first()
-        if existing_tournament:
-            existing_tournament.player_count #= player_count
-            return JsonResponse({
-                'message': 'You already have a pending tournament.',
-                'tournament_id': existing_tournament.id,
-                'player_count': existing_tournament.player_count
-            })
-
         tournament = Tournament.objects.create(
             initiator=request.user,
             player_count=player_count,
@@ -237,7 +228,6 @@ def create_tournament(request):
 
         # Prepare response message
         initiator_display = request.user.userprofile.display_name or request.user.username
-        return JsonResponse({'message': f'Tournament created by {initiator_display}', 'tournament_id': tournament.id, 'player_count': tournament.player_count})
         return JsonResponse({'message': f'Tournament created by {initiator_display}', 'tournament_id': tournament.id, 'player_count': tournament.player_count})
 
     return JsonResponse({'error': 'Invalid request method'}, status=405)

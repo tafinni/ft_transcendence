@@ -317,7 +317,7 @@ export async function tournamentSetUp(count) {
 		{
 			const errorData = await reply.json();
 			console.error('Tournament setup failed', errorData);
-			showAlert('Error during tournament setup. Try again.', 'danger');
+			showAlert('Error during tournament setup . Try again.', 'danger');
 			loadContent('home');
 		}
 	}
