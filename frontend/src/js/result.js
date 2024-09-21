@@ -20,31 +20,17 @@ export async function loadResult(scoreLeft, scoreRight, oppIsHuman) {
                 body: JSON.stringify({scoreLeft, scoreRight, oppIsHuman})
             });
     }
-    if (scoreLeft > scoreRight)
-    {
-        return `
-        <h1>Home</h1>
-            <p>Player ${userData.display_name} wins!</p>
-            <p>Final score is ${scoreLeft} - ${scoreRight}!</p>
-        `;
-    }
-    else
-    {
-        if (oppIsHuman)
-        {
-            return `
-            <h1>Home</h1>
-                <p>Player red wins!<p>
-                <p>Final score is ${scoreLeft} - ${scoreRight}!</p>
-            `;
-        }
-        else
-        {
-        return `
-        <h1>Home</h1>
-        <p>AI wins!<p>
-        <p>Final score is ${scoreLeft} - ${scoreRight}!</p>
-        `;
-        }
-    }
+    const prefixHTML = `<div class="container mt-5"><div class="d-flex justify-content-center">
+    <div class="d-flex card text-black bg-light border border-secondary m-4 justify-content-center" style="max-width: 300px;">
+        <div class="card-header text-center">
+            <h3>Result</h3>
+        </div>
+        <div class="card-body d-flex flex-column align-items-center justify-content-center">
+            <h4 class="mb-3">`
+    let midHTML = ``
+    if (scoreLeft > scoreRight) midHTML = `Left player wins!`;
+    else if (oppIsHuman) midHTML = `Right player wins!`;
+    else midHTML = 'AI wins!'
+    midHTML += `</h4><p class="fs-5">Final score is ${scoreLeft} - ${scoreRight}</p></div></div></div></div>`    
+    return prefixHTML + midHTML;
 }

@@ -84,8 +84,8 @@ fontLoader.load(
 // Window sizes and a function to set them, run it once
 export const sizes = { width: 0, height: 0 }
 export function setWinSizes() {
-    sizes.width = window.innerWidth * 0.95
-    sizes.height = window.innerHeight * 0.9
+    sizes.width = window.innerWidth
+    sizes.height = window.innerHeight
 }
 setWinSizes()
 export function getAspect() { return sizes.width / sizes.height }

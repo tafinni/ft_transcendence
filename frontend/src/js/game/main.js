@@ -45,6 +45,26 @@ export function loadGame(type) {
       </datalist><br>
       <input type="submit" value="Invite">
     </form>`
+    if (type === 's2' || type === 's4') 
+        return `<div class="container d-flex mt-1 justify-content-center">
+                <div class="text-white mt-1">Controls: A is up, D is down</div></div>
+                <div class="container d-flex mt-1 justify-content-center">`
+    else if (type === 'l2')
+        return `<div class="container d-flex mt-1 justify-content-between">
+                <div class="text-white mt-1">Left player: A is up, D is down</div>
+                <div class="text-white mt-1">Right player: Left arrow is up, Right arrow is down</div></div>`
+    else if (type === 'l4')
+        return `<div class="min-vh-100 d-flex flex-column justify-content-between">
+                    <div class="container d-flex flex-row mt-1 justify-content-between">
+                        <div class="text-white mt-1">Top player: N is left, M is right</div>
+                        <div class="text-white mt-1">Right player: Num minus is up, Num plus is down</div>
+                    </div>
+                    <div class="flex-grow-1"></div>
+                    <div class="container d-flex mb-1 justify-content-between">
+                        <div class="text-white mb-1">Left player: A is up, D is down</div>
+                        <div class="text-white mb-1">Bottom player: Left arrow is left, Right arrow is right</div>
+                    </div>
+                </div>`
     return ``
 }
 

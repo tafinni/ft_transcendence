@@ -39,7 +39,11 @@ function generateElements(players) {
             <div class="match" id="` + id2 + `"></div>
         </div>`
     }
-    var result = `<div class="centered col-md-6 mx-auto mt-5">
+    var result = `<div class="container d-flex mt-1 justify-content-between">
+        <div class="text-white mt-1">Left player: A is up, D is down</div>
+        <div class="text-white mt-1">Right player: Left arrow is up, Right arrow is down</div>
+    </div>
+    <div class="centered col-md-6 mx-auto mt-5">
         <div class="local-t-container mt-5 justify-content-center" id="localtournament">
             <div class="tournament-bracket centered">`
     var phasewidth = 100

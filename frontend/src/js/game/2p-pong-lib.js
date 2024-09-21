@@ -124,16 +124,18 @@ function showVictory() {
     i.win_text.material.color = i2.left.material.color.clone()
     i.win_text.lookAt(i.renderer.camera.position)
     i.scene.add(i.win_text)
-    v.score_left++
+    console.log('vic left', v.score_left, 'right', v.score_right)
     sendResults(v.score_left, v.score_right, true)
+    v.score_left++
 }
 
 function showLoss() {
     i.lose_text.material.color = i2.right.material.color.clone()
     i.lose_text.lookAt(i.renderer.camera.position)
     i.scene.add(i.lose_text)
-    v.score_right++
+    console.log('loss left', v.score_left, 'right', v.score_right)
     sendResults(v.score_left, v.score_right, true)
+    v.score_right++
 }
 
 export function resetScore() {
