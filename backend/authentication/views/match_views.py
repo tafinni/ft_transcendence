@@ -179,16 +179,14 @@ def add_tourney_result(request):
         result = resultRight
     )
     participant = Participants.objects.filter(user=userLeft, tournament__status=1).first()
+    puser = participant.user
     tourId = participant.tournament_id
     tourney = Tournament.objects.get(id=tourId)
-    results = ResultTournament.objects.filter(tournament=tourney)
-    if not results:
-        return JsonResponse({'message': 'no results'})
+    results = ResultTournament.objects.filter(tournament = tourney)
     for result in results.filter(round_number=1):
         if winner == "left":
             result.result = "win"
         else:
             result.result = "loss"
         result.save()
-        return JsonResponse({'message': 'results saved'})
     return JsonResponse({'message': 'Result saved successfully'})

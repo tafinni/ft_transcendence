@@ -22,6 +22,7 @@ export async function loadTournamentLobby() {
 		const data = await response.json();
 		
 		// Fetch the tournament matches
+		console.log(data.tournament_id);
 		const reply = await fetch(`http://localhost:8000/get_tournament_matches/?tournament_id=${data.tournament_id}`, {
 			method: 'GET',
 			credentials: 'include',

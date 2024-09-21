@@ -444,6 +444,13 @@ def get_tournament_matches(request):
                     user_display1 = participant1.user.userprofile.display_name or participant1.user.username
                     user_display2 = participant2.user.userprofile.display_name or participant2.user.username
 
+                    mResult = ResultTournament.objects.create(
+                        tournament = tournament,
+                        user = participant1.user,
+                        opponent = participant2.user,
+                        round_number = 1
+                    )
+                    mResult.save()
                     matches_list.append({
                         'round_number': 1,  # Assuming the round number is 1 if no results exist yet
                         'group_number': group_number,
