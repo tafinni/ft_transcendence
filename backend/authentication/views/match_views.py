@@ -179,11 +179,13 @@ def add_tourney_result(request):
         result = resultRight
     )
     participant = Participants.objects.filter(user=userLeft, tournament__status=1).first()
-    puser = participant.user
+    opp = Participants.objects.filter(user=userRight, tournament__status=1).first()
+    pluser = participant.user
+    pruser = opp.user
     tourId = participant.tournament_id
     tourney = Tournament.objects.get(id=tourId)
-    results = ResultTournament.objects.filter(tournament = tourney)
-    for result in results.filter(round_number=1):
+    results = ResultTournament.objects.filter(user=pluser, opponent=pruser, tournament=tourney)
+    for result in results:
         if winner == "left":
             result.result = "win"
         else:
