@@ -527,13 +527,6 @@ def get_tournament_matches(request):
                     user_display = result.user.userprofile.display_name or result.user.username
                     opponent_display = result.opponent.userprofile.display_name or result.opponent.username
                     
-                    subsResult = ResultTournament.objects.create(
-                        tournament = tournament,
-                        user = result.user,
-                        opponent = result.opponent,
-                        round_number = result.round_number
-                    )
-                    subsResult.save()
                     match_info = {
                         'round_number': result.round_number,
                         'group_number': Participants.objects.get(user=result.user, tournament=tournament).group_number,
