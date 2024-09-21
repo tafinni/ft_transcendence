@@ -2,7 +2,7 @@ import { getCookie } from "./csrf";
 import { updateContent } from "./i18n";
 import { loadContent } from "./router";
 import { showAlert } from "./index.js";
-import { startGame } from "./game.js";
+import { startTwoTournament } from "./game/main.js";
 
 var matchInfo = { match: 1, player1: '', player2: '', reset: function() { 
     this.match = 1
@@ -15,6 +15,16 @@ var matchInfo = { match: 1, player1: '', player2: '', reset: function() {
     }
 }}
 var player_list = []
+
+export function sendLocalResults(matchInfo) {
+    console.log('sendLocalResults called with', matchInfo)
+    namePlayers(matchInfo.matchname, matchInfo.left, matchInfo.right, (matchInfo.winner === matchInfo.left ) ? 'p1won' : 'p2won')
+    if (matchInfo.next !== '') {
+        updateMatch(matchInfo.next, matchInfo.winner, (getMatchNbr(matchInfo.matchname, false) % 2 === 1))
+    }
+    const ltElement = document.getElementById('localtournament')
+    ltElement.hidden = false
+}
 
 function generateElements(players) {
     function generateMatchPair(id1, id2) {
@@ -50,7 +60,6 @@ function generateElements(players) {
         result += `<div id="demiFinales" class="phase">` + generateMatchPair("semi-1", "semi-2") + `</div>`
         players /= 2
     }
-    console.log(phasewidth, localtourwidth)
     const contentElement = document.getElementById('content');
     contentElement.innerHTML = result + `<div id="finale" class="phase">
                     <div class="match" id="final"></div>
@@ -77,10 +86,23 @@ function generateElements(players) {
     localtour.style.width = localtourwidth + 'px'
     const phaseElements = document.querySelectorAll('.phase');
     phaseElements.forEach(function(phaseElement) {
-        //console.log(phaseElement);
         phaseElement = phasewidth + '%'
     });
     updateContent();
+}
+
+function updateMatch(match, plrname, upper) {
+    const matchElement = document.getElementById(match)
+    if (!matchElement) { console.error('updateMatch failed to select match:', match); return }
+    console.log('updateMatch:', match, plrname, upper)
+    const upperPlayer = document.getElementById(match + '-p1')
+    const lowerPlayer = document.getElementById(match + '-p2')
+    if (upper) { upperPlayer.textContent = plrname}
+    else lowerPlayer.textContent = plrname
+    if (upperPlayer.textContent !== '' && upperPlayer.textContent !== '\u00a0TBD\u00a0' &&
+        lowerPlayer.textContent !== '' && lowerPlayer.textContent !== '\u00a0TBD\u00a0')
+        namePlayers(match, upperPlayer.textContent, lowerPlayer.textContent, 'ready')
+    //console.log('updateMatch:', upperPlayer.textContent, lowerPlayer.textContent)
 }
 
 function namePlayers(match, p1_name, p2_name, status) {
@@ -88,8 +110,6 @@ function namePlayers(match, p1_name, p2_name, status) {
     if (!selectedmatch) console.log('namePlayers failed to select match:', match)
     if (selectedmatch) {
         selectedmatch.textContent = ''
-        // selectedmatch.innerHTML = p1_name + `<br>` + p2_name
-        // if (play) selectedmatch.innerHTML += `<br><button class="btn btn-dark mx-0 mt-0 mb-0" id="` + match +`-btn">Play</button>`
         if (status !== 'input') {
             const player1 = document.createElement('div')
             if (status === 'p1won')
@@ -97,7 +117,6 @@ function namePlayers(match, p1_name, p2_name, status) {
             else if (status === 'p2won')
                 player1.style.color = 'red'
             player1.id = match + '-p1'
-            console.log(player1.id)
             player1.textContent = p1_name
             selectedmatch.appendChild(player1)
             const player2 = document.createElement('div')
@@ -128,6 +147,42 @@ function namePlayers(match, p1_name, p2_name, status) {
             playbutton.id = match + '-btn'
             playbutton.textContent = 'Play'
             selectedmatch.append(playbutton)
+            playbutton.addEventListener('click', (event) => {
+                //console.log(match, p1_name, p2_name)
+                // if (match.indexOf('ro16') === -1 && match.indexOf('quart') === -1 && 
+                //     match.indexOf('semi') === -1 && match.indexOf('final') === -1)
+                //     return (console.error('Tried to start match on invalid bracket!'))
+                let next_bracket = 'quart-' + getMatchNbr(match, true)
+                //if (match.indexOf('quart') !== -1) next_bracket = 'quart'
+                switch (match.substr(0, match.indexOf('-'))) {
+                    case 'ro16':
+                        break
+                    case 'quart':
+                        next_bracket = 'semi-' + getMatchNbr(match, true)
+                        break
+                    case 'semi':
+                        next_bracket = 'final'
+                        break
+                    // case 'final':
+                    //     next_bracket = ''
+                    //     break
+                    default:
+                        if (match === 'final') { 
+                            next_bracket = ''
+                            break 
+                        }
+                        console.error('Tried to start match on invalid bracket!', match, next_bracket)
+                        return
+                }
+                let winner = (Math.random()) ? p1_name : p2_name
+                startTwoTournament(match, next_bracket, p1_name, p2_name)
+                const ltElement = document.getElementById('localtournament')
+                ltElement.hidden = true
+                // namePlayers(match, p1_name, p2_name, (winner === p1_name ) ? 'p1won' : 'p2won')
+                // if (next_bracket !== '') {
+                //     updateMatch(next_bracket, winner, (getMatchNbr(match, false) % 2 === 1))
+                // }
+            })
         }
     }
     else
@@ -135,29 +190,29 @@ function namePlayers(match, p1_name, p2_name, status) {
 }
 
 function generatePlayerFields(players) {
-    var pnbr = 0
+    var initial_text = '\u00a0TBD\u00a0'
     if (players === 16) {
         const m_pre = 'ro16-'
         for (let i = 1; i <= 8; i++) {
-            namePlayers(m_pre + i, ++pnbr, ++pnbr, '')
+            namePlayers(m_pre + i, initial_text, initial_text, '')
         }
         players /= 2
     }
     if (players === 8) {
         const m_pre = 'quart-'
         for (let i = 1; i <= 4; i++) {
-            namePlayers(m_pre + i, ++pnbr, ++pnbr, '')
+            namePlayers(m_pre + i, initial_text, initial_text, '')
         }
         players /= 2
     }
     if (players === 4) {
         const m_pre = 'semi-'
         for (let i = 1; i <= 2; i++) {
-            namePlayers(m_pre + i, ++pnbr, ++pnbr, '')
+            namePlayers(m_pre + i, initial_text, initial_text, '')
         }
         players /= 2
     }
-    namePlayers('final', ++pnbr, ++pnbr, '')
+    namePlayers('final', initial_text, initial_text, '')
 }
 
 function enterName(players, p1, p2, match_nbr, is_ready) {
@@ -214,135 +269,15 @@ export async function loadLocalTournament(players) {
                 matchInfo.checkNext()
             }
         }
-        console.log(matchInfo)
+    playerform.addEventListener("reset", () => {
+        generatePlayerFields(players)
+        matchInfo.reset()
+        player_list = []
     })
+    })
+
 }
 
-//export async function loadLocalTournament2(players) {
-    // if (!players) {
-    //     loadContent('home')
-    //     return
-    // }
-    // if (players !== 2 && players !== 4 && players !== 8 && players !== 16) {
-    //     showAlert('Invalid number of players for local tournament', 'danger')
-    //     console.log('localtour invalid players:', players)
-    //     loadContent('home')
-    //     return
-    // }
-    // var localtourwidth = '400px'
-    // var phasewidth = '100%'
-    // var localtourHTML = `<div class="col-md-6 mx-auto mt-5">
-    //     <div class="local-t-container mt-5 justify-content-center" id="localtournament">
-    //         <div class="tournament-bracket centered">`
-    // const matchpair = `<div class="hasNextStep">
-    //     <div class="match">first</div>
-    //     <div class="link"></div>
-    //     <div class="match">first</div>
-    // </div>`
-    // const ro16 = `<div id="ro16" class="phase">` + matchpair + matchpair + matchpair + matchpair + `</div>`
-    // const quarters = `<div id="quartFinales" class="phase">` + matchpair + matchpair + `</div>`
-    // const demis = `<div id="demiFinales" class="phase">` + matchpair + `</div>`
-    // var localtourtailHTML = `<div id="finale" class="phase">
-    //                 <div class="match">final</div>
-    //             </div>
-    //         </div>
-    //     </div>
-    // </div>`
-    // switch (players) {
-    //     case 2:
-    //         break;
-    //     case 4:
-    //         phasewidth = '50%'
-    //         localtourHTML += demis
-    //         break;
-    //     case 8:
-    //         localtourwidth = '600px'
-    //         phasewidth = '33.33%'
-    //         localtourHTML += quarters + demis
-    //         break;
-    //     case 16:
-    //         localtourwidth = '800px'
-    //         phasewidth = '16.66%'
-    //         localtourHTML += ro16 + quarters + demis
-    //         break;
-    //     case false:
-    //         loadContent('home')
-    //         return
-    //     default:
-    //         showAlert('Invalid number of players for local tournament', 'danger')
-    //         //console.log('localtournament invalid number of players:', players)
-    //         loadContent('home')
-    //         return
-    // }
-    // localtourHTML += localtourtailHTML
-    // const contentElement = document.getElementById('content');
-    // //contentElement.innerHTML = `Local tournament`
-    // const staticHTMLbox = `<div class="col-md-6 mx-auto mt-5">
-    //     <div class="local-t-container mt-5 justify-content-center" id="localtournament">
-    //         <div class="tournament-bracket centered">
-    //             ` + demis + `
-    //             <div id="finale" class="phase">
-    //                 <div class="match">final</div>
-    //             </div>
-    //         </div>
-    //     </div>
-    // </div>`
-    //generateElements(players);
-    // const localtour = document.getElementById("localtournament");
-    // //const bracketDiv = document.querySelector(".tournament-bracket.centered");
-    // //console.log(localtour)
-    // localtour.style.width = localtourwidth
-    // //console.log(localtour.style)
-    // const phaseElements = document.querySelectorAll('.phase');
-    // phaseElements.forEach(function(phaseElement) {
-    //     console.log(phaseElement);
-    //     phaseElement = phasewidth
-    // });
-    // updateContent();
-//}
-
-const staticHTML = `<div class="container mt-5">
-  <div class="row justify-content-center">
-    <div class="col-md-8 col-lg-6">
-      <h2 class="text-white bg-primary p-3 mb-3">Tournament Bracket</h2>
-      
-      <!-- Round 1 -->
-      <div class="bg-light p-3 mb-3 rounded">
-        <h3 class="text-dark">Round 1</h3>
-        <div class="d-flex align-items-center mb-2">
-          <span class="badge bg-success mr-2">Player 1</span>
-          <i class="fas fa-arrow-right mx-2"></i>
-          <span class="badge bg-danger">Player 2</span>
-        </div>
-        <div class="d-flex align-items-center mb-2">
-          <span class="badge bg-success mr-2">Player 3</span>
-          <i class="fas fa-arrow-right mx-2"></i>
-          <span class="badge bg-danger">Player 4</span>
-        </div>
-      </div>
-
-      <!-- Round 2 -->
-      <div class="bg-light p-3 mb-3 rounded">
-        <h3 class="text-dark">Round 2</h3>
-        <div class="d-flex align-items-center mb-2">
-          <span class="badge bg-success mr-2">Winner R1</span>
-          <i class="fas fa-arrow-right mx-2"></i>
-          <span class="badge bg-danger">Winner R1</span>
-        </div>
-      </div>
-
-      <!-- Final -->
-      <div class="bg-light p-3 mb-3 rounded">
-        <h3 class="text-dark">Final</h3>
-        <div class="d-flex align-items-center mb-2">
-          <span class="badge bg-success mr-2">Winner R2</span>
-          <i class="fas fa-trophy mx-2"></i>
-          <span class="badge bg-danger">Winner R2</span>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>`
 function shuffleArray(array) {
     for (var i = array.length - 1; i >= 0; i--) {
         var j = Math.floor(Math.random() * (i + 1));
@@ -351,3 +286,11 @@ function shuffleArray(array) {
         array[j] = temp;
     }
 }
+
+function getMatchNbr(str, next) {
+    const lastChar = str.slice(-1);
+    const number = parseInt(lastChar, 10);
+    if (isNaN(number)) return -1
+    return (next) ?Math.floor((number + 1) / 2) : number;
+}
+
