@@ -26,7 +26,7 @@ def home(request):
 
 # Define a view function for the login page
 @csrf_exempt
-#@csrf_protect
+@csrf_protect
 def login_page(request):
     if request.method == "POST":
         body = json.loads(request.body)

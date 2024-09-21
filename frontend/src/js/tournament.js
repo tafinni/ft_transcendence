@@ -135,8 +135,8 @@ async function playerAuth(tournament_id, round, group) {
 					<form id="auth2-form" method="POST">
 						<div id="error-message-2" class="text-danger mb-3" style="display: none;"></div>
 						<div class="form-group mb-3">
-							<label for="username2" class="form-label" translate="username"></label>
-							<input type="text" class="form-control" id="username2" value="${playerData.player2.username}" readonly>
+							<label for="username" class="form-label" translate="username"></label>
+							<input type="text" class="form-control" id="usernameRight" value="${playerData.player2.username}" readonly>
 						</div>
 						<div class="form-group mb-3">
 							<label for="password2" class="form-label" translate="password"></label>
@@ -176,9 +176,9 @@ z			</div>
 			}
 
 			let player1 = false;
-			let name1;
+			let nameLeft;
 			let player2 = false;
-			let name2;
+			let nameRight;
 			const errorMessage1 = document.getElementById('error-message-1');
 			const errorMessage2 = document.getElementById('error-message-2');
 			const success1 = document.getElementById('success-1');
@@ -205,7 +205,7 @@ z			</div>
 						const data = await response.json();
 						console.log(data);
 						player1 = true;
-						name1 = username;
+						nameLeft = username;
 						success1.style.display = 'block';
 						errorMessage1.style.display = 'none';
 					}
@@ -227,7 +227,7 @@ z			</div>
 
 			auth2Form.addEventListener('submit', async (event) => {
 				event.preventDefault();
-				const username = document.getElementById('username2').value;
+				const username = document.getElementById('usernameRight').value;
 				const password = document.getElementById('password2').value;
 
 				try
@@ -246,7 +246,7 @@ z			</div>
 						const data = await response.json();
 						console.log(data);
 						player2 = true;
-						name2 = username;
+						nameRight = username;
 						success2.style.display = 'block';
 						errorMessage2.style.display = 'none';
 					}
@@ -271,8 +271,8 @@ z			</div>
 				continueButton.addEventListener('click', () => {
 					if (player1 === true && player2 === true)
 					{
-						console.log("Users are", name1, "and", name2);
-						loadContent('tourney', 0, 0, 0, name1, name2);
+						console.log("Users are", nameLeft, "and", nameRight);
+						loadContent('tourney', 0, 0, 0, nameLeft, nameRight);
 					}
 
 				});
