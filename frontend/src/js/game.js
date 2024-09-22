@@ -7,6 +7,7 @@ import * as i from './idle.js'
 import * as s from './solo.js'
 import * as l2 from './local-2p.js'
 import * as l4 from './local-4p.js'
+import { updateContent } from "./i18n";
 
 // Variable to track current mode
 let m = i
@@ -50,15 +51,19 @@ export function loadGame(nbr) {
       <input type="submit" value="Invite">
     </form>`
     if (nbr == 3)
-        return '<button class="btn btn-primary btn-lg mb-3" id="begin-tourney-match">Begin</button>'
+    {
+        const HTML = `<button class="btn btn-primary btn-lg mb-3" id="begin-tourney-match" translate="begin"></button>`
+        updateContent();
+        return HTML;
+    }
     return ``
 }
 
-export function startGame(gametype, name1, name2) {
+export function startGame(gametype, nameLeft, nameRight) {
     if (gametype === 0) startQuickGame()
     else if (gametype === 1) startTwoLocal()
     else if (gametype === 2) startFourLocal()
-    else if (gametype === 3) startTourney(name1, name2)
+    else if (gametype === 3) startTourney(nameLeft, nameRight)
     gametype = -1
 }
 
@@ -66,21 +71,22 @@ export function endGame() {
     gametype = -1
 }
 
-export function sendResults(scoreLeft, scoreRight, oppIsHuman) {
+export function sendResults(scoreLeft, scoreRight, oppIsHuman, oppName) {
     try {
-        loadContent('result', scoreLeft, scoreRight, oppIsHuman)
+        loadContent('result', scoreLeft, scoreRight, oppIsHuman, "", oppName)
     } catch (error) {
         console.log('failed to sendResults:', error)
     }
 }
 
-export function sendTourneyResults(scoreLeft, scoreRight, oppIsHuman, name1, name2) {
+export function sendTourneyResults(scoreLeft, scoreRight, oppIsHuman, nameLeft, nameRight) {
     try {
-        loadContent('tourneyResult', scoreLeft, scoreRight, oppIsHuman, name1, name2)
+        loadContent('tourneyResult', scoreLeft, scoreRight, oppIsHuman, nameLeft, nameRight)
     } catch (error) {
         console.log('failed to sendResults:', error)
     }
 }
+
 
 export function switchToIdle() {
     m.cleanUp()
@@ -101,10 +107,10 @@ export function startTwoLocal() {
     m.startGame(0)
 }
 
-export function startTourney(name1, name2){
+export function startTourney(nameLeft, nameRight){
     m.cleanUp()
     m = l2
-    m.startGame(1, name1, name2)
+    m.startGame(1, nameLeft, nameRight)
 }
 
 function startFourLocal() {

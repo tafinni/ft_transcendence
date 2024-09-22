@@ -73,6 +73,14 @@
 	"cancel tournament": "Peru turnaus",
 	"wait for tournament to start": "Odota turnauksen alkua",
 	"back to invites": "Takaisin kutsuihin",
-	"enter tournament": "Turnaukseen"
+	"enter tournament": "Turnaukseen",
+	"start game": "Aloita peli",
+	"player 1": "Pelaaja 1",
+	"player 2": "Pelaaja 2",
+	"authenticate": "Tunnistaudu",
+	"continue": "Jatka",
+	"begin": "Aloita"
+
+
 	
 }

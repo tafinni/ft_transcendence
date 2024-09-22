@@ -6,6 +6,8 @@ from authentication.models import Tournament, Participants, ResultTournament
 from django.db.models import Max
 import json
 import random
+import math
+
 
 @login_required
 @csrf_protect
@@ -401,9 +403,6 @@ def cancel_tournament(request):
 
     return JsonResponse({'error': 'Invalid request method'}, status=405)
 
-
-
-
 @login_required
 def get_tournament_matches(request):
     if request.method == "GET":
@@ -423,7 +422,9 @@ def get_tournament_matches(request):
         results = ResultTournament.objects.filter(tournament=tournament)
         current_round = results.aggregate(max_round=Max('round_number'))['max_round'] or 1
         matches_list = []
+        total_participants = Participants.objects.filter(tournament=tournament, is_accepted=True).count()
 
+        total_rounds = int(math.log2(total_participants))
         if not results.exists():
             # Get participants from tournament
             participants = Participants.objects.filter(tournament=tournament, is_accepted=True) # accept
@@ -444,6 +445,13 @@ def get_tournament_matches(request):
                     user_display1 = participant1.user.userprofile.display_name or participant1.user.username
                     user_display2 = participant2.user.userprofile.display_name or participant2.user.username
 
+                    mResult = ResultTournament.objects.create(
+                        tournament = tournament,
+                        user = participant1.user,
+                        opponent = participant2.user,
+                        round_number = 1
+                    )
+                    mResult.save()
                     matches_list.append({
                         'round_number': 1,  # Assuming the round number is 1 if no results exist yet
                         'group_number': group_number,
@@ -465,13 +473,16 @@ def get_tournament_matches(request):
                         winners.append(result.opponent) 
 
                 if len(winners) == 1:
+                #if current_round == total_rounds + 1:
                     # Завершаем турнир, так как остался только один победитель
                     tournament.status = 2  # "Completed"
                     tournament.save()
-                    return JsonResponse({'message': f'{winners[0].username} is the winner!'}, status=200)
+                    return JsonResponse({'message': f'{winners[0].username} is the winner!', 'game_over': True}, status=200)
 
                 # Update group numbers and create new matches for the next round
                 # Если больше одного победителя, создаём новые группы для следующего раунда
+
+                Participants.objects.filter(tournament=tournament).update(group_number=0)
                 new_groups = {}
                 group_number = 1
 
@@ -479,6 +490,8 @@ def get_tournament_matches(request):
                     if len(winners[i:i+2]) == 2:  # Ensure there are exactly two participants
                         winner1, winner2 = winners[i], winners[i+1]
                         new_groups[group_number] = [winner1, winner2]
+                        Participants.objects.filter(user=winner1, tournament=tournament).update(group_number=group_number)
+                        Participants.objects.filter(user=winner2, tournament=tournament).update(group_number=group_number)
                         group_number += 1
 
                 current_round += 1
@@ -487,6 +500,16 @@ def get_tournament_matches(request):
                 for group_number, group_participants in new_groups.items():
                     user_display1 = group_participants[0].userprofile.display_name or group_participants[0].username
                     user_display2 = group_participants[1].userprofile.display_name or group_participants[1].username
+
+                    #tesing may not work yet
+                    subsResult = ResultTournament.objects.create(
+                        tournament = tournament,
+                        user = group_participants[0],
+                        opponent = group_participants[1],
+                        round_number = current_round
+                    )
+                    subsResult.save()
+                    #testing end
 
                     matches_list.append({
                         'round_number': current_round,
@@ -501,6 +524,7 @@ def get_tournament_matches(request):
                 for result in results.filter(round_number=current_round):
                     user_display = result.user.userprofile.display_name or result.user.username
                     opponent_display = result.opponent.userprofile.display_name or result.opponent.username
+                    
                     match_info = {
                         'round_number': result.round_number,
                         'group_number': Participants.objects.get(user=result.user, tournament=tournament).group_number,
@@ -513,6 +537,9 @@ def get_tournament_matches(request):
         return JsonResponse({'matches': matches_list}, status=200)
 
     return JsonResponse({'error': 'Invalid request method'}, status=405)
+
+
+
 
 
 
