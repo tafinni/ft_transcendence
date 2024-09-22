@@ -20,6 +20,7 @@ export async function loadTournamentLobby() {
 		}
 
 		const data = await response.json();
+		const tournamentID = data.tournament_id
 		
 		const reply = await fetch(`http://localhost:8000/get_tournament_matches/?tournament_id=${data.tournament_id}`, {
 			method: 'GET',
@@ -36,7 +37,7 @@ export async function loadTournamentLobby() {
 		if (newData.game_over === true)
 		{
 			console.log("tournament is over");
-			showAlert(newData.message);
+			showAlert(newData.message, 'warning');
 			loadContent('home');
 			return;
 		}
@@ -55,6 +56,8 @@ export async function loadTournamentLobby() {
 
 		const lobbyHTML = `
 			<div class="container mt-5">
+										<button type="button" id="cancel-tournament-btn" class="btn btn-danger w-100 mt-3" translate="cancel tournament"></button>
+
 				${matchesHTML}
 			</div>
 		`;
@@ -74,6 +77,10 @@ export async function loadTournamentLobby() {
 					console.log(`Start game for round ${round}, group ${group}`);
 					playerAuth(data.tournament_id, round, group);
 				});
+			});
+			const cancelTournamentButton = document.getElementById('cancel-tournament-btn');
+			cancelTournamentButton.addEventListener('click', () => {
+				cancelTournament(tournamentID);
 			});
 		}
 		else
