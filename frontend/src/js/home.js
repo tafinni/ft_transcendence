@@ -20,7 +20,7 @@ export async function loadHome() {
                         <a class="dropdown-item" href="#">8 players</a>
                         <a class="dropdown-item" href="#">16 players</a>
                     </div>
-                    <button class="btn btn-warning btn-lg mb-3" id="tournament-btn" translate="tournament" disabled>Tournament</button>
+                    <button class="btn btn-warning btn-lg mb-3" id="tournament-btn" translate="tournament">Tournament</button>
                     <div id="tournament-options" class="d-none mt-3 flex-column align-items-center">
                         <p class="w-100 text-center mb-2" style="color: white;" translate="how many players?"></p>
                         <div id="num-players" class="d-flex justify-content-center w-100">

@@ -19,18 +19,19 @@ export function startGame() {
     i.renderer.camera = i.newIsoCamera()
     i.scene.add(i2.plate, i2.left, i2.right, i2.top, i2.bot)
     i.scene.add(i2.ball)
+    i.three_t.lookAt(i.renderer.camera.position)
     v.left_pos = v.right_pos = 0
     document.addEventListener("keydown", onDocumentKeyDown, true);
     document.addEventListener("keyup", onDocumentKeyUp, true);
     if (i2.interval.id === -1)
         i2.interval.id = setInterval(l2.gametick60, 1000 / 60)
-    console.log('2P solo game: Start!')
+    reallyStart()
 }
 
 export function reallyStart() {
     v.game_started = true
     l2.resetRound()
-    l2.ball_drop.restart()
+    l2.startRound(0.3) // 1.1
 }
 
 export function cleanUp() {

@@ -1,3 +1,4 @@
+import * as THREE from 'three'
 import gsap from 'gsap'
 import * as i from './include.js'
 import * as i2 from './2p-pong-include.js'
@@ -74,11 +75,44 @@ export function checkPaddleHit() {
 
 export function endRound() {
     v.game_running = false
-    if (v.score_right > i.score_to_win || v.score_left > i.score_to_win)
+    if (v.score_right === i.score_to_win || v.score_left === i.score_to_win)
         return
     resetRound()
-    ball_drop.restart()
-    ball_drop.play()
+    startRound(0.5)
+}
+
+export function startRound(speed) {
+    if (typeof speed !== 'number') {
+        console.error('startRound parameter was not a number:', speed)
+        speed = 1.1
+    }
+    i.three_t.quaternion.setFromUnitVectors(new THREE.Vector3(-1, -1, -1).normalize(), new THREE.Vector3(0, 0, 0))
+    i.two_t.quaternion.setFromUnitVectors(new THREE.Vector3(-1, -1, -1).normalize(), new THREE.Vector3(0, 0, 0))
+    i.one_t.quaternion.setFromUnitVectors(new THREE.Vector3(-1, -1, -1).normalize(), new THREE.Vector3(0, 0, 0))
+    console.log(new THREE.Vector3(-1, -1, -1).normalize())
+    i.three_t.rotation.y += Math.PI * 3 / 4
+    i.two_t.rotation.y += Math.PI * 3 / 4
+    i.one_t.rotation.y += Math.PI * 3 / 4
+    i.start_t.lookAt(i.renderer.camera.position)
+    gsap.to(i.three_t.rotation, { y: (Math.PI * 11)/4, duration: speed, delay: 0.3, ease: "none", onComplete: () => {
+        i.scene.remove(i.three_t)
+        gsap.to(i.two_t.rotation, { y: (Math.PI * 11)/4, duration: speed, ease: "none", onComplete: () => {
+            i.scene.remove(i.two_t)
+            gsap.to(i.one_t.rotation, { y: (Math.PI * 11)/4, duration: speed, ease: "none", onComplete: () => {
+                i.scene.remove(i.one_t)
+                i.scene.add(i.start_t)
+                setTimeout(() => {
+                    i.scene.remove(i.start_t)
+                    ball_drop.restart()
+                }, 250)
+            }})
+            i.scene.add(i.one_t)
+        }})
+        i.scene.add(i.two_t)
+    }})
+    i.scene.add(i.three_t)
+    //console.log()
+    //ball_drop.restart()
 }
 
 export function resetRound() {
@@ -91,7 +125,7 @@ export function resetRound() {
 
 function addScore(player) {
     if (player === 'left') {
-        if (v.score_left === v.score_to_win) {
+        if (++v.score_left === v.score_to_win) {
             console.log('victory')
             showVictory()
             return
@@ -102,10 +136,10 @@ function addScore(player) {
         score_clone.material.color = i2.left.material.color.clone()
         score_clone.position.set(-1.7 + 0.25 * v.score_left, 0, 2.25)
         i.scene.add(score_clone)
-        v.score_left++
+        // v.score_left++
     }
     else if (player === 'right') {
-        if (v.score_right === v.score_to_win) {
+        if (++v.score_right === v.score_to_win) {
             console.log('loss')
             showLoss()
             return
@@ -116,7 +150,7 @@ function addScore(player) {
         score_clone.material.color = i2.right.material.color.clone()
         score_clone.position.set(1.7 - 0.25 * v.score_right, 0, -2.25)
         i.scene.add(score_clone)
-        v.score_right++
+        // v.score_right++
     }
 }
 
@@ -126,7 +160,6 @@ function showVictory() {
     i.scene.add(i.win_text)
     console.log('vic left', v.score_left, 'right', v.score_right)
     sendResults(v.score_left, v.score_right, true)
-    v.score_left++
 }
 
 function showLoss() {
@@ -135,7 +168,6 @@ function showLoss() {
     i.scene.add(i.lose_text)
     console.log('loss left', v.score_left, 'right', v.score_right)
     sendResults(v.score_left, v.score_right, true)
-    v.score_right++
 }
 
 export function resetScore() {

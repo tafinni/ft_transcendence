@@ -4,11 +4,11 @@ import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js'
 //import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 
 // DEBUG
-export const debug = true
+export const debug = false
 
 // Timers
 export const aftergame_timer = 115 // 60 = 1 second
-export const idle_timer = 360 // 60 = 1 second
+export const idle_timer = 1500 // 60 = 1 second
 
 // Consts
 export const area_vmax = 2
@@ -33,53 +33,7 @@ export const textureLoader = new THREE.TextureLoader()
 
 export var win_text = {}
 export var lose_text = {}
-// Font loading
-export const fontLoader = new FontLoader()
-fontLoader.load(
-    '/fonts/SuperCornRegular.json',
-    (font) => {
-        const textGeometry = new TextGeometry(
-        'Victory!',
-        {
-            font: font,
-            size: 0.5,
-            depth: 0.2,
-            curveSegments: 12,
-            bevelEnabled: true,
-            bevelThickness: 0.03,
-            bevelSize: 0.02,
-            bevelOffset: 0,
-            bevelSegments: 5
-        })
-        textGeometry.center()
-        const textMaterial = new THREE.MeshBasicMaterial()
-        const text = new THREE.Mesh(textGeometry, textMaterial)
-        text.position.set(1, 1, 1)
-        text.material.transparent = true
-        text.material.opacity = 0.8
-        win_text = text
-        const textGeometry2 = new TextGeometry(
-        'Game Over',
-        {
-            font: font,
-            size: 0.5,
-            depth: 0.2,
-            curveSegments: 12,
-            bevelEnabled: true,
-            bevelThickness: 0.03,
-            bevelSize: 0.02,
-            bevelOffset: 0,
-            bevelSegments: 5
-        })
-        textGeometry2.center()
-        const textMaterial2 = new THREE.MeshBasicMaterial()
-        const text2 = new THREE.Mesh(textGeometry2, textMaterial2)
-        text2.position.set(1, 1, 1)
-        text2.material.transparent = true
-        text2.material.opacity = 0.8
-        lose_text = text2
-    }
-)
+export var three_t = {}, two_t = {}, one_t = {}, start_t = {}
 
 // Window sizes and a function to set them, run it once
 export const sizes = { width: 0, height: 0 }
@@ -117,3 +71,124 @@ export const clock = new THREE.Clock()
 // pre-calculated values
 export const pvmax_pmx = paddle_vmax / paddle_max
 export const avmax_pmx = area_vmax / pos_max
+
+// Font loading
+export const fontLoader = new FontLoader()
+fontLoader.load(
+    '/fonts/SuperCornRegular.json',
+    (font) => {
+        const textGeometry = new TextGeometry(
+        'Victory!', {
+            font: font,
+            size: 0.5,
+            depth: 0.2,
+            curveSegments: 12,
+            bevelEnabled: true,
+            bevelThickness: 0.03,
+            bevelSize: 0.02,
+            bevelOffset: 0,
+            bevelSegments: 5
+        })
+        textGeometry.center()
+        const textMaterial = new THREE.MeshBasicMaterial()
+        const text = new THREE.Mesh(textGeometry, textMaterial)
+        text.position.set(1, 2, 1)
+        text.material.transparent = true
+        text.material.opacity = 0.8
+        win_text = text
+        const textGeometry2 = new TextGeometry(
+        'Game Over', {
+            font: font,
+            size: 0.5,
+            depth: 0.2,
+            curveSegments: 12,
+            bevelEnabled: true,
+            bevelThickness: 0.03,
+            bevelSize: 0.02,
+            bevelOffset: 0,
+            bevelSegments: 5
+        })
+        textGeometry2.center()
+        const textMaterial2 = new THREE.MeshBasicMaterial()
+        const text2 = new THREE.Mesh(textGeometry2, textMaterial2)
+        text2.position.set(1, 2, 1)
+        text2.material.transparent = true
+        text2.material.opacity = 0.8
+        lose_text = text2
+        const textGeometry3 = new TextGeometry(
+            '3', {
+                font: font,
+                size: 1,
+                depth: 0.075,
+                curveSegments: 12,
+                bevelEnabled: true,
+                bevelThickness: 0.03,
+                bevelSize: 0.02,
+                bevelOffset: 0,
+                bevelSegments: 5
+            })
+        textGeometry3.center()
+        const text_three = new THREE.Mesh(textGeometry3, new THREE.MeshBasicMaterial())
+        text_three.position.set(1, 3, 1)
+        text_three.material.transparent = true
+        text_three.material.opacity = 0.7
+        text_three.material.color = new THREE.Color('green')
+        three_t = text_three
+        const textGeometry4 = new TextGeometry(
+            '2', {
+                font: font,
+                size: 1,
+                depth: 0.075,
+                curveSegments: 12,
+                bevelEnabled: true,
+                bevelThickness: 0.03,
+                bevelSize: 0.02,
+                bevelOffset: 0,
+                bevelSegments: 5
+            })
+        textGeometry4.center()
+        const text_two = new THREE.Mesh(textGeometry4, new THREE.MeshBasicMaterial())
+        text_two.position.set(1, 3, 1)
+        text_two.material.transparent = true
+        text_two.material.opacity = 0.7
+        text_two.material.color = new THREE.Color('yellow')
+        two_t = text_two
+        const textGeometry5 = new TextGeometry(
+            '1', {
+                font: font,
+                size: 1,
+                depth: 0.075,
+                curveSegments: 12,
+                bevelEnabled: true,
+                bevelThickness: 0.03,
+                bevelSize: 0.02,
+                bevelOffset: 0,
+                bevelSegments: 5
+            })
+        textGeometry5.center()
+        const text_one = new THREE.Mesh(textGeometry5, new THREE.MeshBasicMaterial())
+        text_one.position.set(1, 3, 1)
+        text_one.material.transparent = true
+        text_one.material.opacity = 0.7
+        text_one.material.color = new THREE.Color('orange')
+        one_t = text_one
+        const textGeometry6 = new TextGeometry(
+            'START', {
+                font: font,
+                size: 1,
+                depth: 0.075,
+                curveSegments: 12,
+                bevelEnabled: true,
+                bevelThickness: 0.03,
+                bevelSize: 0.02,
+                bevelOffset: 0,
+                bevelSegments: 5
+            })
+        textGeometry6.center()
+        start_t = new THREE.Mesh(textGeometry6, new THREE.MeshBasicMaterial())
+        start_t.position.set(1, 3, 1)
+        start_t.material.transparent = true
+        start_t.material.opacity = 0.7
+        start_t.material.color = new THREE.Color('red')
+    }
+)

@@ -14,6 +14,9 @@ import { sendLocalResults } from '../localtournament.js'
 // Variable to track current mode
 let m = i
 
+// Is there a game running?
+let run = false
+
 // Resize listener
 window.addEventListener('resize', () => {
     t.setWinSizes()
@@ -32,19 +35,8 @@ tick()
 
 var gametype = ''
 export function loadGame(type) {
-    console.log('loadGame:', type)
+    //console.log('loadGame:', type)
     gametype = type
-    if (type === '11111') return `<form id="playerSelectForm">
-      <label for="username">Player Name:</label><br>
-      <input type="text" id="username" name="username" list="players">
-      <datalist id="players">
-        <option value="Player1">
-        <option value="Player2">
-        <option value="Player3">
-        <!-- Add more options as needed -->
-      </datalist><br>
-      <input type="submit" value="Invite">
-    </form>`
     if (type === 's2' || type === 's4') 
         return `<div class="container d-flex mt-1 justify-content-center">
                 <div class="text-white mt-1">Controls: A is up, D is down</div></div>
@@ -69,6 +61,9 @@ export function loadGame(type) {
 }
 
 export function startGame() {
+    //if (m !== i) return
+    if (run) return
+    run = true
     switch (gametype) {
         case 's2':
             startQuickGame();
@@ -96,6 +91,7 @@ export function endGame() {
 }
 
 export function sendResults(scoreLeft, scoreRight, oppIsHuman) {
+    run = false
     try {
         loadContent('result', scoreLeft, scoreRight, oppIsHuman)
     } catch (error) {
@@ -104,6 +100,7 @@ export function sendResults(scoreLeft, scoreRight, oppIsHuman) {
 }
 
 export function switchToIdle() {
+    run = false
     m.cleanUp()
     m = i
     m.startGame()

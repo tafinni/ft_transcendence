@@ -1,6 +1,12 @@
 import { getCookie } from './csrf.js';
+import { score_to_win } from './game/include.js';
 
 export async function loadResult(scoreLeft, scoreRight, oppIsHuman) {
+
+    if (scoreLeft !== score_to_win  && scoreRight !== score_to_win) {
+        console.log('invalid result')
+        return ``;
+    }
 
 	const response = await fetch('http://localhost:8000/profile/', {
 		method: 'GET',

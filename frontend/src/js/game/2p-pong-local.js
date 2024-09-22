@@ -20,13 +20,13 @@ export function startGame() {
     document.addEventListener("keyup", onDocumentKeyUp, true);
     if (i2.interval.id === -1)
         i2.interval.id = setInterval(l2.gametick60, 1000 / 60)
-    console.log('2P local game: Start!')
+    reallyStart()
 }
 
 export function reallyStart() {
     v.game_started = true
     l2.resetRound()
-    l2.ball_drop.restart()
+    l2.startRound(0.3) // 1.1
 }
 
 export function cleanUp() {

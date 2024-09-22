@@ -15,7 +15,7 @@ let resolveGame
 
 export function startGame(match, next_bracket, p1, p2) {
     resolveGame = null
-    console.log('t.startGame resolve:', resolveGame)
+    //console.log('t.startGame resolve:', resolveGame)
     i.renderer.camera = i.newIsoCamera()
     i.scene.add(i2.plate, i2.left, i2.right, i2.top, i2.bot)
     i.scene.add(i2.ball)
@@ -25,12 +25,12 @@ export function startGame(match, next_bracket, p1, p2) {
     document.addEventListener("keyup", onDocumentKeyUp, true);
     if (i2.interval.id === -1)
         i2.interval.id = setInterval(l2.gametick60, 1000 / 60)
-    //console.log('2P tournament game: Start!')
+    reallyStart()
     return new Promise((resolve) => { resolveGame = resolve })
 }
 
 export function returnEnd() {
-    console.log('returnEnd called')
+    //console.log('returnEnd called')
     if (resolveGame) {
         if (v.score_left > i.score_to_win)
             v.match_info.winner = v.match_info.left
@@ -43,7 +43,7 @@ export function returnEnd() {
 export function reallyStart() {
     v.game_started = true
     l2.resetRound()
-    l2.ball_drop.restart()
+    l2.startRound(1.1)
 }
 
 export function cleanUp() {

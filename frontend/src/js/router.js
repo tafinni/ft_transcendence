@@ -76,12 +76,12 @@ export async function loadContent(content, scoreLeft, scoreRight, oppIsHuman, ad
 		case 'single':
 			contentElement.innerHTML = await loadGame('s2');
 			startGame();
-			navLinkVisibility(2);
+			navLinkVisibility(0);
 			break;
 		case 'localMulti':
 			contentElement.innerHTML = await loadGame('l2');
 			startGame();
-			navLinkVisibility(2);
+			navLinkVisibility(0);
 			break;
 		case 'single4P':
 			contentElement.innerHTML = await loadGame('s4');

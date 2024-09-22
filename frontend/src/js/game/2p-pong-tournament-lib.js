@@ -1,3 +1,4 @@
+import * as THREE from 'three'
 import gsap from 'gsap'
 import * as i from './include.js'
 import * as i2 from './2p-pong-include.js'
@@ -84,8 +85,41 @@ export function endRound() {
         return
     }
     resetRound()
-    ball_drop.restart()
-    ball_drop.play()
+    startRound(0.5)
+}
+
+export function startRound(speed) {
+    if (typeof speed !== 'number') {
+        console.error('startRound parameter was not a number:', speed)
+        speed = 1.1
+    }
+    i.three_t.quaternion.setFromUnitVectors(new THREE.Vector3(-1, -1, -1).normalize(), new THREE.Vector3(0, 0, 0))
+    i.two_t.quaternion.setFromUnitVectors(new THREE.Vector3(-1, -1, -1).normalize(), new THREE.Vector3(0, 0, 0))
+    i.one_t.quaternion.setFromUnitVectors(new THREE.Vector3(-1, -1, -1).normalize(), new THREE.Vector3(0, 0, 0))
+    console.log(new THREE.Vector3(-1, -1, -1).normalize())
+    i.three_t.rotation.y += Math.PI * 3 / 4
+    i.two_t.rotation.y += Math.PI * 3 / 4
+    i.one_t.rotation.y += Math.PI * 3 / 4
+    i.start_t.lookAt(i.renderer.camera.position)
+    gsap.to(i.three_t.rotation, { y: (Math.PI * 11)/4, duration: speed, delay: 0.3, ease: "none", onComplete: () => {
+        i.scene.remove(i.three_t)
+        gsap.to(i.two_t.rotation, { y: (Math.PI * 11)/4, duration: speed, ease: "none", onComplete: () => {
+            i.scene.remove(i.two_t)
+            gsap.to(i.one_t.rotation, { y: (Math.PI * 11)/4, duration: speed, ease: "none", onComplete: () => {
+                i.scene.remove(i.one_t)
+                i.scene.add(i.start_t)
+                setTimeout(() => {
+                    i.scene.remove(i.start_t)
+                    ball_drop.restart()
+                }, 250)
+            }})
+            i.scene.add(i.one_t)
+        }})
+        i.scene.add(i.two_t)
+    }})
+    i.scene.add(i.three_t)
+    //console.log()
+    //ball_drop.restart()
 }
 
 export function resetRound() {
