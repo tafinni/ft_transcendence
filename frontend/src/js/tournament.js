@@ -56,9 +56,10 @@ export async function loadTournamentLobby() {
 
 		const lobbyHTML = `
 			<div class="container mt-5">
-										<button type="button" id="cancel-tournament-btn" class="btn btn-danger w-100 mt-3" translate="cancel tournament"></button>
-
 				${matchesHTML}
+				<div class="float-right">
+					<button type="button" id="cancel-tournament-btn" class="btn btn-danger w-100 mt-3" translate="cancel tournament"></button>
+				</div>
 			</div>
 		`;
 
