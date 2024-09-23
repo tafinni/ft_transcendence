@@ -18,6 +18,8 @@ export function randomizeBallDir2p() {
     v.ball_direction *= Math.PI / 180
 }
 
+var ticknbr = 0
+
 export function gametick60() {
     if (!v.game_running && v.game_started) {
         if (v.score_left > i.score_to_win || v.score_right > i.score_to_win) {
@@ -29,10 +31,19 @@ export function gametick60() {
     if (v.l_right_pressed) v.left_pos += i.player_speed
     if (v.left_pos > i.paddle_max) v.left_pos = i.paddle_max
     else if (v.left_pos < -i.paddle_max) v.left_pos = -i.paddle_max
-    if (v.r_left_pressed) v.right_pos -= i.player_speed
-    if (v.r_right_pressed) v.right_pos += i.player_speed
-    if (v.right_pos > i.paddle_max) v.right_pos = i.paddle_max
-    else if (v.right_pos < -i.paddle_max) v.right_pos = -i.paddle_max
+    if (v.ai_right !== null) {
+        ticknbr++;
+        //console.log(v.ai_right.aiMove(v.right_pos))
+        v.right_pos -= v.ai_right.aiMove()
+        v.right_pos += v.ai_right.aiMove(v.right_pos) * i.player_speed
+        //console.log(v.right_pos)
+        //console.assert(typeof v.right_pos !== 'number', 'right_pos is NaN!!!', ticknbr)
+    } else {
+        if (v.r_left_pressed) v.right_pos -= i.player_speed
+        if (v.r_right_pressed) v.right_pos += i.player_speed
+        if (v.right_pos > i.paddle_max) v.right_pos = i.paddle_max
+        else if (v.right_pos < -i.paddle_max) v.right_pos = -i.paddle_max
+    }
     if (!v.game_started || !v.game_running) return
     if (v.ball_speed < i.ball_base_speed) {
         v.ball_speed += Math.floor((i.ball_base_speed - v.ball_speed) / 100) * 10
@@ -47,19 +58,31 @@ export function gametick60() {
             v.ball_direction -= v.bounce_distance / i.paddle_halfwidth * Math.PI / 4
         }
         else {
-            v.ball_direction = 2 * Math.PI - v.ball_direction
+            v.ball_direction = (2 * Math.PI) - v.ball_direction
             v.ballX = -i.ball_max - (v.ballX + i.ball_max)
             v.ball_direction += v.bounce_distance / i.paddle_halfwidth * Math.PI / 4
         }
         v.ball_speed += i.ball_increase_speed
+        v.bounced = true
     }
     if (!v.ball_passed && v.ballY > i.ball_max) {
         v.ball_direction = Math.PI - v.ball_direction
         v.ballY = i.ball_max - (v.ballY - i.ball_max)
+        v.bounced = true
     } else if (!v.ball_passed && v.ballY < -i.ball_max) {
         v.ball_direction = Math.PI - v.ball_direction
         v.ballY = -i.ball_max - (v.ballY + i.ball_max)
+        v.bounced = true
     }
+    if (v.bounced) {
+        if (v.ball_direction < 0)
+            v.ball_direction += 2 * Math.PI
+        else if (v.ball_direction > 2 * Math.PI)
+            v.ball_direction += 2 * Math.PI
+        v.bounced = false
+    }
+    console.assert(v.ball_direction >= 0 && v.ball_direction <= 2 * Math.PI,
+        'ball direction outside normal variation: ' + v.ball_direction)
     if (v.ball_passed && ++v.ball_passed_timer > i.aftergame_timer) endRound() 
 }
 
@@ -89,7 +112,6 @@ export function startRound(speed) {
     i.three_t.quaternion.setFromUnitVectors(new THREE.Vector3(-1, -1, -1).normalize(), new THREE.Vector3(0, 0, 0))
     i.two_t.quaternion.setFromUnitVectors(new THREE.Vector3(-1, -1, -1).normalize(), new THREE.Vector3(0, 0, 0))
     i.one_t.quaternion.setFromUnitVectors(new THREE.Vector3(-1, -1, -1).normalize(), new THREE.Vector3(0, 0, 0))
-    console.log(new THREE.Vector3(-1, -1, -1).normalize())
     i.three_t.rotation.y += Math.PI * 3 / 4
     i.two_t.rotation.y += Math.PI * 3 / 4
     i.one_t.rotation.y += Math.PI * 3 / 4
@@ -158,7 +180,7 @@ function showVictory() {
     i.win_text.material.color = i2.left.material.color.clone()
     i.win_text.lookAt(i.renderer.camera.position)
     i.scene.add(i.win_text)
-    console.log('vic left', v.score_left, 'right', v.score_right)
+    //console.log('vic left', v.score_left, 'right', v.score_right)
     sendResults(v.score_left, v.score_right, true)
 }
 
@@ -166,7 +188,7 @@ function showLoss() {
     i.lose_text.material.color = i2.right.material.color.clone()
     i.lose_text.lookAt(i.renderer.camera.position)
     i.scene.add(i.lose_text)
-    console.log('loss left', v.score_left, 'right', v.score_right)
+    //console.log('loss left', v.score_left, 'right', v.score_right)
     sendResults(v.score_left, v.score_right, true)
 }
 

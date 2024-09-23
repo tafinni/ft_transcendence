@@ -4,7 +4,7 @@ import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js'
 //import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 
 // DEBUG
-export const debug = false
+export const debug = true
 
 // Timers
 export const aftergame_timer = 115 // 60 = 1 second
@@ -19,7 +19,7 @@ export const paddle_halfwidth = (area_vmax - paddle_vmax) * pos_max / area_vmax 
 export const ball_max = pos_max - ball_radius
 export const paddle_max = pos_max - paddle_halfwidth
 export const player_speed = 20000 // 20000
-export const ball_base_speed = 60000 // 14000
+export const ball_base_speed = 14000 // 14000
 export const ball_start_speed = 7000 // 7000
 export const ball_increase_speed = 2000
 export const score_to_win = 1

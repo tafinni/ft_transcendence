@@ -9,6 +9,7 @@ export const vars = {
     l_right_pressed: false,
     r_left_pressed: false,
     r_right_pressed: false,
+    ai_right: null,
     game_started: false,
     game_running: false,
     score_to_win: i.score_to_win,
@@ -18,6 +19,7 @@ export const vars = {
     ballY: 0,
     ball_direction: 0,
     ball_speed: i.ball_base_speed,
+    bounced: false,
     bounce_distance: 0,
     ball_passed: false,
     ball_passed_timer: 0,
@@ -80,7 +82,16 @@ export const score = new THREE.Mesh(
 )
 score.name = "score_original"
 score.position.set(20, 0, 0)
-
+export const ball2 = new THREE.Mesh(
+    new THREE.SphereGeometry(0.05, 8, 8),
+    new THREE.MeshNormalMaterial()
+)
+ball2.material.color = new THREE.Color('red')
+export const ball3 = new THREE.Mesh(
+    new THREE.SphereGeometry(0.05, 8, 8),
+    new THREE.MeshNormalMaterial()
+)
+ball3.material.color = new THREE.Color('red')
 //debug
 // export const ball2 = new THREE.Mesh(
 //     new THREE.SphereGeometry(0.1, 16, 16),
