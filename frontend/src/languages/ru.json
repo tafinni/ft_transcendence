@@ -63,6 +63,21 @@
 	"invite to tournament": "Пригласить на турнир",
 	"enter player username": "Введите имя пользователя",
 	"invite player": "Пригласить игрока",
-	"start tournament": "Начать турнир"
+	"start tournament": "Начать турнир",
+    "player count": "Количество игроков",
+    "tournament for": "Турнир для",
+    "for players": "Для игроков",
+    "players": "Игроки",
+
+    "cancel tournament": "Отменить турнир",
+    "wait for tournament to start": "Ожидайте начала турнира",
+    "back to invites": "Вернуться к приглашениям",
+    "enter tournament": "Войти в турнир",
+    "start game": "Начать игру",
+    "player 1": "Игрок 1",
+    "player 2": "Игрок 2",
+    "authenticate": "Авторизоваться",
+    "continue": "Продолжить",
+    "begin": "Начать"
 
 }

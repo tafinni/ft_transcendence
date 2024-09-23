@@ -20,6 +20,7 @@ export async function loadTournamentLobby() {
 		}
 
 		const data = await response.json();
+		const tournamentID = data.tournament_id
 		
 		const reply = await fetch(`http://localhost:8000/get_tournament_matches/?tournament_id=${data.tournament_id}`, {
 			method: 'GET',
@@ -33,6 +34,13 @@ export async function loadTournamentLobby() {
 		}
 
 		const newData = await reply.json();
+		if (newData.game_over === true)
+		{
+			console.log("tournament is over");
+			showAlert(newData.message, 'warning');
+			loadContent('home');
+			return;
+		}
 		console.log('testing: ', newData);
 
 		const matchesHTML = newData.matches.map(match => `
@@ -42,13 +50,16 @@ export async function loadTournamentLobby() {
 				${match.result === 'Pending' ? 
 					`<button type="button" class="btn btn-primary start-game-btn" data-round="${match.round_number}" data-group="${match.group_number}" translate="start game"></button>` 
 					: 
-					`<button type="button" class="btn btn-secondary" disabled>${match.result === 'in_progress' ? 'In Progress' : 'Completed'}</button>`
+					`<button type="button" class="btn btn-secondary" disabled>${match.result === 'Completed'}</button>`
 				}			</div>
 		`).join('');
 
 		const lobbyHTML = `
 			<div class="container mt-5">
 				${matchesHTML}
+				<div class="float-right">
+					<button type="button" id="cancel-tournament-btn" class="btn btn-danger w-100 mt-3" translate="cancel tournament"></button>
+				</div>
 			</div>
 		`;
 
@@ -67,6 +78,10 @@ export async function loadTournamentLobby() {
 					console.log(`Start game for round ${round}, group ${group}`);
 					playerAuth(data.tournament_id, round, group);
 				});
+			});
+			const cancelTournamentButton = document.getElementById('cancel-tournament-btn');
+			cancelTournamentButton.addEventListener('click', () => {
+				cancelTournament(tournamentID);
 			});
 		}
 		else
@@ -213,7 +228,6 @@ z			</div>
 					{
 						const errorData = await response.json();
 						console.error(errorData);
-						//errorMessage1.textContent = errorData.error;
 						errorMessage1.style.display = 'block';
 						player1 = false;
 						success1.style.display = 'none';
