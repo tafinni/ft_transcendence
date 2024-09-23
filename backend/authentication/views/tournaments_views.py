@@ -393,7 +393,7 @@ def cancel_tournament(request):
             return JsonResponse({'error': 'Invalid JSON'}, status=400)
 
         try:
-            tournament = Tournament.objects.get(id=tournament_id, initiator=request.user, status__in=[0, 1])  # status=0 means 'Pending'
+            tournament = Tournament.objects.get(id=tournament_id, status__in=[0, 1])  # status=0 means 'Pending'
         except Tournament.DoesNotExist:
             return JsonResponse({'error': 'Tournament does not exist or is not pending'}, status=404)
 
