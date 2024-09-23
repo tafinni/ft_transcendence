@@ -8,7 +8,6 @@ import json
 import random
 import math
 
-
 @login_required
 @csrf_protect
 #@csrf_exempt
@@ -39,6 +38,15 @@ def accept_tournament_invitation(request):
         ).select_related('tournament').first()
 
         if participant1:
+            return JsonResponse({'error': 'Finish current tournament'}, status=400)
+
+        participant2 = Participants.objects.filter(
+            user=request.user, 
+            tournament__status=1, 
+            is_accepted=True  # Only check for accepted tournaments
+        ).select_related('tournament').first()
+
+        if participant2:
             return JsonResponse({'error': 'Finish current tournament'}, status=400)
 
 
@@ -215,15 +223,6 @@ def create_tournament(request):
                 'player_count': existing_tournament.player_count
             })
 
-        existing_tournament = Tournament.objects.filter(initiator=request.user, status__in=[0]).first()
-        if existing_tournament:
-            existing_tournament.player_count #= player_count
-            return JsonResponse({
-                'message': 'You already have a pending tournament.',
-                'tournament_id': existing_tournament.id,
-                'player_count': existing_tournament.player_count
-            })
-
         tournament = Tournament.objects.create(
             initiator=request.user,
             player_count=player_count,
@@ -239,7 +238,6 @@ def create_tournament(request):
 
         # Prepare response message
         initiator_display = request.user.userprofile.display_name or request.user.username
-        return JsonResponse({'message': f'Tournament created by {initiator_display}', 'tournament_id': tournament.id, 'player_count': tournament.player_count})
         return JsonResponse({'message': f'Tournament created by {initiator_display}', 'tournament_id': tournament.id, 'player_count': tournament.player_count})
 
     return JsonResponse({'error': 'Invalid request method'}, status=405)
@@ -271,7 +269,9 @@ def start_tournament(request):
             return JsonResponse({'error': 'Not enough participants have accepted the invitation'}, status=400)
 
         participants_list = list(accepted_participants)
+        
         random.shuffle(participants_list)
+        
         # create group
         group_number = 1
         for i in range(0, len(participants_list), 2):
@@ -393,7 +393,7 @@ def cancel_tournament(request):
             return JsonResponse({'error': 'Invalid JSON'}, status=400)
 
         try:
-            tournament = Tournament.objects.get(id=tournament_id, initiator=request.user, status=0)  # status=0 means 'Pending'
+            tournament = Tournament.objects.get(id=tournament_id, status__in=[0, 1])  # status=0 means 'Pending'
         except Tournament.DoesNotExist:
             return JsonResponse({'error': 'Tournament does not exist or is not pending'}, status=404)
 
@@ -402,6 +402,9 @@ def cancel_tournament(request):
         return JsonResponse({'success': 'Tournament canceled and deleted successfully'}, status=200)
 
     return JsonResponse({'error': 'Invalid request method'}, status=405)
+
+
+
 
 @login_required
 def get_tournament_matches(request):
@@ -449,7 +452,7 @@ def get_tournament_matches(request):
                         tournament = tournament,
                         user = participant1.user,
                         opponent = participant2.user,
-                        round_number = 1
+                        round_number = 1,
                     )
                     mResult.save()
                     matches_list.append({
@@ -472,8 +475,8 @@ def get_tournament_matches(request):
                     elif result.result == 'loss':
                         winners.append(result.opponent) 
 
+                # if len(winners) == 1 and current_round == total_rounds + 1:
                 if len(winners) == 1:
-                #if current_round == total_rounds + 1:
                     # Завершаем турнир, так как остался только один победитель
                     tournament.status = 2  # "Completed"
                     tournament.save()
@@ -524,7 +527,6 @@ def get_tournament_matches(request):
                 for result in results.filter(round_number=current_round):
                     user_display = result.user.userprofile.display_name or result.user.username
                     opponent_display = result.opponent.userprofile.display_name or result.opponent.username
-                    
                     match_info = {
                         'round_number': result.round_number,
                         'group_number': Participants.objects.get(user=result.user, tournament=tournament).group_number,
@@ -537,9 +539,6 @@ def get_tournament_matches(request):
         return JsonResponse({'matches': matches_list}, status=200)
 
     return JsonResponse({'error': 'Invalid request method'}, status=405)
-
-
-
 
 
 
@@ -631,41 +630,3 @@ def get_players(request):
         }
     return JsonResponse(resp)
 
-
-@csrf_protect
-@login_required
-def update_game_status(request):
-    # Get player usernames from the request
-    body = json.loads(request.body)
-    player1_username = body.get('player1')
-    player2_username = body.get('player2')
-
-    # Validate input
-    if not player1_username or not player2_username:
-        return JsonResponse({'error': 'Both player1 and player2 usernames are required'}, status=400)
-
-    # Fetch both players from the `User` model
-    try:
-        player1 = User.objects.get(username=player1_username)
-        player2 = User.objects.get(username=player2_username)
-    except User.DoesNotExist:
-        return JsonResponse({'error': 'One or both players not found'}, status=404)
-
-    # Retrieve the game involving both players
-    try:
-        game = ResultTournament.objects.filter(
-            (Q(user=player1) & Q(opponent=player2)) | 
-            (Q(user=player2) & Q(opponent=player1))
-        ).first()
-
-        if not game:
-            return JsonResponse({'error': 'Game between these players not found'}, status=404)
-
-    except ResultTournament.DoesNotExist:
-        return JsonResponse({'error': 'Game not found'}, status=404)
-
-    # Update game status (assuming `game_status` is a field on `ResultTournament`)
-    game.status = 'Completed'  # Or 'started', 'finished', etc.
-    game.save()
-
-    return JsonResponse({'success': 'Game status updated successfully'}, status=200)

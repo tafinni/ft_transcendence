@@ -158,63 +158,46 @@ def add_tourney_result(request):
     userRight = User.objects.get(username=nameRight)
     sRight = data.get('scoreRight')
 
-    # Логика определения победителя
-    if sLeft > sRight:
-        resultLeft = f'win {sLeft}-{sRight}'
-        resultRight = f'lost {sLeft}-{sRight}'
+    if (sLeft > sRight):
+        resultLeft = 'win' + ' ' + str(sLeft) + '-' + str(sRight)
+        resultRight = 'lost' + ' ' + str(sLeft) + '-' + str(sRight)
         winner = "left"
     else:
-        resultLeft = f'lost {sLeft}-{sRight}'
-        resultRight = f'win {sLeft}-{sRight}'
+        resultLeft = 'lost' + ' ' + str(sLeft) + '-' + str(sRight)
+        resultRight = 'win' + ' ' + str(sLeft) + '-' + str(sRight)
         winner = "right"
-
-    # Сохранение в MatchHistory
     MatchHistory.objects.create(
-        user=userLeft,
-        opponent=userRight,
-        date=datetime.datetime.now(),
-        result=resultLeft
+        user = userLeft,
+        opponent = userRight,
+        date = datetime.datetime.now(),
+        result = resultLeft
     )
     MatchHistory.objects.create(
-        user=userRight,
-        opponent=userLeft,
-        date=datetime.datetime.now(),
-        result=resultRight
+        user = userRight,
+        opponent = userLeft,
+        date = datetime.datetime.now(),
+        result = resultRight
     )
-
-    # Поиск участников турнира
     participant = Participants.objects.filter(user=userLeft, tournament__status=1).first()
     opp = Participants.objects.filter(user=userRight, tournament__status=1).first()
-
-    if not participant or not opp:
-        return JsonResponse({'message': 'Participants not found'}, status=404)
-
     pluser = participant.user
     pruser = opp.user
     tourId = participant.tournament_id
-
-    # Получение турнира
     tourney = Tournament.objects.get(id=tourId)
     if not tourney:
-        return JsonResponse({'message': 'no tournament'}, status=404)
-
-    # Поиск результата матча в ResultTournament
+        return JsonResponse({'message': 'no tournament'})
+    # results = ResultTournament.objects.filter(user=pluser, opponent=pruser, tournament=tourney)
     results = ResultTournament.objects.filter(
-        tournament=tourney,
-        user__in=[pluser, pruser],
-        opponent__in=[pluser, pruser]
+    tournament=tourney,
+    user__in=[pluser, pruser],
+    opponent__in=[pluser, pruser]
     )
-
-    # Логирование для проверки поиска
-    if not results.exists():
-        return JsonResponse({'message': 'No results found in ResultTournament'}, status=404)
-
-    # Обновление результатов
+    if not results:
+        return JsonResponse({'message': 'no results'})
     for result in results:
         if winner == "left":
             result.result = "win"
         else:
             result.result = "loss"
         result.save()
-
     return JsonResponse({'message': 'Result saved successfully'})
