@@ -188,6 +188,7 @@ function addScore(player) {
                 return
             }
             else{
+                v.score_left++
                 showResult()
                 return
             }
@@ -208,6 +209,7 @@ function addScore(player) {
             return
             }
             else{
+                v.score_right++
                 showResult()
                 return
             }
@@ -240,8 +242,6 @@ function showLoss() {
 
 function showResult(){
     sendTourneyResults(v.score_left, v.score_right, true, v.leftName, v.rightName)
-    v.score_left++
-    v.score_right++
 }
 function resetScore() {
     v.score_left = v.score_right = 0

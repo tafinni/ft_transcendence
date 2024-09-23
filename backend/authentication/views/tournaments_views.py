@@ -614,7 +614,7 @@ def get_players(request):
         tournament_id=tournament_id,
         group_number=group_num,
         is_accepted=True 
-    ).select_related('user')
+    ).select_related('user').order_by()
 
     players_in_round = [p.user for p in participants]
 
