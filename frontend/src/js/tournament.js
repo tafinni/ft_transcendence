@@ -50,7 +50,7 @@ export async function loadTournamentLobby() {
 				${match.result === 'Pending' ? 
 					`<button type="button" class="btn btn-primary start-game-btn" data-round="${match.round_number}" data-group="${match.group_number}" translate="start game"></button>` 
 					: 
-					`<button type="button" class="btn btn-secondary" disabled>${match.result === 'in_progress' ? 'In Progress' : 'Completed'}</button>`
+					`<button type="button" class="btn btn-secondary" disabled>${match.result === 'Completed'}</button>`
 				}			</div>
 		`).join('');
 
@@ -228,7 +228,6 @@ z			</div>
 					{
 						const errorData = await response.json();
 						console.error(errorData);
-						//errorMessage1.textContent = errorData.error;
 						errorMessage1.style.display = 'block';
 						player1 = false;
 						success1.style.display = 'none';
