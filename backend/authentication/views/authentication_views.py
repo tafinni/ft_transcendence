@@ -29,7 +29,8 @@ def home(request):
     return JsonResponse({'message': 'Welcome to the home page!!'})
 
 # Define a view function for the login page
-@csrf_exempt
+# @csrf_exempt
+@csrf_protect
 def login_page(request):
     if request.method == "POST":
         body = json.loads(request.body)
@@ -42,8 +43,8 @@ def login_page(request):
         else:
             login(request, user)
             if hasattr(user, 'userprofile'):
-               # if user.userprofile.is_online == True:
-                #    return JsonResponse({'error': 'User already logged in'}, status=400)
+               if user.userprofile.is_online == True:
+                   return JsonResponse({'error': 'User already logged in'}, status=400)
                 user.userprofile.is_online = True
                 user.userprofile.save()
 

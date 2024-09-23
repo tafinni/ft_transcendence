@@ -81,8 +81,21 @@ export async function loadContent(content, scoreLeft, scoreRight, oppIsHuman, ad
 			startGame();
 			navLinkVisibility(2);
 			break;
+		case 'tourney':
+			contentElement.innerHTML = await loadGame(3, nameLeft, nameRight);
+			startGame(3, nameLeft, nameRight);
+			navLinkVisibility(2);
+			break;
 		case 'result':
-			contentElement.innerHTML = await loadResult(scoreLeft, scoreRight, oppIsHuman);
+			contentElement.innerHTML = await loadResult(scoreLeft, scoreRight, oppIsHuman, nameRight);
+			navLinkVisibility(1);
+			break;
+		case 'tourneyResult':
+			contentElement.innerHTML = await loadTourneyResult(scoreLeft, scoreRight, nameLeft, nameRight);
+			navLinkVisibility(1);
+			break;
+		case 'tournament-lobby':
+			await loadTournamentLobby();
 			navLinkVisibility(1);
 			break;
 		default:

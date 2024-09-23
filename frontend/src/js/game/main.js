@@ -36,7 +36,7 @@ const tick = () => {
 tick()
 
 var gametype = -1
-export function loadGame(nbr) {
+export function loadGame(nbr, nameLeft, nameRight) {
     gametype = nbr
     if (nbr === 1) return `<form id="playerSelectForm">
       <label for="username">Player Name:</label><br>
@@ -49,25 +49,40 @@ export function loadGame(nbr) {
       </datalist><br>
       <input type="submit" value="Invite">
     </form>`
+    if (nbr == 3)
+        return `
+            <button class="btn btn-primary btn-lg mb-3" id="begin-tourney-match">Begin</button>
+            <p class="w-100" style="color: white;">${nameLeft} is yellow, movement keys are a and d, ${nameRight} is purple, movement keys are arrow keys left and right</p>
+            </div>`;
     return ``
 }
 
-export function startGame() {
+export function startGame(gametype, nameLeft, nameRight) {
     if (gametype === 0) startQuickGame()
     else if (gametype === 1) startTwoLocal()
     else if (gametype === 2) startFourLocal()
+    else if (gametype === 3) startTourney(nameLeft, nameRight)
     gametype = -1
 }
+
 
 export function endGame() {
     gametype = -1
 }
 
-export function sendResults(scoreLeft, scoreRight, oppIsHuman) {
+export function sendResults(scoreLeft, scoreRight, oppIsHuman, oppName) {
     try {
-        loadContent('result', scoreLeft, scoreRight, oppIsHuman)
+        loadContent('result', scoreLeft, scoreRight, oppIsHuman, "", oppName)
     } catch (error) {
         console.log('error: failed to send results', scoreLeft, scoreRight, oppIsHuman)
+    }
+}
+
+export function sendTourneyResults(scoreLeft, scoreRight, oppIsHuman, nameLeft, nameRight) {
+    try {
+        loadContent('tourneyResult', scoreLeft, scoreRight, oppIsHuman, nameLeft, nameRight)
+    } catch (error) {
+        console.log('failed to sendResults:', error)
     }
 }
 
@@ -88,6 +103,12 @@ export function startTwoLocal() {
     m.cleanUp()
     m = l2
     m.startGame()
+}
+
+export function startTourney(nameLeft, nameRight){
+    m.cleanUp()
+    m = l2
+    m.startGame(1, nameLeft, nameRight)
 }
 
 function startFourLocal() {

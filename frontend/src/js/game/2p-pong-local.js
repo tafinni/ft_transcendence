@@ -11,15 +11,38 @@ export const tick = () => {
     i2.ball.position.x = v.ballY * i.avmax_pmx
 }
 
-export function startGame() {
+export function startGame(isTourney, nameLeft, nameRight) {
     i.scene.add(i2.plate, i2.left, i2.right, i2.top, i2.bot)
     i.scene.add(i2.ball)
     v.left_pos = v.right_pos = 0
     document.addEventListener("keydown", onDocumentKeyDown, true);
     document.addEventListener("keyup", onDocumentKeyUp, true);
-    if (i2.interval.id === -1)
-        i2.interval.id = setInterval(l2.gametick60, 1000 / 60)
-    console.log('2P local game: Start!')
+    if (!isTourney)
+        {
+            const playerselect = document.getElementById("playerSelectForm")
+            const nameForm = document.getElementById('username');
+            playerselect.style.zIndex = 100
+            playerselect.addEventListener("submit", (e) => {
+                let oppName = nameForm.value;
+                console.log("playing against", oppName);
+                if (oppName != "")
+                {
+                    e.preventDefault()
+                    startSolo(0, "", oppName)
+                    playerselect.remove()
+                }
+            })
+        }
+        else
+        {
+            const beginMatch = document.getElementById('begin-tourney-match')
+            beginMatch.addEventListener('click', (e) => {
+                e.preventDefault
+                console.log("Tournament match between", nameLeft, "and", nameRight, "started");
+                startSolo(1, nameLeft, nameRight);
+                beginMatch.remove();
+            })
+        }
 }
 
 export function reallyStart() {
@@ -61,4 +84,20 @@ function onDocumentKeyUp(event) {
     else if (key_code === 68) { v.l_right_pressed = false }
     else if (key_code === 37) { v.r_left_pressed = false }
     else if (key_code === 39) { v.r_right_pressed = false }
+}
+
+function startSolo(isTourney, nameLeft, nameRight) {
+    v.game_started = true
+    if (isTourney)
+    {
+        v.matchIsTourney = true
+        v.leftName = nameLeft
+        v.rightName = nameRight
+    }
+    else
+    {   
+        v.rightName = nameRight;
+    }
+    console.log(v)
+    ball_drop.restart()
 }

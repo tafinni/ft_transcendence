@@ -2,7 +2,7 @@ import gsap from 'gsap'
 import * as i from './include.js'
 import * as i2 from './2p-pong-include.js'
 import { vars as v } from './2p-pong-include.js'
-import { sendResults, switchToIdle } from './main.js'
+import { sendResults, switchToIdle, sendTourneyResults } from './main.js'
 //import { DynamicReadUsage } from 'three'
 
 export const ball_drop = gsap.to(i2.ball.position, { y: 0.1, duration: 0.7, paused: true, onComplete: () => {
@@ -96,30 +96,44 @@ export function resetRound() {
 function addScore(player) {
     if (player === 'left') {
         if (v.score_left === v.score_to_win) {
-            console.log('victory')
-            showVictory()
-            return
+            if (v.matchIsTourney == false){
+                console.log('victory')
+                showVictory()
+                return
+            }
+            else{
+                v.score_left++
+                showResult()
+                return
+            }
         }
-        const score_clone = i2.score.clone()
+        const score_clone = score.clone()
         score_clone.name = "score"
-        score_clone.material = i2.score.material.clone()
-        score_clone.material.color = i2.left.material.color.clone()
-        score_clone.position.set(-1.7 + 0.25 * v.score_left, 0, 2.25)
-        i.scene.add(score_clone)
+        score_clone.material = score.material.clone()
+        score_clone.material.color = left.material.color.clone()
+        score_clone.position.set(-1.8 + 0.25 * v.score_left, 0, 2.25)
+        t.scene.add(score_clone)
         v.score_left++
     }
     else if (player === 'right') {
         if (v.score_right === v.score_to_win) {
+            if (v.matchIsTourney == false){
             console.log('loss')
             showLoss()
             return
+            }
+            else{
+                v.score_right++
+                showResult()
+                return
+            }
         }
-        const score_clone = i2.score.clone()
+        const score_clone = score.clone()
         score_clone.name = "score"
-        score_clone.material = i2.score.material.clone()
-        score_clone.material.color = i2.right.material.color.clone()
-        score_clone.position.set(1.7 - 0.25 * v.score_right, 0, -2.25)
-        i.scene.add(score_clone)
+        score_clone.material = score.material.clone()
+        score_clone.material.color = right.material.color.clone()
+        score_clone.position.set(1.8 - 0.25 * v.score_right, 0, -2.25)
+        t.scene.add(score_clone)
         v.score_right++
     }
 }
@@ -129,7 +143,7 @@ function showVictory() {
     i.win_text.lookAt(i.gcamera.position)
     i.scene.add(i.win_text)
     v.score_left++
-    sendResults(v.score_left, v.score_right, v.oppIsHuman)
+    sendResults(v.score_left, v.score_right, v.oppIsHuman, v.rightName)
 }
 
 function showLoss() {
@@ -137,7 +151,11 @@ function showLoss() {
     i.lose_text.lookAt(i.gcamera.position)
     i.scene.add(i.lose_text)
     v.score_right++
-    sendResults(v.score_left, v.score_right, v.oppIsHuman)
+    sendResults(v.score_left, v.score_right, v.oppIsHuman, v.leftName)
+}
+
+function showResult(){
+    sendTourneyResults(v.score_left, v.score_right, true, v.leftName, v.rightName)
 }
 
 export function resetScore() {

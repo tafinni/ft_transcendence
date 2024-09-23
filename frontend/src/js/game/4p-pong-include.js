@@ -10,8 +10,11 @@ export const top = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.2, 0.7), new THRE
 export const bot = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.2, 0.7), new THREE.MeshBasicMaterial())
 
 export const vars = {
+    matchIsTourney: false,
     left_pos: 0,
+    leftName: "",
     right_pos: 0,
+    rightName: "",
     top_pos: 0,
     bot_pos: 0,
     l_left_pressed: false,

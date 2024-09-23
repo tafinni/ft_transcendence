@@ -8,8 +8,6 @@ from authentication.models import Tournament, Participants, ResultTournament
 import json
 import random
 
-import random
-
 
 @login_required
 @csrf_protect
@@ -308,3 +306,58 @@ def list_invited_participants(request):
         })
 
     return JsonResponse({'participants': participant_list})
+    
+@login_required
+@csrf_exempt
+def is_user_in_tournament(request):
+    #if request.method == "GET":
+        # Check if the user is a participant in any pending or active tournaments (status = 0 or 1)
+    participant = Participants.objects.filter(
+        user=request.user, 
+        tournament__status__in=[0, 1]  # Checking both pending and active tournaments
+    ).select_related('tournament').first()
+
+    if not participant:
+        return JsonResponse({
+            'in_tournament': False,
+            'message': 'User is not in any pending or active tournament'
+        }, status=200)
+
+    user = request.user
+
+    # If the tournament is active (status = 1)
+    if participant.tournament.status == 1:
+        return JsonResponse({
+            'user': user.username,
+            'in_tournament': True,
+            'status': 'Active',
+            'test': participant.tournament.status,
+            'tournament_id': participant.tournament.id,
+            'tournament_initiator': participant.tournament.initiator.username
+        }, status=200)
+
+    # If the user has accepted the invitation to a pending tournament (status = 0)
+    if participant.is_accepted is True and participant.tournament.status == 0:
+        return JsonResponse({
+            'user': user.username,
+            'in_tournament': True,
+            'status': 'Pending',
+            'test': participant.tournament.status,
+            'tournament_id': participant.tournament.id,
+            'tournament_initiator': participant.tournament.initiator.username
+        }, status=200)
+
+
+    # If the user has accepted the invitation to a pending tournament (status = 0)
+    if participant.is_accepted is None and participant.tournament.status == 0:
+        return JsonResponse({
+            'user': user.username,
+            'in_tournament': None,
+            'status': 'Pending',
+            'test': participant.tournament.status,
+            'test2': 'invited but not accepted',
+            'tournament_id': participant.tournament.id,
+            'tournament_initiator': participant.tournament.initiator.username
+        }, status=200)
+
+    return JsonResponse({'error': 'Invalid request method'}, status=405)

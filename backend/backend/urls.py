@@ -48,13 +48,16 @@ urlpatterns = [
     path('decline_friend_request/', friends_views.decline_friend_request, name='decline_friend_request'),
 
     path('create_tournament/', tournaments_views.create_tournament, name='create_tournament'),
-    path('create_tournament/', tournaments_views.create_tournament, name='create_tournament'),
     path('invite_to_tournament/', tournaments_views.invite_to_tournament, name='invite_to_tournament'),
     path('accept_tournament_invitation/', tournaments_views.accept_tournament_invitation, name='accept_tournament_invitation'),
     path('decline_tournament_invitation/', tournaments_views.decline_tournament_invitation, name='decline_tournament_invitation'),
     path('list_invited_participants/', tournaments_views.list_invited_participants, name='list_invited_participants'),
     path('start_tournament/', tournaments_views.start_tournament, name='start_tournament'),
-
+    path('is_user_in_tournament/', tournaments_views.is_user_in_tournament, name='is_user_in_tournament'),
+    path('cancel_tournament/', tournaments_views.cancel_tournament, name='cancel_tournament'),
+    path('get_tournament_matches/', tournaments_views.get_tournament_matches, name='get_tournament_matches'),
+    path('get_next_match/', tournaments_views.get_next_match, name='get_next_match'),
+    path('get_players/', tournaments_views.get_players, name='get_players'),
 ]
 
 if settings.DEBUG:
