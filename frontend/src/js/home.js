@@ -51,9 +51,30 @@ export async function loadHome() {
             });
         }
         if (twoPlayer) {
-            twoPlayer.addEventListener('click', (event) => {
+            twoPlayer.addEventListener('click', async (event) => {
                 event.preventDefault();
-                loadContent('localMulti');
+
+                try
+                {
+                    const response = await fetch('http://localhost:8000/profile/', {
+                        method: 'GET',
+                        credentials: 'include'
+                    });
+                    if (!response.ok)
+                    {
+                        console.error('Failed loading profile info:', response.statusText);
+                        showAlert('Error occured. Try Again.', 'danger');
+                        return ;
+                    }
+                    const data = await response.json();
+
+                    loadContent('tourney', 0, 0, 0, data.username, 'guest_player');
+
+                }
+                catch (error)
+                {
+                    console.log(error);
+                }
             });
         }
 

@@ -94,8 +94,12 @@ def add_result(request):
     if oppStatus == 0:
         opp = 'AI'
         opp_user = None
+    elif oppStatus == 2:
+        opp = 'Guest Player'
+        opp_user = None
     else:
         opp = oppName
+
     try:
         opp_user = User.objects.get(username=oppName)
         opp_stats = UserStats.objects.get(user=opp_user)

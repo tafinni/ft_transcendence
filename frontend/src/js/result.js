@@ -1,4 +1,5 @@
 import { getCookie } from './csrf.js';
+import { showAlert } from './index.js';
 import { loadContent } from './router.js';
 
 export async function loadResult(scoreLeft, scoreRight, oppIsHuman, oppName) {
@@ -51,16 +52,46 @@ export async function loadResult(scoreLeft, scoreRight, oppIsHuman, oppName) {
 }
 
 export async function loadTourneyResult(scoreLeft, scoreRight, nameLeft, nameRight) {
-	const csrftoken = getCookie('csrftoken');
-    const response = await fetch('http://localhost:8000/add_tourney_result/',
+    console.log('game info: ', nameLeft, scoreLeft, nameRight, scoreRight);
+	if (nameRight === 'guest_player')
+    {
+        if (scoreLeft > scoreRight)
+            showAlert('Player on the left wins!', 'warning');
+        else
+            showAlert('Player on the right wins!', 'warning');
+
+            if (scoreLeft > 0 || scoreRight > 0){
+                const csrftoken = getCookie('csrftoken');
+                await fetch('http://localhost:8000/add_result/',
+                    {
+                        method: 'POST',
+                        credentials: 'include',
+                        headers: {
+                            'Content-Type': 'application/json', 'X-CSRFToken': csrftoken },
+                        body: JSON.stringify({scoreLeft, scoreRight, oppIsHuman: 2, oppName: 'Guest Player'})
+                    });
+            }
+    }
+    else
+    {
+        try
         {
-            method: 'POST',
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json', 'X-CSRFToken': csrftoken },
-            body: JSON.stringify({scoreLeft, scoreRight, nameLeft, nameRight})
-        });
-        const data = await response.json();
-        console.log(data);
+            const csrftoken = getCookie('csrftoken');
+            const response = await fetch('http://localhost:8000/add_tourney_result/',
+                {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json', 'X-CSRFToken': csrftoken },
+                    body: JSON.stringify({scoreLeft, scoreRight, nameLeft, nameRight})
+                });
+                const data = await response.json();
+                console.log(data);
+        }
+        catch (error)
+        {
+            console.log(error);
+        }
+    }
     loadContent('home')
 }

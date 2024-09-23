@@ -1,5 +1,6 @@
 import * as THREE from 'three'
 
+
 export const plate = new THREE.Mesh(
     new THREE.BoxGeometry(4, 0.01, 4),
     new THREE.MeshBasicMaterial()
