@@ -36,7 +36,7 @@ const tick = () => {
 tick()
 
 var gametype = -1
-export function loadGame(nbr) {
+export function loadGame(nbr, nameLeft, nameRight) {
     gametype = nbr
     if (nbr === 1) return `<form id="playerSelectForm">
       <label for="username">Player Name:</label><br>
@@ -50,7 +50,10 @@ export function loadGame(nbr) {
       <input type="submit" value="Invite">
     </form>`
     if (nbr == 3)
-        return '<button class="btn btn-primary btn-lg mb-3" id="begin-tourney-match">Begin</button>'
+        return `
+            <button class="btn btn-primary btn-lg mb-3" id="begin-tourney-match">Begin</button>
+            <p class="w-100" style="color: white;">${nameLeft} is yellow, ${nameRight} is purple</p>
+            </div>`;
     return ``
 }
 

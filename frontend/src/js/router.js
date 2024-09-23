@@ -83,7 +83,7 @@ export async function loadContent(content, scoreLeft, scoreRight, oppIsHuman, na
 			navLinkVisibility(2);
 			break;
 		case 'tourney':
-			contentElement.innerHTML = await loadGame(3);
+			contentElement.innerHTML = await loadGame(3, nameLeft, nameRight);
 			startGame(3, nameLeft, nameRight);
 			navLinkVisibility(2);
 			break;
