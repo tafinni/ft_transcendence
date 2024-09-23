@@ -59,7 +59,7 @@ def login_page(request):
 
 # Define a view function for the registration page
 @csrf_exempt
-#@csrf_protect
+@csrf_protect
 def register_page(request):
     if request.method == 'POST':
         body = json.loads(request.body)
