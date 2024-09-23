@@ -52,7 +52,7 @@ export function loadGame(nbr, nameLeft, nameRight) {
     if (nbr == 3)
         return `
             <button class="btn btn-primary btn-lg mb-3" id="begin-tourney-match">Begin</button>
-            <p class="w-100" style="color: white;">${nameLeft} is yellow, ${nameRight} is purple</p>
+            <p class="w-100" style="color: white;">${nameLeft} is yellow, movement keys are a and d, ${nameRight} is purple, movement keys are arrow keys left and right</p>
             </div>`;
     return ``
 }
