@@ -24,6 +24,7 @@ export function startGame() {
 
 export function reallyStart() {
     v.game_started = true
+    v.oppIsHuman = true
     l2.resetRound()
     l2.ball_drop.restart()
 }

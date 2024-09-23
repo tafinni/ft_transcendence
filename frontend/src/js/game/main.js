@@ -1,7 +1,7 @@
 //import * as THREE from 'three'
 import gsap from 'gsap'
 
-//import { loadContent } from './router.js'
+import { loadContent } from '../router.js'
 import * as t from './include.js'
 import * as i from './0p-idle.js'
 import * as s2 from './2p-pong-single.js'
@@ -67,7 +67,7 @@ export function sendResults(scoreLeft, scoreRight, oppIsHuman) {
     try {
         loadContent('result', scoreLeft, scoreRight, oppIsHuman)
     } catch (error) {
-        console.log('error: failed to send results')
+        console.log('error: failed to send results', scoreLeft, scoreRight, oppIsHuman)
     }
 }
 

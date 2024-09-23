@@ -31,6 +31,7 @@ export function startGame() {
 
 export function reallyStart() {
     v.game_started = true
+    v.oppIsHuman = false
     l2.resetRound()
     l2.ball_drop.restart()
 }
@@ -91,7 +92,7 @@ function predictBallXPurple() {
     // let predictedDirection = v.ball_direction;
     if (distanceRemaining > i.pos_max * 2 || distanceRemaining < 0) // if beyond either paddle
         return 0;
-    console.log("init dist:", distanceRemaining);
+    // console.log("init dist:", distanceRemaining);
     while (distanceRemaining > 0) {
         predictedX += predictedDeltaX;
         if (predictedX < -i.pos_max || predictedX > i.pos_max) {
@@ -126,7 +127,7 @@ function aiMovePurple() {
     if (Date.now() - timerPurple > 1000) {
         predictedX = predictBallXPurple();
         supposedXPurple = predictedX;
-        console.log("guessing, time now", Date.now());
+        // console.log("guessing, time now", Date.now());
         timerPurple = Date.now();
     }
 

@@ -129,7 +129,7 @@ function showVictory() {
     i.win_text.lookAt(i.gcamera.position)
     i.scene.add(i.win_text)
     v.score_left++
-    sendResults(v.score_left, v.score_right, true)
+    sendResults(v.score_left, v.score_right, v.oppIsHuman)
 }
 
 function showLoss() {
@@ -137,7 +137,7 @@ function showLoss() {
     i.lose_text.lookAt(i.gcamera.position)
     i.scene.add(i.lose_text)
     v.score_right++
-    sendResults(v.score_left, v.score_right, true)
+    sendResults(v.score_left, v.score_right, v.oppIsHuman)
 }
 
 export function resetScore() {

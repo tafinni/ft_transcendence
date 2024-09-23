@@ -34,7 +34,7 @@ export async function loadResult(scoreLeft, scoreRight, oppIsHuman) {
         {
             return `
             <h1>Home</h1>
-                <p>Player red wins!<p>
+                <p>Player purple wins!<p>
                 <p>Final score is ${scoreLeft} - ${scoreRight}!</p>
             `;
         }

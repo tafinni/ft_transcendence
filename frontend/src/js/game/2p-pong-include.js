@@ -22,6 +22,7 @@ export const vars = {
     ball_passed: false,
     ball_passed_timer: 0,
     gameover_timer: 0,
+    oppIsHuman:true,
     reset: function() { resetvars() }
 }
 const default_vars = JSON.parse(JSON.stringify(vars))
