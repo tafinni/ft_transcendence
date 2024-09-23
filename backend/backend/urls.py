@@ -32,6 +32,7 @@ urlpatterns = [
     path('register/', authentication_views.register_page, name='register'),
     path('login/', authentication_views.login_page, name='login'),
     path('logout/', authentication_views.logout_page, name='logout'),
+   path('is_online/', authentication_views.is_online, name='is_online'),
 
     path('update_profile/', profile_views.update_profile, name='update_profile'),
     path('profile/', profile_views.profile, name='profile'),
@@ -51,7 +52,6 @@ urlpatterns = [
     path('accept_friend_request/', friends_views.accept_friend_request, name='accept_friend_request'),
     path('decline_friend_request/', friends_views.decline_friend_request, name='decline_friend_request'),
 
-    path('create_tournament/', tournaments_views.create_tournament, name='create_tournament'),
     path('create_tournament/', tournaments_views.create_tournament, name='create_tournament'),
     path('invite_to_tournament/', tournaments_views.invite_to_tournament, name='invite_to_tournament'),
     path('accept_tournament_invitation/', tournaments_views.accept_tournament_invitation, name='accept_tournament_invitation'),

@@ -33,6 +33,26 @@ function navLinkVisibility(state) {
 }
 
 /* Update page content */
+sessionStorage.setItem('timeoutTimer', 0);
+let timeoutPeriod = 5 * 10 * 1000; //time in milliseconds, currently 5 minutes
+
+setInterval(handleInactives, 1 * 60 * 1000); // Time in milliseconds, currently 1 minute
+
+async function handleInactives() {
+	const response = await fetch('http://localhost:8000/is_online/', {
+		method: 'GET',
+		credentials: 'include'
+	});
+	const data = await response.json()
+	if (data.is_online == true) {
+		const timeThen = sessionStorage.getItem('timeoutTimer');
+		if (Date.now() > Number(timeThen) + Number(timeoutPeriod)) {
+			completeLogOut();
+			loadContent('login');
+		}
+	}
+}
+
 export async function loadContent(content, scoreLeft, scoreRight, oppIsHuman, nameLeft, nameRight, addHistory = true) {
   await initI18next;
   const contentElement = document.getElementById('content');
