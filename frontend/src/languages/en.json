@@ -79,6 +79,13 @@
 	"player 2": "Player 2",
 	"authenticate": "Authenticate",
 	"continue": "Continue",
-	"begin": "Begin"
+	"begin": "Begin",
+	"start": "Start",
+	"set name": "Set name",
+	"instruction purple": "Purple player uses Arrowkeys left and right",
+	"instruction yellow": " (yellow) uses keys A and D",
+	"instruction solo": "Player is yellow, movement keys are A and D",
+	"instruction tournament p1": "is yellow, movement keys are A and D",
+	"instruction tournament p2": "is purple, movement keys are arrow keys left and right"
 
 }

@@ -211,10 +211,10 @@ def check_game_password(request):
             return JsonResponse({'error': 'Invalid JSON'}, status=400)
     return JsonResponse({'error': 'Invalid request method'}, status=405)
 
-
 #@login_required
-def get_display_name(username):
+def get_display_name(request):
     try:
+        username = request.GET.get('username')
         user = User.objects.get(username=username)
         user_profile = UserProfile.objects.get(user=user)
         return JsonResponse({'display_name': user_profile.display_name}, status=200)

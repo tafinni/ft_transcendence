@@ -38,17 +38,17 @@ const tick = () => {
 tick()
 
 var gametype = -1
-export function loadGame(nbr, nameLeft, nameRight) {
+export async function loadGame(nbr, nameLeft, nameRight) {
     gametype = nbr
     if (nbr === 0) return `
-     <button class="btn btn-primary btn-lg mb-3" id="begin-solo-match">Begin</button>
-            <p class="w-100" style="color: white;">Player is yellow, movement keys are a and d</p>
+     <button class="btn btn-primary btn-lg mb-3" id="begin-solo-match" translate="begin"></button>
+            <p class="w-100" style="color: white;" translate="instruction solo"></p>
             </div>`;
     if (nbr === 1) return `
     <button type="button" id="start-button" class="btn btn-link" translate="start"></button>
-    <p class="w-100" style="color: white; id="instruction-yellow">${nameLeft} (yellow) uses keys A and D</p>
-    <p class="w-100" style="color: white;" id="instruction-purple">Purple player uses Arrowkeys left and right</p>
-
+    <p class="w-100" style="color: white; id="instruction-yellow"><span>${nameLeft}</span><span translate="instruction yellow"></span></p></p>
+    <p class="w-100" style="color: white;" id="instruction-purple" translate="instruction purple"></p>
+ 
     <form id="name-red">
         <div class="form-group">
             <input type="text" id="opp-name" class="form-control" required>
@@ -57,10 +57,53 @@ export function loadGame(nbr, nameLeft, nameRight) {
     </form>
     `;
     if (nbr == 3)
-        return `
-            <button class="btn btn-primary btn-lg mb-3" id="begin-tourney-match">Begin</button>
-            <p class="w-100" style="color: white;">${nameLeft} is yellow, movement keys are a and d, ${nameRight} is purple, movement keys are arrow keys left and right</p>
-            </div>`;
+    {
+        try
+        {
+            const response = await fetch(`http://localhost:8000/get_display_name/?username=${nameLeft}`, {
+                method: 'GET',
+                credentials: 'include'
+            });
+            if (!response.ok)
+            {
+                console.error('Failed getting display name:', response.statusText);
+                showAlert('Error occurred getting display name. Try again.', 'danger');
+                return ;
+            }
+            const left = await response.json();
+
+            const reply = await fetch(`http://localhost:8000/get_display_name/?username=${nameRight}`, {
+                method: 'GET',
+                credentials: 'include'
+            });
+            if (!reply.ok)
+            {
+                console.error('Failed getting display name:', response.statusText);
+                showAlert('Error occurred getting display name. Try again.', 'danger');
+                return ;
+            }
+            const right = await reply.json();
+
+            return `
+            <button class="btn btn-primary btn-lg mb-3" id="begin-tourney-match" translate="begin"></button>
+            <p class="w-100" style="color: white;">
+                <span>${left.display_name} </span>
+                <span translate="instruction tournament p1"></span>
+            </p>
+            <p class="w-100" style="color: white;">
+                <span>${right.display_name} </span>
+                <span translate="instruction tournament p2"><span/>
+            </p>
+            </div>
+            `;
+        }
+        catch (error)
+        {
+            console.log(error);
+            loadContent('home');
+        }
+
+    }
     return ``
 }
 

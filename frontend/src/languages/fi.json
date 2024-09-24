@@ -79,7 +79,15 @@
 	"player 2": "Pelaaja 2",
 	"authenticate": "Tunnistaudu",
 	"continue": "Jatka",
-	"begin": "Aloita"
+	"begin": "Aloita",
+	"start": "Aloita",
+	"set name": "Tallenna nimi",
+	"instruction purple": "Violetti pelaaja käyttää vasenta ja oikeaa nuolinäppäintä",
+	"instruction yellow": " (keltainen) pelaaja käyttää A ja D näppäimiä",
+	"instruction solo": "Pelaaja on keltainen ja käyttää A ja D näppäimiä",
+	"instruction tournament p1": "on keltainen ja käyttää A ja D näppäimiä",
+	"instruction tournament p2": "on violetti ja käyttää vasenta ja oikeaa nuolinäppäintä"
+
 
 
 	
