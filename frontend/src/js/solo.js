@@ -2,7 +2,7 @@ import * as THREE from 'three'
 import gsap from 'gsap'
 
 import * as t from './game.defs.js'
-import { switchToIdle } from './game.js'
+import { switchToIdle, sendResults } from './game.js'
 
 const plate = new THREE.Mesh(
     new THREE.BoxGeometry(4, 0.01, 4),
@@ -86,6 +86,7 @@ export const tick = () => {
 // curtick()
 
 // game logic
+let timerPurple = 0;
 const area_max = 2
 const paddle_max = 1.65
 const pos_max = 1000000
@@ -107,12 +108,27 @@ let score_right = 0
 let ballX = 0
 let ballY = 0
 let ball_direction = 0
+let gameEnded = false;
 function randomizeBallDir() {
     ball_direction = (Math.random() < 0.5) ? Math.random() * 90 + 225 : Math.random() * 90 + 45
     // set always the same direction for testing purposes
     ball_direction = Math.random() * 90 + 225
     ball_direction *= Math.PI / 180
 }
+function moveYellow(up_pressed, down_pressed){
+    let yellowDir = 0;
+    if (up_pressed)
+        yellowDir = -1;
+    else if (down_pressed)
+        yellowDir = 1;
+    else
+        yellowDir = 0;
+
+    left_pos += yellowDir * player_speed;
+    if (left_pos > paddle_pos_max) left_pos = paddle_pos_max
+    else if (left_pos < -paddle_pos_max) left_pos = -paddle_pos_max
+}
+
 randomizeBallDir()
 const ball_base_speed = 8000
 let ball_speed = ball_base_speed
@@ -124,19 +140,19 @@ let ball_passed_timer = 0
 let gameover_timer = 0
 function gametick() {
     if (!game_running) {
-        if (score_left > score_to_win || score_right > score_to_win)
+        if (gameEnded == true)
             if (gameover_timer++ > 360)
+            {
+                cleanUp()
                 switchToIdle()
+                // game_running = false;
+            }
         return
     }
-    if (up_pressed) left_pos -= player_speed
-    if (down_pressed) left_pos += player_speed
-    if (left_pos > paddle_pos_max) left_pos = paddle_pos_max
-    else if (left_pos < -paddle_pos_max) left_pos = -paddle_pos_max
-    if (up2_pressed) right_pos -= player_speed
-    if (down2_pressed) right_pos += player_speed
-    if (right_pos > paddle_pos_max) right_pos = paddle_pos_max
-    else if (right_pos < -paddle_pos_max) right_pos = -paddle_pos_max
+
+    moveYellow(up_pressed, down_pressed);
+    aiMovePurple();
+    
     ballX -= ball_speed * Math.sin(ball_direction)
     ballY -= ball_speed * Math.cos(ball_direction)
     if (!ball_passed && (ballX > ball_max || ballX < -ball_max) && checkPaddleHit()) {
@@ -196,7 +212,8 @@ function addScore(player) {
     if (player === 'left') {
         if (score_left === score_to_win) {
             console.log('victory')
-            showVictory()
+            gameEnded = true;
+            showVictory(score_left, score_right)
             return
         }
         const score_clone = score.clone()
@@ -210,7 +227,8 @@ function addScore(player) {
     else if (player === 'right') {
         if (score_right === score_to_win) {
             console.log('loss')
-            showLoss()
+            gameEnded = true;
+            showLoss(score_left, score_right)
             return
         }
         const score_clone = score.clone()
@@ -223,18 +241,22 @@ function addScore(player) {
     }
 }
 
-function showVictory() {
+function showVictory(score_left, score_right) {
     t.win_text.material.color = left.material.color.clone()
     t.win_text.lookAt(t.gcamera.position)
     t.scene.add(t.win_text)
     score_left++
+    game_running = false;
+    sendResults(score_left, score_right, false)
 }
 
-function showLoss() {
+function showLoss(score_left, score_right) {
     t.lose_text.material.color = right.material.color.clone()
     t.lose_text.lookAt(t.gcamera.position)
     t.scene.add(t.lose_text)
     score_right++
+    game_running = false;
+    sendResults(score_left, score_right, false)
 }
 
 function resetScore() {
@@ -250,28 +272,50 @@ function onDocumentKeyDown(event) {
     var key_code = event.which
     if (key_code === 65) { up_pressed = true }
     else if (key_code === 68) { down_pressed = true }
-    else if (key_code === 37) { up2_pressed = true }
-    else if (key_code === 39) { down2_pressed = true }
+    // else if (key_code === 37) { up2_pressed = true }
+    // else if (key_code === 39) { down2_pressed = true }
     else if (key_code === 80) { game_running = !game_running }
 }
 function onDocumentKeyUp(event) {
     var key_code = event.which
     if (key_code === 65) { up_pressed = false }
     else if (key_code === 68) { down_pressed = false }
-    else if (key_code === 37) { up2_pressed = false }
-    else if (key_code === 39) { down2_pressed = false }
+    // else if (key_code === 37) { up2_pressed = false }
+    // else if (key_code === 39) { down2_pressed = false }
 }
 
 // external functions
+function resetRound(){
+    gameEnded = false;
+    ball_passed = 0;
+    left_pos = 0;
+    right_pos = 0;
+    up_pressed = 0;
+    down_pressed = 0;
+    score_left = 0;
+    score_right = 0;
+    ballX = 0;
+    ballY = 0;
+}
 export function startQuickGame() {
+    resetRound();
+    const startButton = document.getElementById('begin-solo-match');
+    startButton.addEventListener('click', (event) => {
+        event.preventDefault();
+        startButton.remove();
+        trulyStart();
+    });
+    t.scene.add(plate, left, right, top, bot)
+}
+
+function trulyStart(){
     if (game_running) {
         endRound()
         return
     }
     else if (score_left != 0 || score_right != 0) {
     }
-    //console.log("game.js: startQuickGame called", ball_direction * 180 / Math.PI)
-    t.scene.add(plate, left, right, top, bot)
+    // console.log("game.js: startQuickGame called", ball_direction * 180 / Math.PI)
     gsap.to(ball.position, { y: 0.1, duration: 0.7, onComplete: () => {
         game_running = true
     }})
@@ -288,4 +332,84 @@ export function cleanUp() {
     document.removeEventListener("keydown", onDocumentKeyDown, true)
     document.removeEventListener("keyup", onDocumentKeyUp, true)
     t.scene.remove(plate, left, right, top, bot, ball)
+}
+let supposedXPurple;
+
+function within2PI(initial){
+    while (initial < 0)
+        initial += Math.PI * 2;
+    while (initial > Math.PI * 2)
+        initial -= Math.PI * 2;
+    return initial;
+}
+
+function predictBallXPurple() {
+    //conversion from ball cooridnates to world coordinates
+    //ball-x = world-z, ball-y = world-x
+    //using world coordinates from now on
+    let predictedX = ballY; // ball initial position
+    let predictedDeltaX = -Math.cos(ball_direction) * ball_speed; // change in X-axis per step
+    let deltaZ = -Math.sin(ball_direction) * ball_speed; // change in Z-axis per step
+    let distanceRemaining = pos_max + ballX; // distance from paddle movement axis
+    // let predictedDirection = v.ball_direction;
+    if (distanceRemaining > pos_max * 2 || distanceRemaining < 0) // if beyond either paddle
+        return 0;
+    // console.log("init dist:", distanceRemaining);
+    while (distanceRemaining > 0) {
+        predictedX += predictedDeltaX;
+        if (predictedX < -pos_max || predictedX > pos_max) {
+            // console.log("Ball hit the wall at X:", predictedX, "with distance to paddle:", distanceRemaining);
+            // predictedDirection *= -1;
+            predictedDeltaX *= -1;
+        }
+        if (predictedX < -pos_max) {
+            predictedX = -pos_max;
+        } else if (predictedX > pos_max) {
+            predictedX = pos_max;
+        }
+
+        let effectiveDirection = within2PI(ball_direction);
+        // distanceRemaining -= Math.abs((Math.cos(predictedDirection) * v.ball_speed));
+        if (effectiveDirection > 0 && effectiveDirection < Math.PI)
+            distanceRemaining += deltaZ;
+        else if (effectiveDirection > Math.PI && effectiveDirection < Math.PI * 2)
+            distanceRemaining -= deltaZ;
+        else
+            return 0;
+        // console.log("dist now", distanceRemaining, "ball dir", v.ball_direction);
+        if (distanceRemaining > pos_max * 2) // if beyond either paddle
+            return 0;
+    }
+    return predictedX;
+}
+
+
+function aiMovePurple() {
+    let predictedX;
+    if (Date.now() - timerPurple > 1000) {
+        predictedX = predictBallXPurple();
+        supposedXPurple = predictedX;
+        timerPurple = Date.now();
+    }
+
+    let purpleDir = 0;
+    if (right_pos > supposedXPurple) {
+        purpleDir = -1;
+        // v.r_left_pressed = true;
+        // v.r_right_pressed = false;
+    } else if (right_pos < supposedXPurple) {
+        purpleDir =1;
+        // v.r_left_pressed = false;
+        // v.r_right_pressed = true;
+    }
+    else{
+        purpleDir = 0;
+        // v.r_left_pressed = false;
+        // v.r_right_pressed = false;
+    }
+
+    right_pos += purpleDir * player_speed;
+    if (right_pos > paddle_pos_max) right_pos = paddle_pos_max
+    else if (right_pos < -paddle_pos_max) right_pos = -paddle_pos_max
+
 }

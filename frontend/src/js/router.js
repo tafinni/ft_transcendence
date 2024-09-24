@@ -116,7 +116,7 @@ export async function loadContent(content, scoreLeft, scoreRight, oppIsHuman, na
 			break ;
 		case 'single':
 			contentElement.innerHTML = await loadGame(0);
-			startGame();
+			startGame(0);
 			navLinkVisibility(2);
 			break;
 		case 'localMulti':

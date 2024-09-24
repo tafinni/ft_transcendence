@@ -229,8 +229,8 @@ function showVictory() {
     t.win_text.lookAt(t.gcamera.position)
     t.scene.add(t.win_text)
     v.score_left++
-    console.log("won, name :", v.leftName);
-    sendResults(v.score_left, v.score_right, true, v.leftName)
+    console.log("won, name :", v.rightName);
+    sendResults(v.score_left, v.score_right, true, v.rightName)
 }
 
 function showLoss() {
@@ -238,7 +238,7 @@ function showLoss() {
     t.lose_text.lookAt(t.gcamera.position)
     t.scene.add(t.lose_text)
     v.score_right++
-    console.log("lost, name :", v.leftName);
+    console.log("lost, name :", v.rightName);
     sendResults(v.score_left, v.score_right, true, v.rightName)
 }
 
@@ -264,6 +264,7 @@ export function startGame(isTourney, nameLeft, nameRight) {
         const submitbtn = document.getElementById('opp-name-submit');
         const startButton = document.getElementById('start-button');
         const instPurple = document.getElementById('instruction-purple');
+        startButton.hidden = true;
         let oppName;
         submitbtn.addEventListener('click', (event) => {
             event.preventDefault();
@@ -272,18 +273,17 @@ export function startGame(isTourney, nameLeft, nameRight) {
             {
                 nameForm.remove();
                 submitbtn.remove();
-                instPurple.innerText = `${oppName} uses Arrowkeys left and right`;
+                startButton.hidden = false;
+                instPurple.innerText = `${oppName} (purple) uses Arrowkeys left and right`;
             }
             console.log(oppName);
         });
             startButton.addEventListener('click', (event) => {
-                if (oppName !== "") {
                     event.preventDefault();
                     startButton.remove();
                     nameForm.remove();
                     submitbtn.remove();
                     startSolo(0, "", oppName);
-                }
             });
     }
     else
