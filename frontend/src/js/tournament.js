@@ -513,7 +513,7 @@ async function cancelTournament(tournament_id) {
 		else
 		{
 			const errorData = await response.json();
-			console.error('Cancelling tournamnet', errorData);
+			console.error('Cancelling tournament', errorData);
 			showAlert('Error cancelling tournament. Try again.', 'danger');
 			loadContent('home');
 		}

@@ -4,6 +4,8 @@ import * as t from './game.defs.js'
 import * as d from './local-4p.defs.js'
 import { vars as v }  from './local-4p.defs.js'
 import { switchToIdle, sendResults } from './game.js'
+import { loadContent } from './router.js'
+import { showAlert } from './index.js'
 
 const plate = d.plate; const left = d.left; const right = d.right; const top = d.top;
 const bot = d.bot; const ball = d.ball; const score = d.score;
@@ -182,9 +184,18 @@ function removeLife(player) {
 function removePlayer(player) {
     console.log('removePlayer:', player)
     if (--v.players_remaining === 1) {
-        showVictory()
+        let winner;
+        if (v.lives_right)
+            winner = v.nameRight;
+        if (v.lives_bot)
+            winner = v.nameBottom;
+        if (v.lives_left)
+            winner = sessionStorage.getItem("username");
+        if (v.lives_top)
+            winner = v.nameTop;
+        showVictory(winner)
     } else {
-        const wall = (player === 'left' || player === 'right') ? d.h_wall : d.v_wall
+        const wall = (player === 'left' || player === 'top') ? d.h_wall : d.v_wall
         const new_wall = wall.clone()
         new_wall.material = wall.material
         new_wall.material.color = wall.material.color
@@ -222,11 +233,14 @@ function removePlayer(player) {
     }
 }
 
-function showVictory() {
+function showVictory(winner) {
     t.win_text.material.color = v.player_status.filter(i => i.lives !== 0)[0].obj.material.color.clone()
     t.win_text.lookAt(t.gcamera.position)
     t.scene.add(t.win_text)
-    sendResults(v.score_left, v.score_right, true)
+    let message;
+    message = "Winner is " + winner;
+    showAlert(message, 'warning');
+    loadContent('home');
 }
 
 function resetScore() {
@@ -244,11 +258,26 @@ export function startGame() {
     document.addEventListener("keydown", onDocumentKeyDown, true);
     document.addEventListener("keyup", onDocumentKeyUp, true);
     const playerselect = document.getElementById("playerSelectForm")
-    playerselect.style.zIndex = 100
-    playerselect.addEventListener("submit", (e) => {
+    const form1 = document.getElementById("username1");
+    const form2 = document.getElementById("username2");
+    const form3 = document.getElementById("username3");
+    playerselect.addEventListener("click", (e) => {
         e.preventDefault()
-        reallyStart()
-        playerselect.style.zIndex = -999
+        v.nameTop = form1.value;
+        v.nameRight = form2.value;
+        v.nameBottom = form3.value;
+        if (v.nameTop != "")
+            form1.remove();
+        if (v.nameRight != "")
+            form2.remove();
+        if (v.nameBottom != "")
+            form3.remove();
+        if (v.nameTop != "" && v.nameRight != "" && v.nameBottom != "")
+        {
+            console.log("users are", v.nameTop, v.nameRight, v.nameBottom);
+            reallyStart()
+            playerselect.remove();
+        }
     })
 }
 
@@ -275,10 +304,10 @@ function onDocumentKeyDown(event) {
     else if (key_code === 39) { v.b_left_pressed = true }
     else if (key_code === 109) { v.r_left_pressed = true }
     else if (key_code === 107) { v.r_right_pressed = true }
-    else if (key_code === 80) { 
-        if (!v.game_started) reallyStart()
-        v.game_running = !v.game_running
-    }
+    // else if (key_code === 80) { 
+    //     if (!v.game_started) reallyStart()
+    //     v.game_running = !v.game_running
+    // }
 }
 function onDocumentKeyUp(event) {
     var key_code = event.which

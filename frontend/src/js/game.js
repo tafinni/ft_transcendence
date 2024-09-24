@@ -56,6 +56,26 @@ export async function loadGame(nbr, nameLeft, nameRight) {
     <button type="submit" class="btn btn-success mt-3" id="opp-name-submit" translate="set name"></button>
     </form>
     `;
+    if (nbr === 2) return `<form id="playerSelectForm">
+    <label for="username1">Player Name 1:</label><br>
+    <input type="text" id="username1" name="username1" list="players"><br>
+    
+    <label for="username2">Player Name 2:</label><br>
+    <input type="text" id="username2" name="username2" list="players"><br>
+    
+    <label for="username3">Player Name 3:</label><br>
+    <input type="text" id="username3" name="username3" list="players"><br>
+    
+    <datalist id="players">
+        <option value="Player1">
+        <option value="Player2">
+        <option value="Player3">
+        <!-- Add more options as needed -->
+    </datalist><br>
+    
+    <input type="submit" value="Invite">
+    </form>
+    `;
     if (nbr == 3)
     {
         try
@@ -161,13 +181,14 @@ export function startTwoLocal() {
     m.startGame(0)
 }
 
-export function startTourney(nameLeft, nameRight){
+export function startTourney(nameLeft, nameRight) {
     m.cleanUp()
     m = l2
     m.startGame(1, nameLeft, nameRight)
 }
 
 function startFourLocal() {
+    console.log("Start 4");
     m.cleanUp()
     m = l4
     m.startGame()

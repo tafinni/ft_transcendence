@@ -196,7 +196,7 @@ async function displayGameInvites() {
 	gameInviteContainer.innerHTML = '';
 
 	invites.forEach((invite, index) => {
-		const colors = ['#f0f0f0', '#fffff'];
+		const colors = ['#f0f0f0', '#ffffff'];
 
 		const inviteItem = document.createElement('div');
 		inviteItem.className = 'friend-item';
