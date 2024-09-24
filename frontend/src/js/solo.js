@@ -145,7 +145,8 @@ function gametick() {
             {
                 cleanUp()
                 switchToIdle()
-                // game_running = false;
+                gameEnded = false;
+                //game_running = false;
             }
         return
     }
