@@ -38,6 +38,10 @@ tick()
 var gametype = -1
 export function loadGame(nbr, nameLeft, nameRight) {
     gametype = nbr
+    if (nbr === 0) return `
+     <button class="btn btn-primary btn-lg mb-3" id="begin-solo-match">Begin</button>
+            <p class="w-100" style="color: white;">Player is yellow, movement keys are a and d</p>
+            </div>`;
     if (nbr === 1) return `
     <button type="button" id="start-button" class="btn btn-link" translate="start"></button>
     <p class="w-100" style="color: white; id="instruction-yellow">${nameLeft} uses keys W and S</p>
