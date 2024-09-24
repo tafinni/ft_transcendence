@@ -143,6 +143,7 @@ function gametick() {
         if (gameEnded == true)
             if (gameover_timer++ > 360)
             {
+                gameEnded = false;
                 cleanUp()
                 switchToIdle()
                 // game_running = false;

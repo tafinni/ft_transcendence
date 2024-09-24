@@ -118,7 +118,9 @@ function gametick() {
     if (!v.game_running && v.game_started) {
         if (v.score_left > v.score_to_win || v.score_right > v.score_to_win) {
             if (v.gameover_timer++ > 360)
+            {
                 switchToIdle()
+            }
             return
         }
     }
