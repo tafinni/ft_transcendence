@@ -229,7 +229,8 @@ function showVictory() {
     t.win_text.lookAt(t.gcamera.position)
     t.scene.add(t.win_text)
     v.score_left++
-    sendResults(v.score_left, v.score_right, true, v.rightName)
+    console.log("won, name :", v.leftName);
+    sendResults(v.score_left, v.score_right, true, v.leftName)
 }
 
 function showLoss() {
@@ -237,7 +238,8 @@ function showLoss() {
     t.lose_text.lookAt(t.gcamera.position)
     t.scene.add(t.lose_text)
     v.score_right++
-    sendResults(v.score_left, v.score_right, true, v.nameRight)
+    console.log("lost, name :", v.leftName);
+    sendResults(v.score_left, v.score_right, true, v.rightName)
 }
 
 function showResult(){
@@ -258,22 +260,35 @@ export function startGame(isTourney, nameLeft, nameRight) {
     document.addEventListener("keyup", onDocumentKeyUp, true);
     if (!isTourney)
     {
-        const playerselect = document.getElementById("playerSelectForm")
-        const nameForm = document.getElementById('username');
-        playerselect.style.zIndex = 100
-        playerselect.addEventListener("submit", (e) => {
-            let oppName = nameForm.value;
-            console.log("playing against", oppName);
-            if (oppName != "")
+        const nameForm = document.getElementById('opp-name');
+        const submitbtn = document.getElementById('opp-name-submit');
+        const startButton = document.getElementById('start-button');
+        const instPurple = document.getElementById('instruction-purple');
+        let oppName;
+        submitbtn.addEventListener('click', (event) => {
+            event.preventDefault();
+            oppName = nameForm.value;
+            if (oppName !== "")
             {
-                e.preventDefault()
-                startSolo(0, "", oppName)
-                playerselect.remove()
+                nameForm.remove();
+                submitbtn.remove();
+                instPurple.innerText = `${oppName} uses Arrowkeys left and right`;
             }
-        })
+            console.log(oppName);
+        });
+            startButton.addEventListener('click', (event) => {
+                if (oppName !== "") {
+                    event.preventDefault();
+                    startButton.remove();
+                    nameForm.remove();
+                    submitbtn.remove();
+                    startSolo(0, "", oppName);
+                }
+            });
     }
     else
     {
+        
         const beginMatch = document.getElementById('begin-tourney-match')
         beginMatch.addEventListener('click', (e) => {
             e.preventDefault

@@ -1,13 +1,19 @@
 from django.http import JsonResponse
 from django.conf import settings
+from django.http import JsonResponse
+from django.conf import settings
 from django.shortcuts import render, redirect
+from django.core.exceptions import ValidationError
+from django.core.exceptions import ObjectDoesNotExist
 from django.core.exceptions import ValidationError
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
+from django.contrib.auth.password_validation import validate_password
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
+from authentication.models import UserStats, UserProfile, MatchHistory, Friendship, Participants, Tournament, ResultTournament
 from authentication.models import UserStats, UserProfile, MatchHistory, Friendship, Participants, Tournament, ResultTournament
 import json
 import datetime
@@ -103,15 +109,15 @@ def add_result(request):
             user_stats.wins += 1
             opp_stats.losses +=1
             result = 'WIN' + ' ' + str(sLeft) + '-' + str(sRight)
-            oppResult = 'LOST' + ' ' + str(sRight) + '-' + str(sLeft)
+            oppResult = 'LOST' + ' ' + str(sLeft) + '-' + str(sRight)
         elif (sRight > sLeft):
             user_stats.losses += 1
             opp_stats.wins += 1
             result = 'LOST' + ' ' + str(sLeft) + '-' + str(sRight)
-            oppResult = 'WIN' + ' ' + str(sRight) + '-' + str(sLeft)
+            oppResult = 'WIN' + ' ' + str(sLeft) + '-' + str(sRight)
         else:
             result = 'DRAW' + ' ' + str(sLeft) + '-' + str(sRight)
-            oppResult = 'DRAW' + ' ' + str(sRight) + '-' + str(sLeft)
+            oppResult = 'DRAW' + ' ' + str(sLeft) + '-' + str(sRight)
         user_stats.save()
         opp_stats.save()
 

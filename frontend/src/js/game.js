@@ -39,17 +39,18 @@ tick()
 var gametype = -1
 export function loadGame(nbr, nameLeft, nameRight) {
     gametype = nbr
-    if (nbr === 1) return `<form id="playerSelectForm">
-      <label for="username">Player Name:</label><br>
-      <input type="text" id="username" name="username" list="players">
-      <datalist id="players">
-        <option value="Player1">
-        <option value="Player2">
-        <option value="Player3">
-        <!-- Add more options as needed -->
-      </datalist><br>
-      <input type="submit" value="Invite">
-    </form>`
+    if (nbr === 1) return `
+    <button type="button" id="start-button" class="btn btn-link" translate="start"></button>
+    <p class="w-100" style="color: white; id="instruction-yellow">${nameLeft} uses keys W and S</p>
+    <p class="w-100" style="color: white;" id="instruction-purple">Purple player uses Arrowkeys left and right</p>
+
+    <form id="name-red">
+        <div class="form-group">
+            <input type="text" id="opp-name" class="form-control" required>
+        </div>
+    <button type="submit" class="btn btn-success mt-3" id="opp-name-submit" translate="set name"></button>
+    </form>
+    `;
     if (nbr == 3)
         return `
             <button class="btn btn-primary btn-lg mb-3" id="begin-tourney-match">Begin</button>
@@ -72,6 +73,7 @@ export function endGame() {
 
 export function sendResults(scoreLeft, scoreRight, oppIsHuman, oppName) {
     try {
+        console.log('result', scoreLeft, scoreRight, oppIsHuman, "", oppName);
         loadContent('result', scoreLeft, scoreRight, oppIsHuman, "", oppName)
     } catch (error) {
         console.log('failed to sendResults:', error)

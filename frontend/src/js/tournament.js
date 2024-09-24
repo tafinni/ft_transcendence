@@ -39,7 +39,7 @@ export async function loadTournamentLobby() {
 			console.log("tournament is over");
 			showAlert(newData.message, 'warning');
 			loadContent('home');
-			return;
+			return ;
 		}
 		console.log('testing: ', newData);
 

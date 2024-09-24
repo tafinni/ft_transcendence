@@ -1,11 +1,14 @@
 from django.http import JsonResponse
 from django.db.models import Max
+from django.db.models import Max
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_protect, csrf_exempt
 from authentication.models import Tournament, Participants, ResultTournament
 import json
 import random
+import math
 import math
 
 @login_required
@@ -40,6 +43,17 @@ def accept_tournament_invitation(request):
         if participant1:
             return JsonResponse({'error': 'Finish current tournament'}, status=400)
 
+
+
+#        participant1 = Participants.objects.filter(
+#            user=request.user, 
+#            tournament__status=0, 
+#            is_accepted=True  # Only check for accepted tournaments
+#        ).select_related('tournament').first()
+
+#        if participant1:
+#            return JsonResponse({'error': 'Finish current tournament'}, status=400)
+
         participant2 = Participants.objects.filter(
             user=request.user, 
             tournament__status=1, 
@@ -62,6 +76,10 @@ def accept_tournament_invitation(request):
         tournament = Tournament.objects.filter(initiator=initiator, status=0).first()  # Status=0 means 'Pending'
         if not tournament:
             return JsonResponse({'error': 'Tournament does not exist or already processed'}, status=404)
+        
+        accepted = Participants.objects.filter(tournament=tournament, is_accepted=True)
+        if tournament.player_count == accepted.count():
+            return JsonResponse({'error': 'Tournament full'}, status=404)
         
         accepted = Participants.objects.filter(tournament=tournament, is_accepted=True)
         if tournament.player_count == accepted.count():
@@ -127,6 +145,7 @@ def decline_tournament_invitation(request):
         return JsonResponse({'message': f'Tournament invitation declined: {initiator_display} vs {user_display}'})
     
     
+    
     return JsonResponse({'error': 'Invalid request method'}, status=405)
 
 
@@ -145,6 +164,7 @@ def invite_to_tournament(request):
 
         if not opponent_username or not tournament_id:
             return JsonResponse({'error': 'Opponent username and tournament ID are required'}, status=400)
+   
    
    
         try:
@@ -187,7 +207,7 @@ def invite_to_tournament(request):
 
 @login_required
 @csrf_protect
-@csrf_exempt
+#@csrf_exempt
 def create_tournament(request):
     if request.method == "POST":
         try:
@@ -223,6 +243,15 @@ def create_tournament(request):
                 'player_count': existing_tournament.player_count
             })
 
+        existing_tournament = Tournament.objects.filter(initiator=request.user, status__in=[0]).first()
+        if existing_tournament:
+            existing_tournament.player_count #= player_count
+            return JsonResponse({
+                'message': 'You already have a pending tournament.',
+                'tournament_id': existing_tournament.id,
+                'player_count': existing_tournament.player_count
+            })
+
         tournament = Tournament.objects.create(
             initiator=request.user,
             player_count=player_count,
@@ -238,6 +267,7 @@ def create_tournament(request):
 
         # Prepare response message
         initiator_display = request.user.userprofile.display_name or request.user.username
+        return JsonResponse({'message': f'Tournament created by {initiator_display}', 'tournament_id': tournament.id, 'player_count': tournament.player_count})
         return JsonResponse({'message': f'Tournament created by {initiator_display}', 'tournament_id': tournament.id, 'player_count': tournament.player_count})
 
     return JsonResponse({'error': 'Invalid request method'}, status=405)
@@ -405,8 +435,6 @@ def cancel_tournament(request):
     return JsonResponse({'error': 'Invalid request method'}, status=405)
 
 
-
-
 @login_required
 def get_tournament_matches(request):
     if request.method == "GET":
@@ -541,6 +569,95 @@ def get_tournament_matches(request):
 
     return JsonResponse({'error': 'Invalid request method'}, status=405)
 
+
+
+@login_required
+@csrf_protect
+def get_next_match(request):
+    if request.method == "GET":
+        tournament_id = request.GET.get('tournament_id')
+    
+        try:
+            tournament = Tournament.objects.get(id=tournament_id)
+        except Tournament.DoesNotExist:
+            return JsonResponse({'error': 'Tournament not found'}, status=404)
+    
+        # Check if the current user is a participant in the tournament
+        is_participant = Participants.objects.filter(tournament=tournament, user=request.user).exists()
+        if not is_participant and request.user != tournament.initiator:
+            return JsonResponse({'error': 'You are not allowed to view this tournament'}, status=403)
+        
+        # Retrieve all results for the current tournament
+        results = ResultTournament.objects.filter(tournament=tournament)
+
+        # Get the current round or set it to 1 if no results exist
+        current_round = results.aggregate(max_round=Max('round_number'))['max_round'] or 1
+
+        # Look for the next match for the current user in the current round
+        next_match = results.filter(
+            round_number=current_round,
+            user=request.user
+        ).first()
+
+        if not next_match:
+            # Try checking if the current user is an opponent in any matches
+            next_match = results.filter(
+                round_number=current_round,
+                opponent=request.user
+            ).first()
+
+        if not next_match:
+            return JsonResponse({'message': 'No upcoming match found for this user'}, status=200)
+
+        # Get opponent information
+        if next_match.user == request.user:
+            opponent = next_match.opponent
+        else:
+            opponent = next_match.user
+
+        opponent_display_name = opponent.userprofile.display_name or opponent.username
+
+        # Check if the match has been played
+        match_status = next_match.result or 'Pending'
+
+        # Return match info
+        return JsonResponse({
+            'round_number': next_match.round_number,
+            'opponent': opponent_display_name,
+            'match_status': match_status
+        }, status=200)
+    
+    return JsonResponse({'error': 'Invalid request method'}, status=405)
+
+
+@login_required
+def get_players(request):
+    tournament_id = request.GET.get('tournament_id')
+    group_num = request.GET.get('group')
+
+    # if not tournament_id or not round_num or not group_num:
+    if not tournament_id or not group_num:
+        return JsonResponse({'error': 'Tournament ID, round number, and group number are required', "req": str(request.GET)}, status=400)
+
+    # Retrieve participants for the specified group and round
+    participants = Participants.objects.filter(
+        tournament_id=tournament_id,
+        group_number=group_num,
+        is_accepted=True 
+    ).select_related('user')
+
+    players_in_round = [p.user for p in participants]
+
+    if len(players_in_round) != 2:
+        return JsonResponse({'error': 'Not enough players found for the specified round and group'}, status=404)
+
+    resp = {}
+    for i, p in enumerate(players_in_round, start=1):
+        resp[f'player{i}'] = {
+            'username': p.username,
+            'display_name': p.userprofile.display_name or p.username
+        }
+    return JsonResponse(resp)
 
 
 @login_required

@@ -77,6 +77,7 @@ document.addEventListener('keypress', updateTimeout);
 export async function loadContent(content, scoreLeft, scoreRight, oppIsHuman, nameLeft, nameRight, addHistory = true) {
   await initI18next;
   const contentElement = document.getElementById('content');
+  sessionStorage.setItem('timeoutTimer', Date.now());
 
 	if (!localStorage.getItem("username") && !sessionStorage.getItem("username") && content !== 'login' && content !== 'register')
 	{
@@ -119,7 +120,7 @@ export async function loadContent(content, scoreLeft, scoreRight, oppIsHuman, na
 			navLinkVisibility(2);
 			break;
 		case 'localMulti':
-			contentElement.innerHTML = await loadGame(1);
+			contentElement.innerHTML = await loadGame(1, sessionStorage.getItem("username"));
 			startGame(1);
 			navLinkVisibility(2);
 			break;
@@ -129,6 +130,7 @@ export async function loadContent(content, scoreLeft, scoreRight, oppIsHuman, na
 			navLinkVisibility(2);
 			break;
 		case 'result':
+			console.log(oppIsHuman, nameRight);
 			contentElement.innerHTML = await loadResult(scoreLeft, scoreRight, oppIsHuman, nameRight);
 			navLinkVisibility(1);
 			break;
