@@ -11,15 +11,22 @@ export async function loadResult(scoreLeft, scoreRight, oppIsHuman, oppName) {
 
 	const userData = await response.json();
     if (scoreLeft > 0 || scoreRight > 0){
-        const csrftoken = getCookie('csrftoken');
-        await fetch('http://localhost:8000/add_result/',
-            {
-                method: 'POST',
-                credentials: 'include',
-                headers: {
-                    'Content-Type': 'application/json', 'X-CSRFToken': csrftoken },
-                body: JSON.stringify({scoreLeft, scoreRight, oppIsHuman, oppName})
-            });
+        try
+        {
+            const csrftoken = getCookie('csrftoken');
+            await fetch('http://localhost:8000/add_result/',
+                {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json', 'X-CSRFToken': csrftoken },
+                    body: JSON.stringify({scoreLeft, scoreRight, oppIsHuman, oppName})
+                });
+        }
+        catch (error)
+        {
+            console.log(error)
+        }
     }
     if (scoreLeft > scoreRight)
     {
@@ -48,16 +55,23 @@ export async function loadResult(scoreLeft, scoreRight, oppIsHuman, oppName) {
 }
 
 export async function loadTourneyResult(scoreLeft, scoreRight, nameLeft, nameRight) {
-	const csrftoken = getCookie('csrftoken');
-    const response = await fetch('http://localhost:8000/add_tourney_result/',
-        {
-            method: 'POST',
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json', 'X-CSRFToken': csrftoken },
-            body: JSON.stringify({scoreLeft, scoreRight, nameLeft, nameRight})
-        });
-        const data = await response.json();
-        console.log(data);
+    try
+    {
+        const csrftoken = getCookie('csrftoken');
+        const response = await fetch('http://localhost:8000/add_tourney_result/',
+            {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json', 'X-CSRFToken': csrftoken },
+                body: JSON.stringify({scoreLeft, scoreRight, nameLeft, nameRight})
+            });
+            const data = await response.json();
+            console.log(data);
+    }
+    catch (error)
+    {
+        console.log(error)
+    }    
     loadContent('home')
 }

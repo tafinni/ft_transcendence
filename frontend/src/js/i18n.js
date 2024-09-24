@@ -42,31 +42,37 @@ export async function setLanguage(lang) {
 }
 
 export async function checkUserLanguage() {
-
-	const response = await fetch('http://localhost:8000/profile/', {
-		method: 'GET',
-		credentials: 'include'
-	});
-
-	if (!response.ok)
+  try
   {
-    console.error('Failed checking language:', response.statusText);
-    showAlert('Error checking language. Try again.', 'danger');
-    return ;
+    const response = await fetch('http://localhost:8000/profile/', {
+      method: 'GET',
+      credentials: 'include'
+    });
+
+    if (!response.ok)
+    {
+      console.error('Failed checking language:', response.statusText);
+      showAlert('Error checking language. Try again.', 'danger');
+      return ;
+    }
+
+    const userData = await response.json();
+
+    switch (userData.preferred_language)
+    {
+      case 'FI':
+        setLanguage('fi');
+        break ;
+      case 'RU':
+        setLanguage('ru');
+        break ;
+      default:
+        setLanguage('en');
+    }
   }
-
-	const userData = await response.json();
-
-  switch (userData.preferred_language)
+  catch (error)
   {
-    case 'FI':
-      setLanguage('fi');
-      break ;
-    case 'RU':
-      setLanguage('ru');
-      break ;
-    default:
-      setLanguage('en');
+    console.log(error);
   }
 
 }

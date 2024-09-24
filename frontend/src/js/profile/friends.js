@@ -5,74 +5,80 @@ import { loadPublicProfile } from "./publicProfile.js";
 import { getCookie } from '../csrf.js';
 
 export async function displayFriends() {
+	try
+		{
+		const response = await fetch('http://localhost:8000/profile/',
+		{
+			method: 'GET',
+			credentials: 'include'
+		});
 
-	const response = await fetch('http://localhost:8000/profile/',
-	{
-		method: 'GET',
-		credentials: 'include'
-	});
+		if (!response.ok)
+		{
+			console.error('Failed loading profile:', response.statusText);
+			showAlert('Error occured displaying friends. Try again.', 'danger');
+			return ;
+		}
 
-	if (!response.ok)
-	{
-		console.error('Failed loading profile:', response.statusText);
-		showAlert('Error occured displaying friends. Try again.', 'danger');
-		return ;
+		const data = await response.json();
+		const friends = data.friends;
+
+		const friendsListContainer = document.getElementById('friends-list');
+		friendsListContainer.innerHTML = '';
+
+		friends.forEach((friend, index) => {
+			const colors = ['#f0f0f0', '#fffff'];
+
+			const friendItem = document.createElement('div');
+			friendItem.className = 'friend-item';
+
+			friendItem.style.backgroundColor = colors[index % colors.length];
+			friendItem.style.padding = '10px';
+			friendItem.style.display = 'flex';
+			friendItem.style.alignItems = 'center';
+
+			const onlineStatus = document.createElement('span');
+			onlineStatus.className = 'online-status';
+			onlineStatus.style.marginRight = '10px';
+			onlineStatus.style.fontSize = '80%';
+
+			if (friend.online_status == true)
+			{
+				onlineStatus.innerHTML = '<i class="bi bi-circle-fill"></i>';
+				onlineStatus.style.color = 'green';
+			}
+			else if (friend.online_status == false)
+			{
+				onlineStatus.innerHTML = '<i class="bi bi-circle-fill"></i>';
+				onlineStatus.style.color = 'red';
+			}
+
+			const friendNameButton = document.createElement('button');
+			friendNameButton.className = 'btn btn-link';
+			friendNameButton.style.transform = 'scale(1.3)';
+			friendNameButton.textContent = friend.username;
+			friendNameButton.onclick = () => loadPublicProfile(friend.username);
+
+			const removeFriendButton = document.createElement('button');
+			removeFriendButton.className = 'btn btn-link btn-sm';
+			removeFriendButton.innerHTML = '<i class="bi bi-trash3-fill"></i>';
+			removeFriendButton.style.marginRight = '10px';
+			removeFriendButton.style.marginLeft = 'auto';
+			removeFriendButton.style.color = 'red';
+			removeFriendButton.style.fontSize = '110%';
+			removeFriendButton.onclick = () => removeFriend(friend.username);
+
+			friendItem.appendChild(onlineStatus);
+			friendItem.appendChild(friendNameButton);
+			friendItem.appendChild(removeFriendButton);
+
+			friendsListContainer.appendChild(friendItem);
+		});
 	}
-
-	const data = await response.json();
-	const friends = data.friends;
-
-	const friendsListContainer = document.getElementById('friends-list');
-	friendsListContainer.innerHTML = '';
-
-	friends.forEach((friend, index) => {
-		const colors = ['#f0f0f0', '#fffff'];
-
-		const friendItem = document.createElement('div');
-		friendItem.className = 'friend-item';
-
-		friendItem.style.backgroundColor = colors[index % colors.length];
-		friendItem.style.padding = '10px';
-		friendItem.style.display = 'flex';
-		friendItem.style.alignItems = 'center';
-
-		const onlineStatus = document.createElement('span');
-		onlineStatus.className = 'online-status';
-		onlineStatus.style.marginRight = '10px';
-		onlineStatus.style.fontSize = '80%';
-
-		if (friend.online_status == true)
-		{
-			onlineStatus.innerHTML = '<i class="bi bi-circle-fill"></i>';
-			onlineStatus.style.color = 'green';
-		}
-		else if (friend.online_status == false)
-		{
-			onlineStatus.innerHTML = '<i class="bi bi-circle-fill"></i>';
-			onlineStatus.style.color = 'red';
-		}
-
-		const friendNameButton = document.createElement('button');
-		friendNameButton.className = 'btn btn-link';
-		friendNameButton.style.transform = 'scale(1.3)';
-		friendNameButton.textContent = friend.username;
-		friendNameButton.onclick = () => loadPublicProfile(friend.username);
-
-        const removeFriendButton = document.createElement('button');
-        removeFriendButton.className = 'btn btn-link btn-sm';
-		removeFriendButton.innerHTML = '<i class="bi bi-trash3-fill"></i>';
-	    removeFriendButton.style.marginRight = '10px';
-		removeFriendButton.style.marginLeft = 'auto';
-		removeFriendButton.style.color = 'red';
-		removeFriendButton.style.fontSize = '110%';
-        removeFriendButton.onclick = () => removeFriend(friend.username);
-
-		friendItem.appendChild(onlineStatus);
-		friendItem.appendChild(friendNameButton);
-		friendItem.appendChild(removeFriendButton);
-
-		friendsListContainer.appendChild(friendItem);
-	});
+	catch (error)
+	{
+		console.log(error);
+	}
 }
 
 export async function displayFriendRequests() {
