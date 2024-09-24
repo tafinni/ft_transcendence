@@ -103,15 +103,15 @@ def add_result(request):
             user_stats.wins += 1
             opp_stats.losses +=1
             result = 'WIN' + ' ' + str(sLeft) + '-' + str(sRight)
-            oppResult = 'LOST' + ' ' + str(sRight) + '-' + str(sLeft)
+            oppResult = 'LOST' + ' ' + str(sLeft) + '-' + str(sRight)
         elif (sRight > sLeft):
             user_stats.losses += 1
             opp_stats.wins += 1
             result = 'LOST' + ' ' + str(sLeft) + '-' + str(sRight)
-            oppResult = 'WIN' + ' ' + str(sRight) + '-' + str(sLeft)
+            oppResult = 'WIN' + ' ' + str(sLeft) + '-' + str(sRight)
         else:
             result = 'DRAW' + ' ' + str(sLeft) + '-' + str(sRight)
-            oppResult = 'DRAW' + ' ' + str(sRight) + '-' + str(sLeft)
+            oppResult = 'DRAW' + ' ' + str(sLeft) + '-' + str(sRight)
         user_stats.save()
         opp_stats.save()
 

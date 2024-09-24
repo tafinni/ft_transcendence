@@ -24,9 +24,8 @@ export async function loadResult(scoreLeft, scoreRight, oppIsHuman, oppName) {
     if (scoreLeft > scoreRight)
     {
         return `
-        <h1>Home</h1>
-            <p>Player ${userData.display_name} wins!</p>
-            <p>Final score is ${scoreLeft} - ${scoreRight}!</p>
+            <p class="w-100" style="color: white;">${userData.display_name} wins!</p>
+            <p class="w-100" style="color: white;">Final score is ${scoreLeft} - ${scoreRight}!</p>
         `;
     }
     else
@@ -34,17 +33,15 @@ export async function loadResult(scoreLeft, scoreRight, oppIsHuman, oppName) {
         if (oppIsHuman)
         {
             return `
-            <h1>Home</h1>
-                <p>Player red wins!<p>
-                <p>Final score is ${scoreLeft} - ${scoreRight}!</p>
+                <p class="w-100" style="color: white;">${oppName} wins!<p>
+                <p class="w-100" style="color: white;">Final score is ${scoreLeft} - ${scoreRight}!</p>
             `;
         }
         else
         {
         return `
-        <h1>Home</h1>
-        <p>AI wins!<p>
-        <p>Final score is ${scoreLeft} - ${scoreRight}!</p>
+        <p class="w-100" style="color: white;>AI wins!<p>
+        <p class="w-100" style="color: white;>Final score is ${scoreLeft} - ${scoreRight}!</p>
         `;
         }
     }
