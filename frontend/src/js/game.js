@@ -44,7 +44,7 @@ export function loadGame(nbr, nameLeft, nameRight) {
             </div>`;
     if (nbr === 1) return `
     <button type="button" id="start-button" class="btn btn-link" translate="start"></button>
-    <p class="w-100" style="color: white; id="instruction-yellow">${nameLeft} uses keys W and S</p>
+    <p class="w-100" style="color: white; id="instruction-yellow">${nameLeft} (yellow) uses keys A and D</p>
     <p class="w-100" style="color: white;" id="instruction-purple">Purple player uses Arrowkeys left and right</p>
 
     <form id="name-red">
