@@ -8,6 +8,7 @@ import * as s from './solo.js'
 import * as l2 from './local-2p.js'
 import * as l4 from './local-4p.js'
 import { updateContent } from "./i18n";
+import { showAlert } from './index.js'
 
 // Variable to track current mode
 let m = i
@@ -78,6 +79,10 @@ export function endGame() {
 export function sendResults(scoreLeft, scoreRight, oppIsHuman, oppName) {
     try {
         console.log('result', scoreLeft, scoreRight, oppIsHuman, "", oppName);
+        if (scoreLeft > scoreRight)
+            showAlert('Player on the left wins', 'warning');
+        else
+            showAlert('Player on the right wins', 'warning');
         loadContent('result', scoreLeft, scoreRight, oppIsHuman, "", oppName)
     } catch (error) {
         console.log('failed to sendResults:', error)

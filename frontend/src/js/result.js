@@ -2,12 +2,13 @@ import { getCookie } from './csrf.js';
 import { loadContent } from './router.js';
 
 export async function loadResult(scoreLeft, scoreRight, oppIsHuman, oppName) {
-
-	const response = await fetch('http://localhost:8000/profile/', {
-		method: 'GET',
-		credentials: 'include'
-	});
-	if (!response.ok) { console.error('Failed loading profile:', response.statusText); return `<h1>Error loading profile</h1>`; }
+    try
+    {
+        const response = await fetch('http://localhost:8000/profile/', {
+            method: 'GET',
+            credentials: 'include'
+        });
+        if (!response.ok) { console.error('Failed loading profile:', response.statusText); return `<h1>Error loading profile</h1>`; }
 
 	const userData = await response.json();
     if (scoreLeft > 0 || scoreRight > 0){
@@ -28,6 +29,10 @@ export async function loadResult(scoreLeft, scoreRight, oppIsHuman, oppName) {
             console.log(error)
         }
     }
+
+    if (oppIsHuman == false)
+        loadContent('home');
+
     if (scoreLeft > scoreRight)
     {
         return `
@@ -51,6 +56,11 @@ export async function loadResult(scoreLeft, scoreRight, oppIsHuman, oppName) {
         <p class="w-100" style="color: white;>Final score is ${scoreLeft} - ${scoreRight}!</p>
         `;
         }
+    }
+    }
+    catch (error)
+    {
+        console.log(error);
     }
 }
 
