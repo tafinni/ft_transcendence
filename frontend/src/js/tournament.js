@@ -287,7 +287,7 @@ z			</div>
 					if (player1 === true && player2 === true)
 					{
 						console.log("Users are", nameLeft, "and", nameRight);
-						loadContent('tourney', 0, 0, 0, nameLeft, nameRight);
+						loadContent('tourney', 0, 0, 0, nameLeft, nameRight, false);
 					}
 
 				});

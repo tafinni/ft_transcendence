@@ -68,6 +68,7 @@ export async function loadGame(nbr, nameLeft, nameRight) {
             {
                 console.error('Failed getting display name:', response.statusText);
                 showAlert('Error occurred getting display name. Try again.', 'danger');
+                loadContent('home');
                 return ;
             }
             const left = await response.json();
@@ -80,7 +81,7 @@ export async function loadGame(nbr, nameLeft, nameRight) {
             {
                 console.error('Failed getting display name:', response.statusText);
                 showAlert('Error occurred getting display name. Try again.', 'danger');
-                return ;
+                
             }
             const right = await reply.json();
 
