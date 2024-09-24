@@ -10,6 +10,7 @@ export async function loadHome() {
                 <div class="card-body d-flex flex-column align-items-center">
                     <button class="btn btn-primary btn-lg mb-3" id="single-player-btn" translate="single player">Single Player</button>
                     <button class="btn btn-success btn-lg mb-3" id="local-multiplayer-btn" translate="local multiplayer">Local Multiplayer</button>
+                    <button class="btn btn-default btn-lg mb-3" id="4player-btn" translate="4player">4 Player Local</button>
                     <button class="btn btn-warning btn-lg mb-3" id="tournament-btn" translate="tournament">Tournament</button>
 
                     <div id="tournament-waiting" class="d-none mt-3 flex-column align-items-center">
@@ -41,6 +42,7 @@ export async function loadHome() {
     window.requestAnimationFrame(() => {
         const singlePlayer = document.getElementById('single-player-btn');
         const twoPlayer = document.getElementById('local-multiplayer-btn');
+        const fourPlayer = document.getElementById('4player-btn');
         const tournamentButton = document.getElementById('tournament-btn');
         let options = false;
 
@@ -56,7 +58,13 @@ export async function loadHome() {
                 loadContent('localMulti');
             });
         }
-
+        if (fourPlayer) {
+            fourPlayer.addEventListener('click', (event) => {
+                event.preventDefault();
+                loadContent('local4');
+            });
+        }
+        
         tournamentButton.addEventListener('click', async (event) => {
             event.preventDefault();
             if (options === false)

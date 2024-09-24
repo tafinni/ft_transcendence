@@ -124,6 +124,11 @@ export async function loadContent(content, scoreLeft, scoreRight, oppIsHuman, na
 			startGame(1);
 			navLinkVisibility(2);
 			break;
+		case 'local4':
+			contentElement.innerHTML = await loadGame(2, sessionStorage.getItem("username"));
+			startGame(2)
+			navLinkVisibility(2);
+			break;
 		case 'tourney':
 			contentElement.innerHTML = await loadGame(3, nameLeft, nameRight);
 			startGame(3, nameLeft, nameRight);
@@ -138,7 +143,6 @@ export async function loadContent(content, scoreLeft, scoreRight, oppIsHuman, na
 			contentElement.innerHTML = await loadTourneyResult(scoreLeft, scoreRight, nameLeft, nameRight);
 			navLinkVisibility(1);
 			break;
-
 		case 'tournament-lobby':
 			await loadTournamentLobby();
 			navLinkVisibility(1);

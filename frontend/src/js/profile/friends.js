@@ -26,7 +26,7 @@ export async function displayFriends() {
 	friendsListContainer.innerHTML = '';
 
 	friends.forEach((friend, index) => {
-		const colors = ['#f0f0f0', '#fffff'];
+		const colors = ['#f0f0f0', '#ffffff'];
 
 		const friendItem = document.createElement('div');
 		friendItem.className = 'friend-item';
@@ -97,7 +97,7 @@ export async function displayFriendRequests() {
 	friendsListContainer.innerHTML = '';
 
 	friends.forEach((friend, index) => {
-		const colors = ['#f0f0f0', '#fffff'];
+		const colors = ['#f0f0f0', '#ffffff'];
 
 		const friendItem = document.createElement('div');
 		friendItem.className = 'friend-item';
