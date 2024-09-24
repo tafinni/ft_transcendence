@@ -57,7 +57,7 @@ def update_profile(request):
             user_profile.display_name = display_name
         if avatar:
             # Implement size and type checks for avatar
-            if avatar.size > 5 * 1024 * 1024:  # 5 MB limit ? or 3
+            if avatar.size > 5 * 1024 * 1024:  # 5 MB limit
                 return JsonResponse({'error': 'Avatar file is too large'}, status=400)
             if not avatar.name.lower().endswith(('.png', '.jpg', '.jpeg')):
                 return JsonResponse({'error': 'Invalid file type for avatar'}, status=400)
@@ -188,7 +188,8 @@ def public_profile(request):
             'losses': user_stats.losses,
             'avatar': user_profile.avatar.url,
         }
-        return JsonResponse(data) #ADD ERRORS
+        return JsonResponse(data)
+    return JsonResponse({'error': 'Invalid request method'}, status=405)
     
 @csrf_exempt
 def check_game_password(request):
@@ -210,6 +211,7 @@ def check_game_password(request):
         except json.JSONDecodeError:
             return JsonResponse({'error': 'Invalid JSON'}, status=400)
     return JsonResponse({'error': 'Invalid request method'}, status=405)
+
 
 #@login_required
 def get_display_name(request):

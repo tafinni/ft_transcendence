@@ -48,13 +48,10 @@ def login_page(request):
                 user.userprofile.save()
 
             return JsonResponse({'message': 'Login successful', 'redirect': '/home/'})
-#return JsonResponse({"status": "ok"})
-#return JsonResponse({})
     return JsonResponse({'error': 'Invalid request method'}, status=405)
 
 # Define a view function for the registration page
 @csrf_exempt
-# @csrf_protect
 def register_page(request):
     if request.method == 'POST':
         body = json.loads(request.body)
@@ -110,7 +107,6 @@ def logout_page(request):
     return JsonResponse({'error': 'Invalid request method'}, status=405)
 
 @csrf_exempt
-#@csrf_protect
 def is_online(request):
     user = request.user
     if user.is_authenticated and hasattr(user, 'userprofile'):

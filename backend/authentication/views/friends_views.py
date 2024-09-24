@@ -33,7 +33,7 @@ def add_friend(request):
         existing_friendship = Friendship.objects.filter(
             (Q(user=request.user, friend=friend) | Q(user=friend, friend=request.user)),
             accepted=False
-        ).first() #?
+        ).first()
 
         if existing_friendship:
             return JsonResponse({'error': 'Friend request already sent or pending'}, status=400)
@@ -75,9 +75,7 @@ def remove_friend(request):
 
 # Accept friend request
 @login_required
-#@csrf_exempt
 @csrf_protect
-#@csrf_protect
 def accept_friend_request(request):
     if request.method == "POST":
         body = json.loads(request.body)
@@ -109,7 +107,6 @@ def accept_friend_request(request):
 
 
 @login_required
-#@csrf_exempt
 @csrf_protect
 def decline_friend_request(request):
     if request.method == "POST":

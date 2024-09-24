@@ -1,19 +1,13 @@
 from django.http import JsonResponse
 from django.conf import settings
-from django.http import JsonResponse
-from django.conf import settings
 from django.shortcuts import render, redirect
-from django.core.exceptions import ValidationError
-from django.core.exceptions import ObjectDoesNotExist
 from django.core.exceptions import ValidationError
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
-from django.contrib.auth.password_validation import validate_password
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
-from authentication.models import UserStats, UserProfile, MatchHistory, Friendship, Participants, Tournament, ResultTournament
 from authentication.models import UserStats, UserProfile, MatchHistory, Friendship, Participants, Tournament, ResultTournament
 import json
 import datetime
@@ -73,7 +67,7 @@ def friends_statistics(request):
             stats = UserStats.objects.get(user=friend)
         except ObjectDoesNotExist:
             stats = UserStats(user=friend, wins=0, losses=0)
-            stats.save() # ?
+            stats.save()
 
         friends_data.append({
             'friend_name': friend.username,
@@ -85,7 +79,6 @@ def friends_statistics(request):
 
 @login_required
 @csrf_protect
-#@csrf_exempt
 def add_result(request):
     data = json.loads(request.body)
     user = request.user
