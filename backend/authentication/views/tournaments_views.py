@@ -1,9 +1,9 @@
 from django.http import JsonResponse
-from django.contrib.auth.decorators import login_required
-from django.views.decorators.csrf import csrf_protect, csrf_exempt
-from django.contrib.auth.models import User
-from authentication.models import Tournament, Participants, ResultTournament
 from django.db.models import Max
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from django.views.decorators.csrf import csrf_protect, csrf_exempt
+from authentication.models import Tournament, Participants, ResultTournament
 import json
 import random
 import math
@@ -187,7 +187,7 @@ def invite_to_tournament(request):
 
 @login_required
 @csrf_protect
-#@csrf_exempt
+@csrf_exempt
 def create_tournament(request):
     if request.method == "POST":
         try:
@@ -329,6 +329,7 @@ def list_invited_participants(request):
 
 
 @login_required
+@csrf_exempt
 def is_user_in_tournament(request):
     #if request.method == "GET":
         # Check if the user is a participant in any pending or active tournaments (status = 0 or 1)

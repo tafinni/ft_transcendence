@@ -1,14 +1,14 @@
+from django.conf import settings
+from django.http import JsonResponse
 from django.shortcuts import render, redirect
+from django.core.exceptions import ValidationError
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.views.decorators.csrf import csrf_exempt, csrf_protect
-from django.http import JsonResponse
-import json
-from authentication.models import UserStats, UserProfile, MatchHistory, Friendship, Participants, Tournament
-from django.conf import settings
 from django.contrib.auth.password_validation import validate_password
-from django.core.exceptions import ValidationError
+from django.views.decorators.csrf import csrf_exempt, csrf_protect
+from authentication.models import UserStats, UserProfile, MatchHistory, Friendship, Participants, Tournament
+import json
 import re
 
 # Create your views here.

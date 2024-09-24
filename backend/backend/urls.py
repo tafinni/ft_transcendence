@@ -32,6 +32,7 @@ urlpatterns = [
     path('register/', authentication_views.register_page, name='register'),
     path('login/', authentication_views.login_page, name='login'),
     path('logout/', authentication_views.logout_page, name='logout'),
+   path('is_online/', authentication_views.is_online, name='is_online'),
 
     path('update_profile/', profile_views.update_profile, name='update_profile'),
     path('profile/', profile_views.profile, name='profile'),

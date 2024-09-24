@@ -1,16 +1,16 @@
+from django.http import JsonResponse
+from django.conf import settings
 from django.shortcuts import render, redirect
+from django.core.exceptions import ValidationError
+from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.views.decorators.csrf import csrf_exempt, csrf_protect
-from django.http import JsonResponse
-import json
-from authentication.models import UserStats, UserProfile, MatchHistory, Friendship, Participants, Tournament, ResultTournament
-from django.conf import settings
 from django.contrib.auth.password_validation import validate_password
-from django.core.exceptions import ValidationError
+from django.views.decorators.csrf import csrf_exempt, csrf_protect
+from authentication.models import UserStats, UserProfile, MatchHistory, Friendship, Participants, Tournament, ResultTournament
+import json
 import datetime
-from django.core.exceptions import ObjectDoesNotExist
 
 
 @login_required
@@ -184,16 +184,11 @@ def add_tourney_result(request):
     pruser = opp.user
     tourId = participant.tournament_id
     tourney = Tournament.objects.get(id=tourId)
-    if not tourney:
-        return JsonResponse({'message': 'no tournament'})
-    # results = ResultTournament.objects.filter(user=pluser, opponent=pruser, tournament=tourney)
     results = ResultTournament.objects.filter(
     tournament=tourney,
     user__in=[pluser, pruser],
     opponent__in=[pluser, pruser]
     )
-    if not results:
-        return JsonResponse({'message': 'no results'})
     for result in results:
         if winner == "left":
             result.result = "win"

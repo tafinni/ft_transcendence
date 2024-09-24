@@ -54,7 +54,7 @@ def login_page(request):
 
 # Define a view function for the registration page
 @csrf_exempt
-@csrf_protect
+# @csrf_protect
 def register_page(request):
     if request.method == 'POST':
         body = json.loads(request.body)
@@ -73,8 +73,9 @@ def register_page(request):
             return JsonResponse({'error': 'Invalid username. It should be between 1 and 10 characters long.'}, status=400)
 
         user = User.objects.filter(username=username)
+        display = UserProfile.objects.filter(display_name=username)
          
-        if user.exists():
+        if user.exists() or display.exists():
             return JsonResponse({'error': 'Username already taken!'}, status=400)
 
         try:
@@ -107,3 +108,13 @@ def logout_page(request):
         return JsonResponse({'message': 'Logout successful'})
 
     return JsonResponse({'error': 'Invalid request method'}, status=405)
+
+@csrf_exempt
+#@csrf_protect
+def is_online(request):
+    user = request.user
+    if user.is_authenticated and hasattr(user, 'userprofile'):
+        userProfile = user.userprofile
+        is_online_status = userProfile.is_online
+        return JsonResponse({'is_online': is_online_status})
+    return JsonResponse({'is_online': False})

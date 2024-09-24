@@ -33,6 +33,47 @@ function navLinkVisibility(state) {
 }
 
 /* Update page content */
+//sessionStorage.setItem('timeoutTimer', 0);
+sessionStorage.setItem('timeoutTimer', Date.now()); 
+let timeoutPeriod = 15 * 60 * 1000; //time in milliseconds, currently 15 minutes
+
+setInterval(handleInactives, 2 * 60 * 1000); // Time in milliseconds, currently 2 minute 
+
+async function handleInactives() {
+	try {
+		const response = await fetch('http://localhost:8000/is_online/', {
+			method: 'GET',
+			credentials: 'include'
+		});
+		if (response.ok) {
+			const data = await response.json();
+			if (data.is_online) {
+				const timeThen = sessionStorage.getItem('timeoutTimer');
+				if (Date.now() > Number(timeThen) + Number(timeoutPeriod)) {
+					await completeLogOut();
+					loadContent('login');
+				}
+			}
+		} else {
+			console.error('Failed to fetch is_online status');
+		}
+	} catch (error) {
+		console.error('Error in handleInactives:', error);
+	}
+}
+
+function updateTimeout() {
+	// Update the time on any user action
+	sessionStorage.setItem('timeoutTimer', Date.now()); 
+}
+
+// Add event listeners to track clicks and key presses
+document.addEventListener('click', updateTimeout);
+document.addEventListener('keypress', updateTimeout); 
+
+
+
+
 export async function loadContent(content, scoreLeft, scoreRight, oppIsHuman, nameLeft, nameRight, addHistory = true) {
   await initI18next;
   const contentElement = document.getElementById('content');
@@ -83,7 +124,7 @@ export async function loadContent(content, scoreLeft, scoreRight, oppIsHuman, na
 			navLinkVisibility(2);
 			break;
 		case 'tourney':
-			contentElement.innerHTML = await loadGame(3);
+			contentElement.innerHTML = await loadGame(3, nameLeft, nameRight);
 			startGame(3, nameLeft, nameRight);
 			navLinkVisibility(2);
 			break;
