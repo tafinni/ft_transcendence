@@ -210,3 +210,17 @@ def check_game_password(request):
         except json.JSONDecodeError:
             return JsonResponse({'error': 'Invalid JSON'}, status=400)
     return JsonResponse({'error': 'Invalid request method'}, status=405)
+
+
+#@login_required
+def get_display_name(username):
+    try:
+        user = User.objects.get(username=username)
+        user_profile = UserProfile.objects.get(user=user)
+        return JsonResponse({'display_name': user_profile.display_name}, status=200)
+    except User.DoesNotExist:
+        return JsonResponse({'error': 'User not found'}, status=404)
+    except UserProfile.DoesNotExist:
+        return JsonResponse({'error': 'UserProfile not found'}, status=404)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
