@@ -264,6 +264,7 @@ export function startGame(isTourney, nameLeft, nameRight) {
         const submitbtn = document.getElementById('opp-name-submit');
         const startButton = document.getElementById('start-button');
         const instPurple = document.getElementById('instruction-purple');
+        startButton.hidden = true;
         let oppName;
         submitbtn.addEventListener('click', (event) => {
             event.preventDefault();
@@ -272,18 +273,17 @@ export function startGame(isTourney, nameLeft, nameRight) {
             {
                 nameForm.remove();
                 submitbtn.remove();
+                startButton.hidden = false;
                 instPurple.innerText = `${oppName} uses Arrowkeys left and right`;
             }
             console.log(oppName);
         });
             startButton.addEventListener('click', (event) => {
-                if (oppName !== "") {
                     event.preventDefault();
                     startButton.remove();
                     nameForm.remove();
                     submitbtn.remove();
                     startSolo(0, "", oppName);
-                }
             });
     }
     else

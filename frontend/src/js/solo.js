@@ -143,6 +143,7 @@ function gametick() {
         if (gameEnded == true)
             if (gameover_timer++ > 360)
             {
+                cleanUp()
                 switchToIdle()
                 // game_running = false;
             }
@@ -284,7 +285,20 @@ function onDocumentKeyUp(event) {
 }
 
 // external functions
+function resetRound(){
+    gameEnded = false;
+    ball_passed = 0;
+    left_pos = 0;
+    right_pos = 0;
+    up_pressed = 0;
+    down_pressed = 0;
+    score_left = 0;
+    score_right = 0;
+    ballX = 0;
+    ballY = 0;
+}
 export function startQuickGame() {
+    resetRound();
     const startButton = document.getElementById('begin-solo-match');
     startButton.addEventListener('click', (event) => {
         event.preventDefault();
