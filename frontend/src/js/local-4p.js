@@ -44,10 +44,15 @@ function gametick() {
     if (!v.game_running && v.game_started) {
         if (v.players_remaining === 1) {
             if (v.gameover_timer++ > 360)
-                switchToIdle()
+                {
+                    clearInterval(gamePlay);
+                    v.reset();
+                    switchToIdle()
+                }
             return
         }
     }
+    console.log("ball pos is", v.ballX, v.ballY, "dir is ", v.ball_direction, "speed is", v.ball_speed);
     v.left_pos = movePlayer(v.left_pos, v.l_left_pressed, v.l_right_pressed)
     v.right_pos = movePlayer(v.right_pos, v.r_left_pressed, v.r_right_pressed)
     v.top_pos = movePlayer(v.top_pos, v.t_left_pressed, v.t_right_pressed)
@@ -90,7 +95,7 @@ function gametick() {
     if (v.ball_passed && v.ball_passed_timer++ > 200) endRound()
 }
 // run gametick at 120 Hz
-setInterval(gametick, 1000 / 120)
+let gamePlay;
 
 function movePlayer(pos, up, down) {
     if (up && down) return pos
@@ -158,14 +163,14 @@ function removeLife(player) {
             if ((v.lives_left = --v.player_status.filter(i => i.obj === left)[0].lives) === 0) 
                 removePlayer('left')
             else
-                t.scene.remove(t.scene.getObjectByName('l_score' + String.fromCharCode(48 + d.score_to_win - v.lives_left)))
-            break
+            t.scene.remove(t.scene.getObjectByName('l_score' + String.fromCharCode(48 + d.score_to_win - v.lives_left)))
+        break
         case 'right':
             if ((v.lives_right = --(v.player_status.filter(i => i.obj === right)[0].lives)) === 0) 
                 removePlayer('right')
             else
-                t.scene.remove(t.scene.getObjectByName('r_score' + String.fromCharCode(48 + d.score_to_win - v.lives_right)))
-            break
+            t.scene.remove(t.scene.getObjectByName('r_score' + String.fromCharCode(48 + d.score_to_win - v.lives_right)))
+        break
         case 'top':
             if ((v.lives_top = --v.player_status.filter(i => i.obj === top)[0].lives) === 0) 
                 removePlayer('top')
@@ -187,18 +192,19 @@ function removePlayer(player) {
         let winner;
         if (v.lives_right)
             winner = v.nameRight;
-        if (v.lives_bot)
+        else if (v.lives_bot)
             winner = v.nameBottom;
-        if (v.lives_left)
+        else if (v.lives_left)
             winner = sessionStorage.getItem("username");
-        if (v.lives_top)
+        else if (v.lives_top)
             winner = v.nameTop;
         showVictory(winner)
     } else {
-        const wall = (player === 'left' || player === 'top') ? d.h_wall : d.v_wall
+        const wall = (player === 'left' || player === 'right') ? d.h_wall : d.v_wall
         const new_wall = wall.clone()
         new_wall.material = wall.material
         new_wall.material.color = wall.material.color
+        console.log(player, "lost last life");
         if (player === 'left') {
             new_wall.position.set(0, 5, 2.1)
             gsap.to(left.position, { z: 5, duration: 0.5, onComplete: () => {
@@ -275,6 +281,8 @@ export function startGame() {
         if (v.nameTop != "" && v.nameRight != "" && v.nameBottom != "")
         {
             console.log("users are", v.nameTop, v.nameRight, v.nameBottom);
+            clearInterval(gamePlay);
+            gamePlay = setInterval(gametick, 1000 / 120)
             reallyStart()
             playerselect.remove();
         }

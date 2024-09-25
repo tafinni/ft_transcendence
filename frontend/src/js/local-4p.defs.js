@@ -136,8 +136,8 @@ export const vars = {
     ball_passed_timer: 0,
     gameover_timer: 0,
     reset: function() {
-        //this.left_pos = this.right_pos = this.top_pos = this.bot_pos = this.score_left = this.score_right = 0
-        this.lives_left = this.lives_bot = this.lives_top = this.lives_top = score_to_win
+        this.left_pos = this.right_pos = this.top_pos = this.bot_pos = 0
+        this.lives_left = this.lives_bot = this.lives_right = this.lives_top = score_to_win
         this.ballX = this.ballY = this.ball_direction = this.bounce_distance = this.ball_passed_timer = 0
         this.gameover_timer = 0
         this.l_left_pressed = this.l_right_pressed = this.r_left_pressed = this.r_right_pressed = false
