@@ -1,17 +1,25 @@
+version: '3.5'
+
 services:
   db:
     image: postgres:latest
     container_name: postgres
     environment:
-      POSTGRES_DB: pong_project
-      POSTGRES_USER: your_user
-      POSTGRES_PASSWORD: your_password
+      POSTGRES_DB: ${DATABASE_NAME}
+      POSTGRES_USER: ${DATABASE_USER}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data_new:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DATABASE_USER} -d ${DATABASE_NAME}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5  
     ports:
       - "5432:5432"
     networks:
        - t_intra
+
 
   backend:
     image: backend
@@ -19,6 +27,7 @@ services:
     build: ./backend
     depends_on:
       - db
+      #  condition: service_healthy
     networks:
       - t_intra
       - t_extra
@@ -26,11 +35,13 @@ services:
       - "8000:8000"
     volumes:
       - ./backend:/backend
+      - ./media:/app/media 
     environment:
-      - DATABASE_HOST=db
-      - DATABASE_NAME=pong_project
-      - DATABASE_USER=your_user
-      - DATABASE_PASSWORD=your_password
+      - DATABASE_HOST=${DATABASE_HOST}
+      - DATABASE_NAME=${DATABASE_NAME}
+      - DATABASE_USER=${DATABASE_USER}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+      - SECRET_KEY=${SECRET_KEY}
 
   frontend:
     image: frontend
@@ -42,17 +53,35 @@ services:
     networks:
       - t_extra
     volumes:
-      - ./frontend/src:/app/src
+     - ./frontend/src:/app/src
     ports:
       - "3000:3000"
     environment:
-      REACT_APP_BACKEND_URL: http://backend:8000
+      VITE_BACKEND_URL: ${VITE_BACKEND_URL}
+
+  nginx:
+    image: nginx_image
+    container_name: nginx
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    depends_on:
+      - frontend
+    networks:
+      - t_extra
+    volumes:
+      - ./frontend/src/dist:/usr/share/nginx/html
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+    ports:
+      - "8080:8080"
+      - "1443:1443"
 
 networks:
   t_intra:
-    name: t_intra
+#    name: t_intra
   t_extra:
-    name: t_extra
+#    name: t_extra
 
 volumes:
-  postgres_data:
+#  postgres_data:
+  postgres_data_new:
