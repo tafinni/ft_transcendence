@@ -13,7 +13,7 @@ RUN openssl req -x509 -nodes -sha256 -days 365 -newkey rsa:4096 \
 
 
 # Expose port 80 to the host
-EXPOSE 443
+EXPOSE 1443
 
 # Start Nginx
 CMD ["nginx", "-g", "daemon off;"]
