@@ -31,7 +31,9 @@ export default defineConfig ({
         restart({ restart: [ '../static/**', ] }), // Restart server on static file change
         viteStaticCopy({
             targets: [
-                { src: 'languages/*.json', dest: 'languages' } // Copy language files
+                { src: 'languages/*.json', dest: 'languages' }, // Copy language files
+                { src: 'fonts/SuperCornRegular.json', dest: 'fonts' } // Copy language files
+
             ]
         })
     ],
