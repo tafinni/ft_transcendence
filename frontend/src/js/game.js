@@ -56,26 +56,55 @@ export async function loadGame(nbr, nameLeft, nameRight) {
     <button type="submit" class="btn btn-success mt-3" id="opp-name-submit" translate="set name"></button>
     </form>
     `;
-    if (nbr === 2) return `<form id="playerSelectForm">
-    <label for="username1">Player Name 1:</label><br>
-    <input type="text" id="username1" name="username1" list="players"><br>
-    
-    <label for="username2">Player Name 2:</label><br>
-    <input type="text" id="username2" name="username2" list="players"><br>
-    
-    <label for="username3">Player Name 3:</label><br>
-    <input type="text" id="username3" name="username3" list="players"><br>
-    
-    <datalist id="players">
-        <option value="Player1">
-        <option value="Player2">
-        <option value="Player3">
-        <!-- Add more options as needed -->
-    </datalist><br>
-    
-    <input type="submit" value="Invite">
-    </form>
-    `;
+    if (nbr === 2)
+    {
+        try
+        {
+            const response = await fetch(`http://localhost:8000/profile/`, {
+                method: 'GET',
+                credentials: 'include'
+            });
+            if (!response.ok)
+            {
+                console.error('Failed getting display name:', response.statusText);
+                showAlert('Error occurred getting display name. Try again.', 'danger');
+                loadContent('home');
+                return ;
+            }
+            const user = await response.json();
+
+            return `
+            <p style="color: white;"><span>${user.display_name} </span><span translate="4p p1"></span></p>
+            <form id="playerSelectForm">
+            
+            <label for="username1" style="color: white;" translate="4p p2"></label><br>
+            <input type="text" id="username1" name="username1" list="players"><br>
+            
+            <label for="username2" style="color: white;" translate="4p p3"></label><br>
+            <input type="text" id="username2" name="username2" list="players"><br>
+            
+            <label for="username3" style="color: white;" translate="4p p4"></label><br>
+            <input type="text" id="username3" name="username3" list="players"><br>
+            
+            <datalist id="players" style="color: white;">
+                <option value="Player1">
+                <option value="Player2">
+                <option value="Player3">
+                <!-- Add more options as needed -->
+            </datalist><br>
+            
+            <input type="submit" value="Start">
+            </form>
+            `;
+        }
+        catch (error)
+        {
+            console.log(error);
+            loadContent('home');
+            return ; // ?edit to be like tournament ?
+        }
+
+    }
     if (nbr == 3)
     {
         try

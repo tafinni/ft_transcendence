@@ -53,7 +53,7 @@
 	"win %": "Win %",
 
 	"single player": "Single Player",
-	"local multiplayer": "Local Multiplayer",
+	"local multiplayer": "2 Player Multiplayer",
 	"remote multiplayer": "Remote Multiplayer",
 	"tournament": "Tournament",
 	"how many players?": "How many players?",
@@ -82,10 +82,15 @@
 	"begin": "Begin",
 	"start": "Start",
 	"set name": "Set name",
-	"instruction purple": "Purple player uses Arrowkeys left and right",
-	"instruction yellow": " (yellow) uses keys A and D",
-	"instruction solo": "Player is yellow, movement keys are A and D",
-	"instruction tournament p1": "is yellow, movement keys are A and D",
-	"instruction tournament p2": "is purple, movement keys are arrow keys left and right"
+	"instruction purple": "Purple: Left and Right arrowkey",
+	"instruction yellow": " (yellow): A and D",
+	"instruction solo": "Player is yellow: A and D",
+	"instruction tournament p1": "is yellow: A and D",
+	"instruction tournament p2": "is purple: Left and Right arrowkey",
+	"4p p1": "is Player 1 (yellow): A and Z",
+	"4p p2": "Set name for Player 2 (blue): N and M",
+	"4p p3": "Set name for Player 3: - and + on numpad",
+	"4p p4": "Set name for Player 4: Left and Right on arrow keys",
+	"4player": "4 Player Multiplayer"
 
 }

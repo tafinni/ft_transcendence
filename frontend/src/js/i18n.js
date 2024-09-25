@@ -21,6 +21,7 @@ export function updateContent() {
     document.getElementById('profile-link').innerText = i18next.t('profile');
     document.getElementById('login-link').innerText = i18next.t('login');
     document.getElementById('languageDropdown').innerText = i18next.t('languageDropdown');
+
   
     document.querySelectorAll('[translate]').forEach(element => {
       const key = element.getAttribute('translate');

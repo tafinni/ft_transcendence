@@ -53,7 +53,7 @@
 	"win %": "Voitto %",
 
 	"single player": "Yksinpeli",
-	"local multiplayer": "Paikallinen Moninpeli",
+	"local multiplayer": "Kahden Pelaajan Moninpeli",
 	"remote multiplayer": "Etämoninpeli",
 	"tournament": "Turnaus",
 	"how many players?": "Montako pelaajaa?",
@@ -82,12 +82,16 @@
 	"begin": "Aloita",
 	"start": "Aloita",
 	"set name": "Tallenna nimi",
-	"instruction purple": "Violetti pelaaja käyttää vasenta ja oikeaa nuolinäppäintä",
-	"instruction yellow": " (keltainen) pelaaja käyttää A ja D näppäimiä",
+	"instruction purple": "Violetti: Vasen ja Oikea nuolinäppäin",
+	"instruction yellow": " (keltainen): A ja D",
 	"instruction solo": "Pelaaja on keltainen ja käyttää A ja D näppäimiä",
 	"instruction tournament p1": "on keltainen ja käyttää A ja D näppäimiä",
-	"instruction tournament p2": "on violetti ja käyttää vasenta ja oikeaa nuolinäppäintä"
-
+	"instruction tournament p2": "on violetti ja käyttää vasenta ja oikeaa nuolinäppäintä",
+	"4p p1": "on Pelaaja 1 (keltainen): A ja Z",
+	"4p p2": "Aseta nimi Pelaajalle 2 (sininen): N ja M",
+	"4p p3": "Aseta nimi Pelaajalle 3 (violetti): - ja + numpadillä",
+	"4p p4": "Aseta nimi Pelaajalle 4 (punainen): Vasen ja Oikea nuolinäppäin",
+	"4player": "Neljän pelaajan moninpeli"
 
 
 	
