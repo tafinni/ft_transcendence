@@ -75,6 +75,9 @@ export async function loadGame(nbr, nameLeft, nameRight) {
 
             return `
             <p style="color: white;"><span>${user.display_name} </span><span translate="4p p1"></span></p>
+            <p class="w-100" style="color: white;" id="instruction-blue-4" translate="instruction blue 4"></p>
+            <p class="w-100" style="color: white;" id="instruction-purple-4" translate="instruction purple 4"></p>
+            <p class="w-100" style="color: white;" id="instruction-red-4" translate="instruction red 4"></p>
             <form id="playerSelectForm">
             
             <label for="username1" style="color: white;" translate="4p p2"></label><br>

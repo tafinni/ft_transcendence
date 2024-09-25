@@ -52,7 +52,7 @@ function gametick() {
             return
         }
     }
-    console.log("ball pos is", v.ballX, v.ballY, "dir is ", v.ball_direction, "speed is", v.ball_speed);
+    // console.log("ball pos is", v.ballX, v.ballY, "dir is ", v.ball_direction, "speed is", v.ball_speed);
     v.left_pos = movePlayer(v.left_pos, v.l_left_pressed, v.l_right_pressed)
     v.right_pos = movePlayer(v.right_pos, v.r_left_pressed, v.r_right_pressed)
     v.top_pos = movePlayer(v.top_pos, v.t_left_pressed, v.t_right_pressed)
@@ -267,6 +267,12 @@ export function startGame() {
     const form1 = document.getElementById("username1");
     const form2 = document.getElementById("username2");
     const form3 = document.getElementById("username3");
+    const instb4 = document.getElementById("instruction-blue-4");
+    const instp4 = document.getElementById("instruction-purple-4");
+    const instr4 = document.getElementById("instruction-red-4");
+    instb4.hidden = true;
+    instp4.hidden = true;
+    instr4.hidden = true;
     playerselect.addEventListener("click", (e) => {
         e.preventDefault()
         v.nameTop = form1.value;
@@ -285,6 +291,12 @@ export function startGame() {
             gamePlay = setInterval(gametick, 1000 / 120)
             reallyStart()
             playerselect.remove();
+            instb4.innerText = `${v.nameTop} N - M`;
+            instb4.hidden = false;
+            instp4.innerText = `${v.nameRight} - - +`;
+            instp4.hidden = false;
+            instr4.innerText = `${v.nameBottom} <- - ->`;
+            instr4.hidden = false;
         }
     })
 }

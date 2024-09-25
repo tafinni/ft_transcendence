@@ -89,8 +89,11 @@
 	"instruction tournament p2": "is purple: Left and Right arrowkey",
 	"4p p1": "is Player 1 (yellow): A and Z",
 	"4p p2": "Set name for Player 2 (blue): N and M",
-	"4p p3": "Set name for Player 3: - and + on numpad",
-	"4p p4": "Set name for Player 4: Left and Right on arrow keys",
-	"4player": "4 Player Multiplayer"
+	"4p p3": "Set name for Player 3: (purple) - and + on numpad",
+	"4p p4": "Set name for Player 4: (red) Left and Right on arrow keys",
+	"4player": "4 Player Multiplayer",
+	"instruction blue 4": "is Player 2 (blue): N and M",
+	"instruction purple 4": "is Player 3 (purple): - and +",
+	"instruction red 4": "is Player 4 (red): Left and Right on arrow keys"
 
 }
