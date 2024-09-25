@@ -92,8 +92,7 @@
 	"4p p3": "Set name for Player 3: (purple) - and + on numpad",
 	"4p p4": "Set name for Player 4: (red) Left and Right on arrow keys",
 	"4player": "4 Player Multiplayer",
-	"instruction blue 4": "is Player 2 (blue): N and M",
-	"instruction purple 4": "is Player 3 (purple): - and +",
-	"instruction red 4": "is Player 4 (red): Left and Right on arrow keys"
-
+	"instruction blue 4": "Player 2 (blue): N and M",
+	"instruction purple 4": "Player 3 (purple): - and +",
+	"instruction red 4": "Player 4 (red): Left and Right on arrow keys"
 }

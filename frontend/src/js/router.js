@@ -14,21 +14,25 @@ function navLinkVisibility(state) {
 	const homeLink = document.getElementById('home-link');
 	const profileLink = document.getElementById('profile-link');
 	const loginLink = document.getElementById('login-link');
+	const langSwitch = document.getElementById('languageDropdown')
 	
 	if (state == 1) {
 		homeLink.style.display = 'block';
 		profileLink.style.display = 'block';
 		loginLink.style.display = 'block';
+		langSwitch.style.display = 'block';
 	}
 	else if (state == 2) {
 		homeLink.style.display ='block';
 		profileLink.style.display ='none';
 		loginLink.style.display ='none';
+		langSwitch.style.display = 'none';
 	}
 	else {
 		homeLink.style.display ='none';
 		profileLink.style.display ='none';
 		loginLink.style.display ='none';
+		langSwitch.style.display = 'block';
 	}
 }
 
