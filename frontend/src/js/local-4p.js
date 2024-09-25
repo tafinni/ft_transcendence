@@ -195,7 +195,7 @@ function removePlayer(player) {
             winner = v.nameTop;
         showVictory(winner)
     } else {
-        const wall = (player === 'left' || player === 'top') ? d.h_wall : d.v_wall
+        const wall = (player === 'left' || player === 'right') ? d.h_wall : d.v_wall
         const new_wall = wall.clone()
         new_wall.material = wall.material
         new_wall.material.color = wall.material.color
