@@ -15,6 +15,13 @@ html, body {
 	display: none;
 }
 
+.ml-auto .dropdown-menu {
+    position: absolute;
+    right: 0;
+    left: auto; 
+    top: 100%;
+}
+
 .chart-container {
 	width: 20%;
 	height: 20%;
