@@ -195,7 +195,7 @@ function removePlayer(player) {
         else if (v.lives_bot)
             winner = v.nameBottom;
         else if (v.lives_left)
-            winner = sessionStorage.getItem("username");
+            winner = v.nameLeft;
         else if (v.lives_top)
             winner = v.nameTop;
         showVictory(winner)
@@ -257,12 +257,28 @@ function resetScore() {
     console.log('SCORE RESET')
 }
 
-export function startGame() {
+export async function startGame() {
     t.scene.add(plate, left, right, top, bot)
     t.scene.add(d.corner, d.corner2, d.corner3, d.corner4)
     t.scene.add(ball)
     document.addEventListener("keydown", onDocumentKeyDown, true);
     document.addEventListener("keyup", onDocumentKeyUp, true);
+    const userNameLeft = sessionStorage.getItem("username");
+    const response = await fetch(`https://localhost:1443/api/get_display_name/?username=${userNameLeft}`, {
+        method: 'GET',
+        credentials: 'include'
+    });
+
+    if (!response.ok)
+    {
+        console.error('Failed getting display name:', response.statusText);
+        showAlert('Error occurred getting display name. Try again.', 'danger');
+        loadContent('home');
+        return ;
+    }
+
+    const name = await response.json();
+    v.nameLeft = name.display_name;
     const playerselect = document.getElementById("playerSelectForm")
     const form1 = document.getElementById("username1");
     const form2 = document.getElementById("username2");

@@ -98,6 +98,7 @@ export const pvmax_pmx = paddle_vmax / paddle_max
 export const avmax_pmx = area_vmax / pos_max
 
 export const vars = {
+    nameLeft: "",
     nameRight: "",
     nameTop: "",
     nameBottom: "",
