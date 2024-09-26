@@ -200,8 +200,8 @@ z			</div>
 
 			auth1Form.addEventListener('submit', async (event) => {
 				event.preventDefault();
-				const username = document.getElementById('username').value;
-				const password = document.getElementById('password').value;
+				const usernameL = document.getElementById('username').value;
+				const passwordL = document.getElementById('password').value;
 
 				try
 				{
@@ -211,7 +211,7 @@ z			</div>
 						method: 'POST',
 						credentials: 'include',
 						headers: { 'Content-Type' : 'application/json', 'X-CSRFToken': csrftoken  },
-						body: JSON.stringify({ check_user: username, check_pass: password })
+						body: JSON.stringify({ check_user: usernameL, check_pass: passwordL })
 					});
 			
 					if (response.ok)
@@ -219,7 +219,7 @@ z			</div>
 						const data = await response.json();
 						console.log(data);
 						player1 = true;
-						nameLeft = username;
+						nameLeft = usernameL;
 						success1.style.display = 'block';
 						errorMessage1.style.display = 'none';
 					}
@@ -241,8 +241,8 @@ z			</div>
 
 			auth2Form.addEventListener('submit', async (event) => {
 				event.preventDefault();
-				const username = document.getElementById('usernameRight').value;
-				const password = document.getElementById('password2').value;
+				const usernameR = document.getElementById('usernameRight').value;
+				const passwordR = document.getElementById('password2').value;
 
 				try
 				{
@@ -252,7 +252,7 @@ z			</div>
 						method: 'POST',
 						credentials: 'include',
 						headers: { 'Content-Type' : 'application/json', 'X-CSRFToken': csrftoken  },
-						body: JSON.stringify({ check_user: username, check_pass: password })
+						body: JSON.stringify({ check_user: usernameR, check_pass: passwordR })
 					});
 			
 					if (response.ok)
@@ -260,7 +260,7 @@ z			</div>
 						const data = await response.json();
 						console.log(data);
 						player2 = true;
-						nameRight = username;
+						nameRight = usernameR;
 						success2.style.display = 'block';
 						errorMessage2.style.display = 'none';
 					}
