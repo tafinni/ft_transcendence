@@ -38,7 +38,7 @@ export async function loadProfile() {
 								</button>
 							</div>
 							<div>
-								<img src="https://localhost:1443/api/${userData.avatar}" class="rounded-circle img-fluid mb-3" alt="Avatar" style="width: 150px; height: 150px;">							
+								<img src="https://localhost:1443/${userData.avatar}" class="rounded-circle img-fluid mb-3" alt="Avatar" style="width: 150px; height: 150px;">							
         	                </div>
 							<h4 class="card-title">${userData.display_name}</h4>
 							<p class="text-muted">@${userData.username}</p>
