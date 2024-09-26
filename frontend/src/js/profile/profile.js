@@ -11,16 +11,19 @@ import { loadChartTwo } from "./stats.js";
 
 export async function loadProfile() {
 
-	const response = await fetch('https://localhost:1443/api/profile/', {
-		method: 'GET',
-		credentials: 'include'
-	});
-	if (!response.ok)
+	try
 	{
-		console.error('Failed loading profile:', response.statusText);
-		showAlert('Error occured loading profile. Try Again.', 'danger');
-		return ;
-	}
+		const response = await fetch('https://localhost:1443/api/profile/', {
+			method: 'GET',
+			credentials: 'include'
+		});
+		if (!response.ok)
+		{
+			console.error('Failed loading profile:', response.statusText);
+			showAlert('Error occured loading profile. Try Again.', 'danger');
+			return ;
+		}
+	
 
 	const userData = await response.json();
 
@@ -173,21 +176,28 @@ export async function loadProfile() {
 	}
 	else
 		console.error('Content element not found');
+	}
+	catch (error)
+	{
+		console.log(error);
+	}
 }
 
 async function displayGameInvites() {
-	const response = await fetch('https://localhost:1443/api/profile/',
+	try
 	{
-		method: 'GET',
-		credentials: 'include'
-	});
+		const response = await fetch('https://localhost:1443/api/profile/',
+		{
+			method: 'GET',
+			credentials: 'include'
+		});
 
-	if (!response.ok)
-	{
-		console.error('Failed loading profile:', response.statusText);
-		showAlert('Error occured displaying friend requests. Try again.', 'danger');
-		return ;
-	}
+		if (!response.ok)
+		{
+			console.error('Failed loading profile:', response.statusText);
+			showAlert('Error occured displaying friend requests. Try again.', 'danger');
+			return ;
+		}
 
 	const data = await response.json();
 
@@ -231,6 +241,11 @@ async function displayGameInvites() {
 
 		gameInviteContainer.appendChild(inviteItem);
 	});
+	}
+	catch (error)
+	{
+		console.log(error);
+	}
 }
 
 async function acceptInvite(initiator_username) {
