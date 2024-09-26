@@ -87,7 +87,7 @@ export async function loadContent(content, scoreLeft, scoreRight, oppIsHuman, na
   const contentElement = document.getElementById('content');
   sessionStorage.setItem('timeoutTimer', Date.now());
 
-	if (!localStorage.getItem("username") && !sessionStorage.getItem("username") && content !== 'login' && content !== 'register')
+	if ((!localStorage.getItem("username") && content !== 'login' && content !== 'register' ) || (!sessionStorage.getItem("username") && content !== 'login' && content !== 'register'))
 	{
 		content = 'login';
 		console.log('Redirected to login');
