@@ -41,7 +41,6 @@ export async function loadTournamentLobby() {
 			loadContent('home');
 			return ;
 		}
-		console.log('testing: ', newData);
 
 		const matchesHTML = newData.matches.map(match => `
 			<div class="match-container mb-3">
