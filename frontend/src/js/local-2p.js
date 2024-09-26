@@ -340,6 +340,7 @@ function startSolo(isTourney, nameLeft, nameRight) {
     else
     {   
         v.rightName = nameRight;
+        v.matchIsTourney = false;
     }
     console.log(v)
     ball_drop.restart()
