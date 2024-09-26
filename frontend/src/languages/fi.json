@@ -91,8 +91,10 @@
 	"4p p2": "Aseta nimi Pelaajalle 2 (sininen): N ja M",
 	"4p p3": "Aseta nimi Pelaajalle 3 (violetti): - ja + numpadillä",
 	"4p p4": "Aseta nimi Pelaajalle 4 (punainen): Vasen ja Oikea nuolinäppäin",
-	"4player": "Neljän pelaajan moninpeli"
-
+	"4player": "Neljän pelaajan moninpeli",
+	"instruction blue 4": "Pelaaja 2 (sininen): N ja M",
+	"instruction purple 4": "Pelaaja 3 (violetti): - ja +",
+	"instruction red 4": "Pelaaja 4 (punainen): Oikea ja Vasen nuolinäppäin"
 
 	
 }
