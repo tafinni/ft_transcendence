@@ -1,0 +1,98 @@
+{
+	"languageDropdown": "FI",
+	"home": "Peli",
+	"profile": "Profiili",
+	"stats": "Tilastot",
+	"login": "Kirjaudu ulos",
+
+	"log in": "Kirjaudu sisään",
+	"username": "Käyttäjänimi",
+	"password": "Salasana",
+	"don't have an account?": "Eikö sinulla ole tiliä?",
+	"register": "Rekisteröidy",
+
+	"back": "Takaisin",
+	"first name": "Etunimi",
+	"last name": "Sukunimi",
+
+	"match history": "Otteluhistoria",
+	"friends": "Ystävät",
+	"add": "Lisää",
+	"remove": "Poista",
+	"user info": "Käyttäjätiedot",
+	"display name": "Näyttönimi",
+	"change password": "Muuta salasanaa",
+
+	"change avatar": "Muuta avataria",
+	"save changes": "Tallenna muutokset",
+	"cancel": "Peruuta",
+	"edit user information": "Muuta käyttäjätietoja",
+	"current password": "Nykyinen salasana",
+	"new password": "Uusi salasana",
+	"type new password again": "Kirjoita uusi salasana uudelleen",
+
+	"friend's name": "Ystävän nimi",
+	"send request": "Lähetä pyyntö",
+	"remove friend": "Poista ystävä",
+
+	"wins": "Voitot",
+	"losses": "Häviöt",
+
+	"requests": "Pyynnöt",
+	"date": "Päivä",
+	"opponent": "Vastustaja",
+	"result": "Tulos",
+
+
+	"preferred language": "Valittu kieli",
+	"english": "Englanti",
+	"finnish": "Suomi",
+	"russian": "Venäjä",
+	"language": "Kieli",
+
+	"win %": "Voitto %",
+
+	"single player": "Yksinpeli",
+	"local multiplayer": "Kahden Pelaajan Moninpeli",
+	"remote multiplayer": "Etämoninpeli",
+	"tournament": "Turnaus",
+	"how many players?": "Montako pelaajaa?",
+
+	"game invites": "Pelikutsut",
+	"invited players": "Kutsutut pelaajat",
+
+	"invite to tournament": "Kutsu turnaukseen",
+	"enter player username": "Kirjoita käyttäjänimi",
+	"invite player": "Kutsu pelaaja",
+	"start tournament": "Aloita turnaus",
+	"player count": "Pelaajien määrä",
+	"tournament for": "Turnaus",
+	"for players": "pelaajalle",
+	"players": "pelaajat",
+
+	"cancel tournament": "Peru turnaus",
+	"wait for tournament to start": "Odota turnauksen alkua",
+	"back to invites": "Takaisin kutsuihin",
+	"enter tournament": "Turnaukseen",
+	"start game": "Aloita peli",
+	"player 1": "Pelaaja 1",
+	"player 2": "Pelaaja 2",
+	"authenticate": "Tunnistaudu",
+	"continue": "Jatka",
+	"begin": "Aloita",
+	"start": "Aloita",
+	"set name": "Aseta nimi",
+	"instruction purple": "Violetti: Vasen ja Oikea nuolinäppäin",
+	"instruction yellow": " (keltainen): A ja D",
+	"instruction solo": "Pelaaja on keltainen: A ja D",
+	"instruction tournament p1": "on keltainen: A ja D",
+	"instruction tournament p2": "on violetti ja käyttää vasenta ja oikeaa nuolinäppäintä",
+	"4p p1": "on Pelaaja 1 (keltainen): A ja Z",
+	"4p p2": "Aseta nimi Pelaajalle 2 (sininen): N ja M",
+	"4p p3": "Aseta nimi Pelaajalle 3 (violetti): - ja + numpadillä",
+	"4p p4": "Aseta nimi Pelaajalle 4 (punainen): Vasen ja Oikea nuolinäppäin",
+	"4player": "Neljän pelaajan moninpeli"
+
+
+	
+}

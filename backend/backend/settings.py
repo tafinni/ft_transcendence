@@ -43,7 +43,7 @@ SESSION_COOKIE_SAMESITE = 'None'
 # Allowed origins
 CORS_ALLOWED_ORIGINS = [
 	"https://localhost",
-    "https://localhost:443",
+    "https://localhost:1443",
     "http://localhost:3000",
 ]
 
@@ -53,7 +53,7 @@ CORS_ALLOW_CREDENTIALS = True
 
 CSRF_TRUSTED_ORIGINS = [
     "https://localhost",
-    "https://localhost:443",
+    "https://localhost:1443",
 	"http://localhost",
 	"http://localhost:3000",
 ]
