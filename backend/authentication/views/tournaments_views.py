@@ -478,7 +478,6 @@ def get_tournament_matches(request):
                     user_display1 = group_participants[0].userprofile.display_name or group_participants[0].username
                     user_display2 = group_participants[1].userprofile.display_name or group_participants[1].username
 
-                    #tesing may not work yet
                     subsResult = ResultTournament.objects.create(
                         tournament = tournament,
                         user = group_participants[0],
@@ -486,7 +485,6 @@ def get_tournament_matches(request):
                         round_number = current_round
                     )
                     subsResult.save()
-                    #testing end
 
                     matches_list.append({
                         'round_number': current_round,

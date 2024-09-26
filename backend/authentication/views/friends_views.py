@@ -64,7 +64,7 @@ def remove_friend(request):
 
         try:
             friendship = Friendship.objects.get(user=request.user, friend=friend)
-            reverse_friendship = Friendship.objects.get(user=friend, friend=request.user) #?
+            reverse_friendship = Friendship.objects.get(user=friend, friend=request.user)
             friendship.delete()
             reverse_friendship.delete()
             return JsonResponse({'message': 'Friend removed successfully'})
@@ -96,7 +96,7 @@ def accept_friend_request(request):
             friendship.save()
 
             # Create a reciprocal friendship
-            Friendship.objects.get_or_create(user=request.user, friend=request_user, accepted=True, is_request=False) #?
+            Friendship.objects.get_or_create(user=request.user, friend=request_user, accepted=True, is_request=False)
 
             return JsonResponse({'message': 'Friend request accepted'})
         except Friendship.DoesNotExist:
