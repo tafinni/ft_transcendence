@@ -264,57 +264,64 @@ export async function startGame() {
     document.addEventListener("keydown", onDocumentKeyDown, true);
     document.addEventListener("keyup", onDocumentKeyUp, true);
     const userNameLeft = sessionStorage.getItem("username");
-    const response = await fetch(`https://localhost:1443/api/get_display_name/?username=${userNameLeft}`, {
-        method: 'GET',
-        credentials: 'include'
-    });
-
-    if (!response.ok)
+    try
     {
-        console.error('Failed getting display name:', response.statusText);
-        showAlert('Error occurred getting display name. Try again.', 'danger');
-        loadContent('home');
-        return ;
-    }
+        const response = await fetch(`https://localhost:1443/api/get_display_name/?username=${userNameLeft}`, {
+            method: 'GET',
+            credentials: 'include'
+        });
 
-    const name = await response.json();
-    v.nameLeft = name.display_name;
-    const playerselect = document.getElementById("playerSelectForm")
-    const form1 = document.getElementById("username1");
-    const form2 = document.getElementById("username2");
-    const form3 = document.getElementById("username3");
-    const instb4 = document.getElementById("instruction-blue-4");
-    const instp4 = document.getElementById("instruction-purple-4");
-    const instr4 = document.getElementById("instruction-red-4");
-    instb4.hidden = true;
-    instp4.hidden = true;
-    instr4.hidden = true;
-    playerselect.addEventListener("click", (e) => {
-        e.preventDefault()
-        v.nameTop = form1.value;
-        v.nameRight = form2.value;
-        v.nameBottom = form3.value;
-        if (v.nameTop != "")
-            form1.remove();
-        if (v.nameRight != "")
-            form2.remove();
-        if (v.nameBottom != "")
-            form3.remove();
-        if (v.nameTop != "" && v.nameRight != "" && v.nameBottom != "")
+        if (!response.ok)
         {
-            console.log("users are", v.nameTop, v.nameRight, v.nameBottom);
-            clearInterval(gamePlay);
-            gamePlay = setInterval(gametick, 1000 / 120)
-            reallyStart()
-            playerselect.remove();
-            instb4.innerText = `${v.nameTop} N - M`;
-            instb4.hidden = false;
-            instp4.innerText = `${v.nameRight} - - +`;
-            instp4.hidden = false;
-            instr4.innerText = `${v.nameBottom} <- - ->`;
-            instr4.hidden = false;
+            console.error('Failed getting display name:', response.statusText);
+            showAlert('Error occurred getting display name. Try again.', 'danger');
+            loadContent('home');
+            return ;
         }
-    })
+
+        const name = await response.json();
+        v.nameLeft = name.display_name;
+        const playerselect = document.getElementById("playerSelectForm")
+        const form1 = document.getElementById("username1");
+        const form2 = document.getElementById("username2");
+        const form3 = document.getElementById("username3");
+        const instb4 = document.getElementById("instruction-blue-4");
+        const instp4 = document.getElementById("instruction-purple-4");
+        const instr4 = document.getElementById("instruction-red-4");
+        instb4.hidden = true;
+        instp4.hidden = true;
+        instr4.hidden = true;
+        playerselect.addEventListener("click", (e) => {
+            e.preventDefault()
+            v.nameTop = form1.value;
+            v.nameRight = form2.value;
+            v.nameBottom = form3.value;
+            if (v.nameTop != "")
+                form1.remove();
+            if (v.nameRight != "")
+                form2.remove();
+            if (v.nameBottom != "")
+                form3.remove();
+            if (v.nameTop != "" && v.nameRight != "" && v.nameBottom != "")
+            {
+                console.log("users are", v.nameTop, v.nameRight, v.nameBottom);
+                clearInterval(gamePlay);
+                gamePlay = setInterval(gametick, 1000 / 120)
+                reallyStart()
+                playerselect.remove();
+                instb4.innerText = `${v.nameTop} N - M`;
+                instb4.hidden = false;
+                instp4.innerText = `${v.nameRight} - - +`;
+                instp4.hidden = false;
+                instr4.innerText = `${v.nameBottom} <- - ->`;
+                instr4.hidden = false;
+            }
+        })
+    }
+    catch (error)
+    {
+        console.log(error);
+    }
 }
 
 export function cleanUp() {
