@@ -351,6 +351,7 @@ export async function tournamentSetUp(count) {
 							<i class="bi bi-arrow-clockwise" style="font-size: 100%;"></i>
 					</button>
 				</div>
+                    <div id="error-message" class="text-danger mb-3" style="display: none;"></div>
 
 				<hr style="visibility:hidden;"></hr>
 				
@@ -403,6 +404,9 @@ export async function tournamentSetUp(count) {
 			cancelTournament(tournamentID);
 		});
 
+		const errorMessage = document.getElementById('error-message');
+		errorMessage.style.display = 'none';
+
 		const startTournamentButton = document.getElementById('start-tournament-btn');
 		startTournamentButton.addEventListener('click', async (e) => {
 			e.preventDefault();
@@ -446,8 +450,6 @@ export async function tournamentSetUp(count) {
 			
 			const newPlayerInput = document.getElementById('new-player');
 			const username = newPlayerInput.value.trim();
-			const errorMessage = document.getElementById('error-message');
-			errorMessage.style.display = 'none';
 		
 			if (!username) return;
 		
