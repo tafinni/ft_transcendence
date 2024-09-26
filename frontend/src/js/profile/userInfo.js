@@ -7,72 +7,78 @@ import { getCookie } from '../csrf.js';
 import { loadProfile } from "./profile.js";
 
 export async function editInfo() {
-
-	const response = await fetch('https://localhost:1443/api/profile/', {
-		method: 'GET',
-		credentials: 'include'
-	});
-	if (!response.ok)
+	try
 	{
-		console.error('Failed editing profile:', response.statusText);
-		showAlert('Error editing profile. Try again.', 'danger');
-		return ;
-	}
+		const response = await fetch('https://localhost:1443/api/profile/', {
+			method: 'GET',
+			credentials: 'include'
+		});
+		if (!response.ok)
+		{
+			console.error('Failed editing profile:', response.statusText);
+			showAlert('Error editing profile. Try again.', 'danger');
+			return ;
+		}
 
-	const userData = await response.json();
+		const userData = await response.json();
 
-	const editInfoHTML = `
-       <div class="container mt-5">
-            <div class="card" style="background-color: white; padding: 20px; border-radius: 10px;">
-            
-				<h2 translate="edit user information"></h2>
-			
-				<div id="error-message" class="text-danger mb-3" styl2="display: none;"></div>
+		const editInfoHTML = `
+		<div class="container mt-5">
+				<div class="card" style="background-color: white; padding: 20px; border-radius: 10px;">
+				
+					<h2 translate="edit user information"></h2>
+				
+					<div id="error-message" class="text-danger mb-3" styl2="display: none;"></div>
 
-				<form id="edit-info-form" enctype="multipart/form-data">
-					<div class="form-group">
-						<label for="first_name" translate="first name"></label>
-						<input type="text" id="first_name" name="first_name" class="form-control" value="${userData.first_name}" required>
-					</div>
-					<div class="form-group">
-						<label for="last_name" translate="last name"></label>
-						<input type="text" id="last_name" name="last_name" class="form-control" value="${userData.last_name}" required>
-					</div>
-					<div class="form-group">
-						<label for="display_name" translate="display name"></label>
-						<input type="text" id="display_name" name="display_name" class="form-control" value="${userData.display_name}" required>
-					</div>
-				    <div class="form-group">
-        				<label for="username" translate="username"></label>
-        				<input type="text" id="username" name="username" class="form-control" value="${userData.username}" readonly>
-    				</div>
-					<div class="form-group">
-					    <label for="preferred_language" translate="preferred language"></label>
-					    <select id="preferred_language" name="preferred_language" class="form-control">
-							<option value="EN" ${userData.language === 'en' ? 'selected' : ''} translate="english"></option>
-							<option value="FI" ${userData.language === 'fi' ? 'selected' : ''} translate="finnish"></option>
-							<option value="RU" ${userData.language === 'ru' ? 'selected' : ''} translate="russian"></option>
-					    </select>
-  					</div>
-					<button type="submit" class="btn btn-primary mt-3" translate="save changes"></button>
-					<button type="button" id="cancel-button" class="btn btn-link" translate="cancel"></button>
-				</form>
+					<form id="edit-info-form" enctype="multipart/form-data">
+						<div class="form-group">
+							<label for="first_name" translate="first name"></label>
+							<input type="text" id="first_name" name="first_name" class="form-control" value="${userData.first_name}" required>
+						</div>
+						<div class="form-group">
+							<label for="last_name" translate="last name"></label>
+							<input type="text" id="last_name" name="last_name" class="form-control" value="${userData.last_name}" required>
+						</div>
+						<div class="form-group">
+							<label for="display_name" translate="display name"></label>
+							<input type="text" id="display_name" name="display_name" class="form-control" value="${userData.display_name}" required>
+						</div>
+						<div class="form-group">
+							<label for="username" translate="username"></label>
+							<input type="text" id="username" name="username" class="form-control" value="${userData.username}" readonly>
+						</div>
+						<div class="form-group">
+							<label for="preferred_language" translate="preferred language"></label>
+							<select id="preferred_language" name="preferred_language" class="form-control">
+								<option value="EN" ${userData.language === 'en' ? 'selected' : ''} translate="english"></option>
+								<option value="FI" ${userData.language === 'fi' ? 'selected' : ''} translate="finnish"></option>
+								<option value="RU" ${userData.language === 'ru' ? 'selected' : ''} translate="russian"></option>
+							</select>
+						</div>
+						<button type="submit" class="btn btn-primary mt-3" translate="save changes"></button>
+						<button type="button" id="cancel-button" class="btn btn-link" translate="cancel"></button>
+					</form>
+				</div>
 			</div>
-        </div>
-    `;
+		`;
 
-	const contentElement = document.getElementById('content');
-	if (contentElement)
-	{
-		contentElement.innerHTML = editInfoHTML;
-		saveInfo();
-		updateContent();
+		const contentElement = document.getElementById('content');
+		if (contentElement)
+		{
+			contentElement.innerHTML = editInfoHTML;
+			saveInfo();
+			updateContent();
+		}
+		else
+		{
+			console.error('Content element not found');
+			showAlert('Error occured. Try again.', 'danger');
+			loadContent('profile');
+		}
 	}
-	else
+	catch (error)
 	{
-		console.error('Content element not found');
-		showAlert('Error occured. Try again.', 'danger');
-		loadContent('profile');
+		console.log(error);
 	}
 }
 
