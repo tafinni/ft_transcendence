@@ -103,7 +103,7 @@ async function playerAuth(tournament_id, round, group) {
 	try
 	{
 		
-		const response = await fetch(`https://localhost:1443/api/?tournament_id=${tournament_id}&group=${group}`, {
+		const response = await fetch(`https://localhost:1443/api/get_players/?tournament_id=${tournament_id}&group=${group}`, {
 			method: 'GET',
 			credentials: 'include',
 		});
