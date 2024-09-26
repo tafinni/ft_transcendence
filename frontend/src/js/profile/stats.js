@@ -6,7 +6,7 @@ import { backButtonListener } from "./profile.js";
 export async function matchHistory () {
 	try
 	{
-		const response = await fetch('http://localhost:8000/match_history/', {
+		const response = await fetch('https://localhost:1443/api/match_history/', {
 			method: 'GET',
 			credentials: 'include'
 		});
@@ -80,7 +80,7 @@ export async function matchHistory () {
 export async function loadChartOne() {
 	try
 	{
-		const response = await fetch('http://localhost:8000/friends_statistics/', {
+		const response = await fetch('https://localhost:1443/api/friends_statistics/', {
 			method: 'GET',
 			credentials: 'include'
 		});
@@ -192,7 +192,7 @@ export async function loadChartOne() {
 export async function loadChartTwo() {
     try 
 	{
-        const response = await fetch('http://localhost:8000/friends_statistics/', {
+        const response = await fetch('https://localhost:1443/api/friends_statistics/', {
             method: 'GET',
             credentials: 'include'
         });
@@ -206,7 +206,7 @@ export async function loadChartTwo() {
 
         const data = await response.json();
 
-        const reply = await fetch('http://localhost:8000/profile/', {
+        const reply = await fetch('https://localhost:1443/api/profile/', {
             method: 'GET',
             credentials: 'include'
         });

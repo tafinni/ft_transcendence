@@ -8,7 +8,7 @@ import { startGame } from "./game.js";
 export async function loadTournamentLobby() {
 	try
 	{
-		const response = await fetch(`http://localhost:8000/is_user_in_tournament/`, {
+		const response = await fetch(`https://localhost:1443/api/is_user_in_tournament/`, {
 			method: 'GET',
 			credentials: 'include',
 		});
@@ -22,7 +22,7 @@ export async function loadTournamentLobby() {
 		const data = await response.json();
 		const tournamentID = data.tournament_id
 		
-		const reply = await fetch(`http://localhost:8000/get_tournament_matches/?tournament_id=${data.tournament_id}`, {
+		const reply = await fetch(`https://localhost:1443/api/get_tournament_matches/?tournament_id=${data.tournament_id}`, {
 			method: 'GET',
 			credentials: 'include',
 		});
@@ -103,7 +103,7 @@ async function playerAuth(tournament_id, round, group) {
 	try
 	{
 		
-		const response = await fetch(`http://localhost:8000/get_players/?tournament_id=${tournament_id}&group=${group}`, {
+		const response = await fetch(`https://localhost:1443/api/?tournament_id=${tournament_id}&group=${group}`, {
 			method: 'GET',
 			credentials: 'include',
 		});
@@ -207,7 +207,7 @@ z			</div>
 				try
 				{
 					const csrftoken = getCookie('csrftoken');
-					const response = await fetch('http://localhost:8000/check_game_password/',
+					const response = await fetch('https://localhost:1443/api/check_game_password/',
 					{
 						method: 'POST',
 						credentials: 'include',
@@ -248,7 +248,7 @@ z			</div>
 				try
 				{
 					const csrftoken = getCookie('csrftoken');
-					const response = await fetch('http://localhost:8000/check_game_password/',
+					const response = await fetch('https://localhost:1443/api/check_game_password/',
 					{
 						method: 'POST',
 						credentials: 'include',
@@ -313,7 +313,7 @@ export async function tournamentSetUp(count) {
 	const csrftoken = getCookie('csrftoken');
 	try
 	{
-		const reply = await fetch('http://localhost:8000/create_tournament/',
+		const reply = await fetch('https://localhost:1443/api/create_tournament/',
 		{
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrftoken },
@@ -410,7 +410,7 @@ export async function tournamentSetUp(count) {
 			try
 			{
 				const csrftoken = getCookie('csrftoken');
-				const response = await fetch('http://localhost:8000/start_tournament/',
+				const response = await fetch('https://localhost:1443/api/start_tournament/',
 				{
 					method: 'POST',
 					headers: { 'X-CSRFToken': csrftoken },
@@ -455,7 +455,7 @@ export async function tournamentSetUp(count) {
 			try
 			{
 				const csrftoken = getCookie('csrftoken');
-				const response = await fetch('http://localhost:8000/invite_to_tournament/',
+				const response = await fetch('https://localhost:1443/api/invite_to_tournament/',
 				{
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrftoken },
@@ -495,7 +495,7 @@ async function cancelTournament(tournament_id) {
 	try
 	{
 		const csrftoken = getCookie('csrftoken');
-		const response = await fetch('http://localhost:8000/cancel_tournament/',
+		const response = await fetch('https://localhost:1443/api/cancel_tournament/',
 		{
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrftoken },
@@ -530,7 +530,7 @@ async function cancelTournament(tournament_id) {
 async function updatePlayersList(tournamentID) {
 	try
 	{
-		const response = await fetch(`http://localhost:8000/list_invited_participants/?tournament_id=${tournamentID}`, {
+		const response = await fetch(`https://localhost:1443/api/list_invited_participants/?tournament_id=${tournamentID}`, {
 			method: 'GET',
 			credentials: 'include',
 		});

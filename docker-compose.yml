@@ -31,8 +31,8 @@ services:
     networks:
       - t_intra
       - t_extra
-    ports:
-      - "8000:8000"
+    expose:
+      - "8000"
     volumes:
       - ./backend:/backend
       - ./media:/app/media 

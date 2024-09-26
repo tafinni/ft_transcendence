@@ -60,7 +60,7 @@ export async function loadGame(nbr, nameLeft, nameRight) {
     {
         try
         {
-            const response = await fetch(`http://localhost:8000/profile/`, {
+            const response = await fetch(`https://localhost:1443/api/profile/`, {
                 method: 'GET',
                 credentials: 'include'
             });
@@ -112,7 +112,7 @@ export async function loadGame(nbr, nameLeft, nameRight) {
     {
         try
         {
-            const response = await fetch(`http://localhost:8000/get_display_name/?username=${nameLeft}`, {
+            const response = await fetch(`https://localhost:1443/api/get_display_name/?username=${nameLeft}`, {
                 method: 'GET',
                 credentials: 'include'
             });
@@ -125,7 +125,7 @@ export async function loadGame(nbr, nameLeft, nameRight) {
             }
             const left = await response.json();
 
-            const reply = await fetch(`http://localhost:8000/get_display_name/?username=${nameRight}`, {
+            const reply = await fetch(`https://localhost:1443/api/get_display_name/?username=${nameRight}`, {
                 method: 'GET',
                 credentials: 'include'
             });

@@ -66,7 +66,7 @@ export async function savePassword() {
 		const csrftoken = getCookie('csrftoken');
 		try
 		{
-            const response = await fetch('http://localhost:8000/change_password/',
+            const response = await fetch('https://localhost:1443/api/change_password/',
 			{
 				method: 'POST',
 				credentials: 'include',

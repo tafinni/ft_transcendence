@@ -11,7 +11,7 @@ import { loadChartTwo } from "./stats.js";
 
 export async function loadProfile() {
 
-	const response = await fetch('http://localhost:8000/profile/', {
+	const response = await fetch('https://localhost:1443/api/profile/', {
 		method: 'GET',
 		credentials: 'include'
 	});
@@ -38,7 +38,7 @@ export async function loadProfile() {
 								</button>
 							</div>
 							<div>
-								<img src="http://localhost:8000/${userData.avatar}" class="rounded-circle img-fluid mb-3" alt="Avatar" style="width: 150px; height: 150px;">							
+								<img src="https://localhost:1443/api/${userData.avatar}" class="rounded-circle img-fluid mb-3" alt="Avatar" style="width: 150px; height: 150px;">							
         	                </div>
 							<h4 class="card-title">${userData.display_name}</h4>
 							<p class="text-muted">@${userData.username}</p>
@@ -176,7 +176,7 @@ export async function loadProfile() {
 }
 
 async function displayGameInvites() {
-	const response = await fetch('http://localhost:8000/profile/',
+	const response = await fetch('https://localhost:1443/api/profile/',
 	{
 		method: 'GET',
 		credentials: 'include'
@@ -237,7 +237,7 @@ async function acceptInvite(initiator_username) {
 	try
 	{
 		const csrftoken = getCookie('csrftoken');
-		const response = await fetch('http://localhost:8000/accept_tournament_invitation/',
+		const response = await fetch('https://localhost:1443/api/accept_tournament_invitation/',
 		{
 			method: 'POST',
 			credentials: 'include',
@@ -272,7 +272,7 @@ async function declineInvitation(initiator_username) {
 	try
 	{
 		const csrftoken = getCookie('csrftoken');
-		const response = await fetch('http://localhost:8000/decline_tournament_invitation/',
+		const response = await fetch('https://localhost:1443/api/decline_tournament_invitation/',
 		{
 			method: 'POST',
 			credentials: 'include',

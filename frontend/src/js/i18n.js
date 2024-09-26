@@ -45,7 +45,7 @@ export async function setLanguage(lang) {
 export async function checkUserLanguage() {
   try
   {
-    const response = await fetch('http://localhost:8000/profile/', {
+    const response = await fetch('https://localhost:1443/api/profile/', {
       method: 'GET',
       credentials: 'include'
     });

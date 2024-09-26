@@ -8,7 +8,7 @@ export async function loadPublicProfile(user_username) {
 	try
 	{
 		const csrftoken = getCookie('csrftoken');
-		const response = await fetch('http://localhost:8000/public_profile/',
+		const response = await fetch('https://localhost:1443/api/public_profile/',
 		{
 			method: 'POST',
 			credentials: 'include',
@@ -30,7 +30,7 @@ export async function loadPublicProfile(user_username) {
 								<div class="card-body">
 									<button type="button" id="back-button" class="btn btn-link float-left" translate="back"></button>
 									<div>
-										<img src="http://localhost:8000/${userData.avatar}" class="rounded-circle img-fluid mb-3" alt="Avatar" style="width: 150px; height: 150px;">							
+										<img src="https://localhost:1443/api/${userData.avatar}" class="rounded-circle img-fluid mb-3" alt="Avatar" style="width: 150px; height: 150px;">							
 									</div>
 									<h4 class="card-title">${userData.display_name}</h4>
 										<p class="text-muted">@${userData.username}</p>
@@ -99,7 +99,7 @@ export async function loadPublicProfile(user_username) {
 async function publicMatchHistory(user_username) {
 	try
 	{
-		const response = await fetch(`http://localhost:8000/public_match_history/?user_username=${user_username}`, {
+		const response = await fetch(`https://localhost:1443/api/public_match_history/?user_username=${user_username}`, {
 			method: 'GET',
 			credentials: 'include',
 		});

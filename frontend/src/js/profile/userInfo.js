@@ -8,7 +8,7 @@ import { loadProfile } from "./profile.js";
 
 export async function editInfo() {
 
-	const response = await fetch('http://localhost:8000/profile/', {
+	const response = await fetch('https://localhost:1443/api/profile/', {
 		method: 'GET',
 		credentials: 'include'
 	});
@@ -96,7 +96,7 @@ export async function saveInfo() {
 		const csrftoken = getCookie('csrftoken');
         try 
         {
-            const response = await fetch('http://localhost:8000/update_profile/',
+            const response = await fetch('https://localhost:1443/api/update_profile/',
             {
                 method: 'POST',
 				headers: { 'X-CSRFToken': csrftoken },
@@ -190,7 +190,7 @@ async function saveAvatar() {
 		const csrftoken = getCookie('csrftoken');
         try 
         {
-            const response = await fetch('http://localhost:8000/update_profile/',
+            const response = await fetch('https://localhost:1443/api/update_profile/',
             {
                 method: 'POST',
 				headers: { 'X-CSRFToken': csrftoken },

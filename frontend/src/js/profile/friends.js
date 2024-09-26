@@ -7,7 +7,7 @@ import { getCookie } from '../csrf.js';
 export async function displayFriends() {
 	try
 		{
-		const response = await fetch('http://localhost:8000/profile/',
+		const response = await fetch('https://localhost:1443/api/profile/',
 		{
 			method: 'GET',
 			credentials: 'include'
@@ -83,7 +83,7 @@ export async function displayFriends() {
 
 export async function displayFriendRequests() {
 	
-	const response = await fetch('http://localhost:8000/profile/',
+	const response = await fetch('https://localhost:1443/api/profile/',
 	{
 		method: 'GET',
 		credentials: 'include'
@@ -145,7 +145,7 @@ async function acceptFriend(request_user_username) {
 	try
 	{
 		const csrftoken = getCookie('csrftoken');
-		const response = await fetch('http://localhost:8000/accept_friend_request/',
+		const response = await fetch('https://localhost:1443/api/accept_friend_request/',
 		{
 			method: 'POST',
 			credentials: 'include',
@@ -180,7 +180,7 @@ async function declineFriend(request_user_username) {
 	try
 	{
 		const csrftoken = getCookie('csrftoken');
-		const response = await fetch('http://localhost:8000/decline_friend_request/',
+		const response = await fetch('https://localhost:1443/api/decline_friend_request/',
 		{
 			method: 'POST',
 			credentials: 'include',
@@ -211,7 +211,7 @@ async function declineFriend(request_user_username) {
 }
 
 export async function addFriend() {
-	const response = await fetch('http://localhost:8000/profile/', {
+	const response = await fetch('https://localhost:1443/api/profile/', {
 		method: 'GET',
 		credentials: 'include'
 	});
@@ -270,7 +270,7 @@ async function saveFriend() {
 		try
 		{
 			const csrftoken = getCookie('csrftoken');
-			const response = await fetch('http://localhost:8000/add_friend/',
+			const response = await fetch('https://localhost:1443/api/add_friend/',
 			{
 				method: 'POST',
 				credentials: 'include',
@@ -309,7 +309,7 @@ async function removeFriend(friend_username) {
 	try
 	{
 		const csrftoken = getCookie('csrftoken');
-		const response = await fetch('http://localhost:8000/remove_friend/',
+		const response = await fetch('https://localhost:1443/api/remove_friend/',
 		{
 			method: 'POST',
 			credentials: 'include',

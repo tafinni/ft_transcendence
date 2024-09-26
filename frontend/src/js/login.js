@@ -52,7 +52,7 @@ export function initializeLogIn() {
 
         try
 		{
-            const response = await fetch('http://localhost:8000/login/',
+            const response = await fetch('https://localhost:1443/api/login/',
 			{
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrftoken },

@@ -114,7 +114,7 @@ async function setTournamentButtons(options) {
         const backToInvitesButton = document.getElementById('back-to-invites');
         const enterTournamentButton = document.getElementById('enter-tournament-btn');
     
-        const response = await fetch(`http://localhost:8000/is_user_in_tournament/`, {
+        const response = await fetch(`https://localhost:1443/api/is_user_in_tournament/`, {
             method: 'GET',
             credentials: 'include',
         });

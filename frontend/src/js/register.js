@@ -60,7 +60,7 @@ export function initializeRegister() {
 
 		try
 		{
-			const response = await fetch('http://localhost:8000/register/',
+			const response = await fetch('https://localhost:1443/api/register/',
 			{
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrftoken  },

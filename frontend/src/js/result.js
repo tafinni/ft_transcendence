@@ -4,7 +4,7 @@ import { loadContent } from './router.js';
 export async function loadResult(scoreLeft, scoreRight, oppIsHuman, oppName) {
     try
     {
-        const response = await fetch('http://localhost:8000/profile/', {
+        const response = await fetch('https://localhost:1443/api/profile/', {
             method: 'GET',
             credentials: 'include'
         });
@@ -15,7 +15,7 @@ export async function loadResult(scoreLeft, scoreRight, oppIsHuman, oppName) {
         try
         {
             const csrftoken = getCookie('csrftoken');
-            await fetch('http://localhost:8000/add_result/',
+            await fetch('https://localhost:1443/api/add_result/',
                 {
                     method: 'POST',
                     credentials: 'include',
@@ -68,7 +68,7 @@ export async function loadTourneyResult(scoreLeft, scoreRight, nameLeft, nameRig
     try
     {
         const csrftoken = getCookie('csrftoken');
-        const response = await fetch('http://localhost:8000/add_tourney_result/',
+        const response = await fetch('https://localhost:1443/api/add_tourney_result/',
             {
                 method: 'POST',
                 credentials: 'include',

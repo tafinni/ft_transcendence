@@ -45,7 +45,7 @@ setInterval(handleInactives, 2 * 60 * 1000); // Time in milliseconds, currently 
 
 async function handleInactives() {
 	try {
-		const response = await fetch('http://localhost:8000/is_online/', {
+		const response = await fetch('https://localhost:1443/api/is_online/', {
 			method: 'GET',
 			credentials: 'include'
 		});
@@ -186,7 +186,7 @@ async function completeLogOut() {
 	const csrftoken = getCookie('csrftoken');
 	try
 	{
-		const response = await fetch('http://localhost:8000/logout/',
+		const response = await fetch('https://localhost:1443/api/logout/',
 		{
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrftoken },
