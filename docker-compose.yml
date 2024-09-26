@@ -1,4 +1,4 @@
-version: '3.5'
+#version: '3.5'
 
 services:
   db:
@@ -54,8 +54,6 @@ services:
       - t_extra
     volumes:
      - ./frontend/src:/app/src
-    ports:
-      - "3000:3000"
     environment:
       VITE_BACKEND_URL: ${VITE_BACKEND_URL}
 
