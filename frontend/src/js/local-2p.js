@@ -173,9 +173,12 @@ function endRound() {
 }
 
 function resetRound() {
+    console.log("RESET round");
     v.ball_passed = v.game_running = false
     v.ballX = v.ballY = v.ball_passed_timer = 0
     v.ball_speed = c.ball_speed
+    v.left_pos = 0;
+    v.right_pos = 0;
     ball.position.y = 5
 }
 
@@ -283,6 +286,8 @@ export function startGame(isTourney, nameLeft, nameRight) {
                     startButton.remove();
                     nameForm.remove();
                     submitbtn.remove();
+                    v.left_pos = 0;
+                    v.right_pos = 0;
                     startSolo(0, "", oppName);
             });
     }

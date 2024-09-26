@@ -204,6 +204,8 @@ function endRound() {
     ball_passed_timer = 0
     ball_speed = ball_base_speed
     ball.position.y = 5
+    right_pos = 0;
+    left_pos = 0;
     gsap.to(ball.position, { y: 0.1, duration: 1, onComplete: () => {
         game_running = true
     }})
@@ -396,17 +398,11 @@ function aiMovePurple() {
     let purpleDir = 0;
     if (right_pos > supposedXPurple) {
         purpleDir = -1;
-        // v.r_left_pressed = true;
-        // v.r_right_pressed = false;
     } else if (right_pos < supposedXPurple) {
         purpleDir =1;
-        // v.r_left_pressed = false;
-        // v.r_right_pressed = true;
     }
     else{
         purpleDir = 0;
-        // v.r_left_pressed = false;
-        // v.r_right_pressed = false;
     }
 
     right_pos += purpleDir * player_speed;
