@@ -67,6 +67,7 @@ services:
       dockerfile: Dockerfile
     depends_on:
       - frontend
+      - backend
     networks:
       - t_extra
     volumes:
@@ -83,5 +84,4 @@ networks:
 #    name: t_extra
 
 volumes:
-#  postgres_data:
   postgres_data_new:
