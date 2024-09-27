@@ -28,36 +28,34 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True #? eval with False
+DEBUG = False
 
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+    'localhost:1443',
 
-ALLOWED_HOSTS = []
+]
 
-CORS_ALLOW_ALL_ORIGINS = True # ONLY FOR TESTING
+#CORS_ALLOW_ALL_ORIGINS = True # ONLY FOR TESTING
 
-#CSRF_COOKIE_SECURE = True #?
-#SESSION_COOKIE_SECURE = True #?
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SAMESITE = 'None'
+SESSION_COOKIE_SAMESITE = 'None'
 
 # Allowed origins
 CORS_ALLOWED_ORIGINS = [
 	"https://localhost",
-    "https://localhost:443",
-    "http://localhost:3000",
+    "https://localhost:1443",
 ]
-
-#CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', 'http://localhost:3000, https://localhost:443, https://localhost').split(',')
 
 CORS_ALLOW_CREDENTIALS = True
 
 CSRF_TRUSTED_ORIGINS = [
     "https://localhost",
-    "https://localhost:443",
-	"http://localhost",
-	"http://localhost:3000",
+    "https://localhost:1443",
 ]
-
-#CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', 'http://localhost:3000, https://localhost:443, https://localhost').split(',') #?
-
 
 # Application definition
 
@@ -69,13 +67,13 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'authentication',
-	'corsheaders'
+	'corsheaders' #testing
 ]
 
 MIDDLEWARE = [
-	'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+	'corsheaders.middleware.CorsMiddleware', #testing
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -126,7 +124,7 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator', #8
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
     },
     {
         'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
