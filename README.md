@@ -22,7 +22,7 @@ A full-stack single-page application (SPA) that has a ping pong game in 3D. Done
 
 3. Access app at
 ```bash
-    https://localhost:3000
+    https://localhost:1443
 `````
 
 4. Close app with
