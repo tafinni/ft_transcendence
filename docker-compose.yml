@@ -37,7 +37,7 @@ services:
       - ./backend:/backend
       - ./media:/app/media 
     environment:
-      - DATABASE_HOST=${DATABASE_HOST}
+      - DATABASE_HOST=db
       - DATABASE_NAME=${DATABASE_NAME}
       - DATABASE_USER=${DATABASE_USER}
       - DATABASE_PASSWORD=${DATABASE_PASSWORD}
@@ -55,7 +55,7 @@ services:
     volumes:
      - ./frontend/src:/app/src
     environment:
-      VITE_BACKEND_URL: ${VITE_BACKEND_URL}
+      VITE_BACKEND_URL: http://backend:8000
 
   nginx:
     image: nginx_image
