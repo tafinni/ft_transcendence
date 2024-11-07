@@ -15,6 +15,14 @@ A full-stack single-page application (SPA) that has a ping pong game in 3D. Done
     ǵit clone https://github.com/tafinni/ft_transcendence.git
 `````
 
+2. Create .env file to the root. Example:
+```
+    DATABASE_NAME=db_name
+    DATABASE_USER=db_user
+    DATABASE_PASSWORD=db_pwd
+    SECRET_KEY='secretkey'
+```
+
 2. Start the app with
 ```bash
     docker-compose up
